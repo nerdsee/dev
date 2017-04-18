@@ -24,9 +24,11 @@ public class TransactionsService {
 		TransactionList ret = null;
 
 		long minDateMillis = System.currentTimeMillis();
-		minDateMillis = minDateMillis - (days * 24 * 60 * 60 * 1000);
+		Date curDate = new Date(minDateMillis);
+		minDateMillis = minDateMillis - ((long)days * 24 * 60 * 60 * 1000);
 		Date minDate = new Date(minDateMillis);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String curBankBookingDate = formatter.format(curDate);
 		String minBankBookingDate = formatter.format(minDate);
 
 		Client client = ClientBuilder.newClient();
