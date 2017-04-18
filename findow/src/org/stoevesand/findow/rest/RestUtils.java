@@ -16,15 +16,15 @@ public class RestUtils {
 	public static Token getAdminToken() {
 		return TokenStore.getInstance().getAdminToken();
 	}
-	
+
 	public static String generateJsonResponse(Object element, String rootName) {
 		String result = "";
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 			if (rootName == null) {
 				result = mapper.writeValueAsString(element);
 			} else {
+				mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 				result = mapper.writer().withRootName(rootName).writeValueAsString(element);
 			}
 		} catch (JsonProcessingException e) {

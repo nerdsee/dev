@@ -9,9 +9,11 @@ import javax.ws.rs.Produces;
 
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.loader.DataLoader;
+import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.CategorySum;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.TransactionWrapper;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
@@ -32,9 +34,13 @@ public class RestTransactions {
 
 			// User laden
 			User user = Authenticator.getUser(userToken);
-			
+			Account account = user.getAccount(accountId);
 			List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
-			result = RestUtils.generateJsonResponse(transactions, "transactions");
+			
+			TransactionWrapper wrapper = new TransactionWrapper(transactions, account);
+			
+			//result = RestUtils.generateJsonResponse(transactions, "transactions");
+			result = RestUtils.generateJsonResponse(wrapper, null);
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		}
