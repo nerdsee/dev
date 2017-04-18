@@ -77,7 +77,7 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+				List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new ErrorHandler(500, "NO SUCH ACCOUNT");
