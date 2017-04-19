@@ -154,4 +154,11 @@ public class User {
 		setToken(userToken);
 	}
 
+	public void addAccount(Account account) {
+		if (this.accounts != null) {
+			accounts.add(account);
+			account.setUser(this);
+		}
+	}
+
 }

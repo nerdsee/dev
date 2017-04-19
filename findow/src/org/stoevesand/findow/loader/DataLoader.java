@@ -11,9 +11,9 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 
 public class DataLoader {
 
-	public static void updateTransactions(String userToken, int days) throws ErrorHandler {
+	public static void updateTransactions(String userToken, Long accountId, int days) throws ErrorHandler {
 		TransactionList transactions = null;
-		transactions = TransactionsService.searchTransactions(userToken, null, days);
+		transactions = TransactionsService.searchTransactions(userToken, accountId, days);
 
 		List<Transaction> newTransactions = new Vector<Transaction>();
 		

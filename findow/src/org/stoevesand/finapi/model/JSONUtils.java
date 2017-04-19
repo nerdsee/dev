@@ -5,6 +5,16 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class JSONUtils {
 
+	public static JSONObject getJSONObject(JSONObject jo, String key) {
+		JSONObject ret = null;
+		try {
+			ret = jo.getJSONObject(key);
+		} catch (JSONException e) {
+			System.out.println("Cannot read from JSON: " + key);
+		}
+		return ret;
+	}
+
 	public static double getDouble(JSONObject jo, String key) {
 		double ret = 0;
 		try {

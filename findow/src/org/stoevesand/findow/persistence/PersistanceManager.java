@@ -77,7 +77,8 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+				List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId())
+						.getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new ErrorHandler(500, "NO SUCH ACCOUNT");
@@ -299,5 +300,38 @@ public class PersistanceManager {
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
+	}
+
+	public void checkAccount(User user, Account account) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<Account> accounts = entityManager.createQuery("select a from Account a where a.sourceId=:sid", Account.class).setParameter("sid", account.getSourceId()).getResultList();
+
+		if (accounts.isEmpty()) {
+			account.setUser(user);
+			persist(entityManager, account);
+		}
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+	}
+
+	public void checkAccounts(User user, List<Account> accounts) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		for (Account account : accounts) {
+
+			List<Account> accs = entityManager.createQuery("select a from Account a where a.sourceId=:sid", Account.class).setParameter("sid", account.getSourceId()).getResultList();
+
+			if (accs.isEmpty()) {
+				user.addAccount(account);
+			}
+		}
+		persist(entityManager, user);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
 	}
 }

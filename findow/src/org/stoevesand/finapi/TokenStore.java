@@ -36,7 +36,7 @@ public class TokenStore {
 	}
 
 	public void validateClientToken() {
-		if (!clientToken.isValid()) {
+		if ((clientToken == null) || (!clientToken.isValid())) {
 			System.out.println("Refresh Token.");
 			try {
 				clientToken = TokenService.requestClientToken(client_id, client_secret);

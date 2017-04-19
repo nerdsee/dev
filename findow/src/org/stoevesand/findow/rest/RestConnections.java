@@ -70,14 +70,14 @@ public class RestConnections {
 			BankConnection connection = BankConnectionsService.importConnection(userToken, bankId, bankingUserId, bankingPin);
 			result = RestUtils.generateJsonResponse(connection);
 			// initial die Umsätze laden
-			DataLoader.updateTransactions(userToken, 60);
+			// DataLoader.updateTransactions(userToken, null, 7);
 
 			// User laden
 			FinapiUser finapiUser = UsersService.getUser(userToken);
 			User user = PersistanceManager.getInstance().getUserByExternalName(finapiUser.getId());
 
 			// Accounts laden
-			List<Account> accounts = AccountsService.searchAccounts(userToken, 0);
+			List<Account> accounts = AccountsService.searchAccounts(userToken, connection.getId());
 
 			// Den aktuellen User zuweisen
 			for (Account account : accounts) {

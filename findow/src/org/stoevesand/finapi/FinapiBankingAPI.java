@@ -22,7 +22,7 @@ public class FinapiBankingAPI implements BankingAPI {
 		String result = RestUtils.generateJsonResponse(connection);
 
 		// initial die Umsätze laden
-		DataLoader.updateTransactions(userToken, 60);
+		DataLoader.updateTransactions(userToken, null, 60);
 
 		// User laden
 		User user = Authenticator.getUser(userToken);

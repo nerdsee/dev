@@ -30,11 +30,12 @@ public class RestTransactions {
 		String result = "";
 
 		try {
-			DataLoader.updateTransactions(userToken, days);
-
 			// User laden
 			User user = Authenticator.getUser(userToken);
 			Account account = user.getAccount(accountId);
+
+			DataLoader.updateTransactions(userToken, account.getSourceId(), days);
+
 			List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
 			
 			TransactionWrapper wrapper = new TransactionWrapper(transactions, account);

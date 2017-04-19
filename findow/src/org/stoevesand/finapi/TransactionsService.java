@@ -20,12 +20,25 @@ public class TransactionsService {
 	static final String URL = "https://sandbox.finapi.io/api/v1/transactions";
 
 	public static TransactionList searchTransactions(String userToken, Long accountId, int days) throws ErrorHandler {
+		TransactionList ret = searchTransactions(userToken, accountId, days, 1);
+		int pageCount = ret.getPageCount();
+		if (pageCount > 1) {
+			for (int page = 2; page <= pageCount; page++) {
+				TransactionList txPage = searchTransactions(userToken, accountId, days, page);
+				ret.append(txPage);
+			}
+		}
+
+		return ret;
+	}
+
+	public static TransactionList searchTransactions(String userToken, Long accountId, int days, int page) throws ErrorHandler {
 
 		TransactionList ret = null;
 
 		long minDateMillis = System.currentTimeMillis();
 		Date curDate = new Date(minDateMillis);
-		minDateMillis = minDateMillis - ((long)days * 24 * 60 * 60 * 1000);
+		minDateMillis = minDateMillis - ((long) days * 24 * 60 * 60 * 1000);
 		Date minDate = new Date(minDateMillis);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		String curBankBookingDate = formatter.format(curDate);
@@ -35,14 +48,14 @@ public class TransactionsService {
 
 		WebTarget webTarget = client.target(URL);
 		webTarget = webTarget.queryParam("access_token", userToken);
-		webTarget = webTarget.queryParam("perPage", 400);
+		webTarget = webTarget.queryParam("perPage", 100);
 		webTarget = webTarget.queryParam("minBankBookingDate", minBankBookingDate);
-		
+
 		// only use valid accountId
 		if (accountId != null) {
 			webTarget = webTarget.queryParam("accountIds", accountId.toString());
 		}
-		
+
 		webTarget = webTarget.queryParam("view", "userView");
 		// webTarget = webTarget.queryParam("isNew", "false");
 

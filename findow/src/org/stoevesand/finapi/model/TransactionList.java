@@ -7,13 +7,18 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.rest.RestUtils;
 
 public class TransactionList {
 
 	List<Transaction> transactions;
-	private int income;
-	private int spending;
-	private int balance;
+	private double income;
+	private double spending;
+	private double balance;
+	private int page;
+	private int perPage;
+	private int pageCount;
+	private int totalCount;
 
 	public TransactionList(JSONObject jo) {
 		try {
@@ -28,13 +33,36 @@ public class TransactionList {
 				transactions.add(transaction);
 			}
 
-			income = jo.getInt("income");
-			spending = jo.getInt("spending");
-			balance = jo.getInt("balance");
+			income = JSONUtils.getDouble(jo, "income");
+			spending = JSONUtils.getDouble(jo, "spending");
+			balance = JSONUtils.getDouble(jo, "balance");
+
+			JSONObject paging = JSONUtils.getJSONObject(jo, "paging");
+
+			page = JSONUtils.getInt(paging, "page");
+			perPage = JSONUtils.getInt(paging, "perPage");
+			pageCount = JSONUtils.getInt(paging, "pageCount");
+			totalCount = JSONUtils.getInt(paging, "totalCount");
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public int getPerPage() {
+		return perPage;
+	}
+
+	public int getPageCount() {
+		return pageCount;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
 	}
 
 	public TransactionList(List<Transaction> list) {
@@ -45,16 +73,20 @@ public class TransactionList {
 		return transactions;
 	}
 
-	public int getIncome() {
+	public double getIncome() {
 		return income;
 	}
 
-	public int getSpending() {
+	public double getSpending() {
 		return spending;
 	}
 
-	public int getBalance() {
+	public double getBalance() {
 		return balance;
+	}
+
+	public void append(TransactionList txPage) {
+		transactions.addAll(txPage.getTransactions());
 	}
 
 }

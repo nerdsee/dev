@@ -26,7 +26,7 @@
             <property name="javax.persistence.jdbc.user" value="tvqsilkojqyoew" />
             <property name="javax.persistence.jdbc.password" value="ecf847e4bf9d1275a867595261e0bb882989d9fbdda4c1fc34f089b01d2aa44e" />
 
-            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
         </properties>
 
