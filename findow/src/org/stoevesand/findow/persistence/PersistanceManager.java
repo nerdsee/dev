@@ -1,15 +1,14 @@
 package org.stoevesand.findow.persistence;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.stoevesand.finapi.AccountsService;
 import org.stoevesand.finapi.model.Category;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.CategorySum;
@@ -22,6 +21,9 @@ public class PersistanceManager {
 
 	private static PersistanceManager _instance = null;
 
+	@PersistenceContext
+	EntityManager em;
+	
 	// private EntityManager entityManager;
 
 	public static PersistanceManager getInstance() {
@@ -288,15 +290,16 @@ public class PersistanceManager {
 		entityManager.close();
 	}
 
-	public void deleteAccounts(int connectionId) {
+	public void deleteAccounts(User user, int connectionId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
 		List<Account> accounts = entityManager.createQuery("select a from Account a where a.bankConnectionId=:bcid", Account.class).setParameter("bcid", connectionId).getResultList();
 
 		for (Account account : accounts) {
-			entityManager.remove(account);
+			user.removeAccount(account);
 		}
+		persist(entityManager, user);
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
