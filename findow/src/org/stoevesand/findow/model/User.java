@@ -1,6 +1,8 @@
 package org.stoevesand.findow.model;
 
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -136,17 +138,20 @@ public class User {
 
 	public void removeAccount(Account account) {
 		if (this.accounts != null) {
-			accounts.remove(account);
+			getAccounts().remove(account);
 			account.setUser(null);
 		}
 	}
 
 	public void removeAccount(long accountId) {
+		List<Account> remacc = new Vector<Account>();
 		for (Account account : getAccounts()) {
 			if (account.getId() == accountId) {
-				removeAccount(account);
+				account.setUser(null);
+				remacc.add(account);
 			}
 		}
+		getAccounts().removeAll(remacc);
 	}
 
 	public void refreshToken() throws ErrorHandler {

@@ -15,7 +15,7 @@ import org.stoevesand.finapi.BankConnectionsService;
 import org.stoevesand.finapi.UsersService;
 import org.stoevesand.finapi.model.BankConnection;
 import org.stoevesand.finapi.model.FinapiUser;
-import org.stoevesand.findow.loader.DataLoader;
+import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
@@ -50,9 +50,11 @@ public class RestConnections {
 	@Deprecated
 	public String deleteConnection(@HeaderParam("userToken") String userToken, @PathParam("connectionId") int connectionId) {
 		String result = "";
+
 		try {
+			User user = Authenticator.getUser(userToken);
 			result = BankConnectionsService.deleteBankConnection(userToken, connectionId);
-			PersistanceManager.getInstance().deleteAccounts(connectionId);
+			PersistanceManager.getInstance().deleteAccounts(user, connectionId);
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		}

@@ -3,6 +3,7 @@ package org.stoevesand.findow.persistence;
 import java.util.List;
 import java.util.Vector;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -21,9 +22,9 @@ public class PersistanceManager {
 
 	private static PersistanceManager _instance = null;
 
-	@PersistenceContext
-	EntityManager em;
-	
+	// @PersistenceContext(unitName = "org.stoevesand.finapi.persistence")
+	// EntityManager entityManager;
+
 	// private EntityManager entityManager;
 
 	public static PersistanceManager getInstance() {
@@ -68,8 +69,8 @@ public class PersistanceManager {
 	public List<Transaction> getTx(User user, long accountId, int days) throws ErrorHandler {
 
 		// create a couple of events...
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		entityManager.getTransaction().begin();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		em.getTransaction().begin();
 
 		List<Transaction> result = new Vector<Transaction>();
 
@@ -79,8 +80,7 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId())
-						.getResultList();
+				List<Transaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new ErrorHandler(500, "NO SUCH ACCOUNT");
@@ -89,17 +89,17 @@ public class PersistanceManager {
 		} else {
 			// wenn keine accountId angegeben ist, dann werden die Tx von allen
 			// Accounts geladen
-			List<Account> accounts = entityManager.createQuery("select a from Account a where user=:id", Account.class).setParameter("id", user).getResultList();
+			List<Account> accounts = em.createQuery("select a from Account a where user=:id", Account.class).setParameter("id", user).getResultList();
 			if (accounts != null) {
 				for (Account account : accounts) {
-					List<Transaction> subResult = entityManager.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+					List<Transaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
 					result.addAll(subResult);
 				}
 			}
 		}
 
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		em.getTransaction().commit();
+		em.close();
 
 		return result;
 	}
@@ -109,7 +109,7 @@ public class PersistanceManager {
 		// create a couple of events...
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		List<User> result = entityManager.createQuery("select t from User t where t.name = :username").setParameter("username", id).getResultList();
+		List<User> result = entityManager.createQuery("select t from User t where t.name = :username", User.class).setParameter("username", id).getResultList();
 		if (result.size() > 0) {
 			ret = (User) result.get(0);
 		}
@@ -212,26 +212,31 @@ public class PersistanceManager {
 	public void deleteUserByName(String id) {
 		User ret = null;
 		// create a couple of events...
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		entityManager.getTransaction().begin();
-		List<User> result = entityManager.createQuery("select t from User t where t.name = :username", User.class).setParameter("username", id).getResultList();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		em.getTransaction().begin();
+		List<User> result = em.createQuery("select t from User t where t.name = :username", User.class).setParameter("username", id).getResultList();
 		if (result.size() > 0) {
 			ret = (User) result.get(0);
 		}
-		entityManager.remove(ret);
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		em.remove(ret);
+		em.getTransaction().commit();
+		em.close();
 	}
 
 	public List<User> getUsers() {
 
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		entityManager.getTransaction().begin();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		// em.getTransaction().begin();
 
-		List<User> users = entityManager.createQuery("select u from User u", User.class).getResultList();
+		List<User> users = em.createQuery("select u from User u", User.class).getResultList();
 
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		// DEBUG
+		for (User user : users) {
+			System.out.println("User: " + user.getClass() + " " + user);
+		}
+
+		// em.getTransaction().commit();
+		em.close();
 
 		return users;
 	}

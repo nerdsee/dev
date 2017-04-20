@@ -56,6 +56,11 @@ public class RestAccounts {
 
 			long accountId = Long.parseLong(id);
 
+			Account account = PersistanceManager.getInstance().getAccount(user, accountId, userToken);
+
+			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
+			bankingAPI.deleteAccount(userToken, account);
+
 			PersistanceManager.getInstance().deleteAccount(user, accountId, userToken);
 
 			result = RestUtils.generateJsonResponse(Response.OK);
@@ -93,7 +98,8 @@ public class RestAccounts {
 		try {
 
 			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
-			bankingAPI.importAccount(userToken, bankId, bankingUserId, bankingPin);
+			List<Account> accounts = bankingAPI.importAccount(userToken, bankId, bankingUserId, bankingPin);
+			result = RestUtils.generateJsonResponse(accounts, "accounts");
 
 		} catch (ErrorHandler e) {
 			result = e.getResponse();

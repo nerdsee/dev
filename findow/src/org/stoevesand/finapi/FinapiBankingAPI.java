@@ -69,4 +69,9 @@ public class FinapiBankingAPI implements BankingAPI {
 		return banks;
 	}
 
+	@Override
+	public void deleteAccount(String userToken, Account account) throws ErrorHandler {
+		AccountsService.deleteAccount(userToken, account);
+	}
+
 }

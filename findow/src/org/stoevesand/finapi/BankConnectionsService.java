@@ -175,7 +175,7 @@ public class BankConnectionsService {
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
 			System.out.println("getBankConnection failed: " + status);
-			throw eh;
+			//throw eh;
 		}
 
 		return output;

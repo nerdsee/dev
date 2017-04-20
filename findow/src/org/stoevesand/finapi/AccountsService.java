@@ -99,7 +99,7 @@ public class AccountsService {
 		String output = response.readEntity(String.class);
 
 		int status = response.getStatus();
-		if (status != 200) {
+		if ((status != 200) && (status != 404)) {
 			ErrorHandler eh = new ErrorHandler(status, output);
 			throw eh;
 		}

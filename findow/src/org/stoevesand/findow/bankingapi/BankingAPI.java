@@ -16,4 +16,6 @@ public interface BankingAPI {
 
 	public List<Bank> searchBanks(String search);
 
+	public void deleteAccount(String userToken, Account account) throws ErrorHandler;
+
 }
