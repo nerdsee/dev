@@ -111,7 +111,7 @@ public class Transaction {
 		return bookingDate;
 	}
 
-	@Column(name = "PURPOSE")
+	@Column(name = "PURPOSE", columnDefinition="text")
 	public String getPurpose() {
 		return purpose;
 	}

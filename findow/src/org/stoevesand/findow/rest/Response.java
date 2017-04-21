@@ -9,6 +9,7 @@ public class Response {
 	public static final Response USER_OR_PASSWORD_INVALID = new Response(401, "USER_OR_PASSWORD_INVALID");
 	public static final Response USER_UNKNOWN = new Response(402, "USER_UNKNOWN");
 	public static final Response INVALID_ID = new Response(403, "INVALID_ID");
+	public static final Response ACCOUNT_UNKNOWN = new Response(404, "ACCOUNT_UNKNOWN");
 	public static final Response UNKNOWN = new Response(999, "UNKNOWN");
 
 	String status = "";

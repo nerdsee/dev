@@ -253,7 +253,6 @@ public class Account {
 		try {
 			AccountsService.refreshAccount(userToken, this);
 		} catch (ErrorHandler e) {
-			e.printStackTrace();
 			return e.getStatus();
 		}
 		return 0;

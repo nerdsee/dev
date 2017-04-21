@@ -20,7 +20,7 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 import io.swagger.annotations.Api;
 
 @Path("/transactions")
-@Api(value="transactions")
+@Api(value = "transactions")
 public class RestTransactions {
 
 	@Path("/")
@@ -34,14 +34,19 @@ public class RestTransactions {
 			User user = Authenticator.getUser(userToken);
 			Account account = user.getAccount(accountId);
 
-			DataLoader.updateTransactions(userToken, account.getSourceId(), days);
+			if (account != null) {
+				DataLoader.updateTransactions(userToken, account.getSourceId(), days);
 
-			List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
-			
-			TransactionWrapper wrapper = new TransactionWrapper(transactions, account);
-			
-			//result = RestUtils.generateJsonResponse(transactions, "transactions");
-			result = RestUtils.generateJsonResponse(wrapper, null);
+				List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
+
+				TransactionWrapper wrapper = new TransactionWrapper(transactions, account);
+
+				// result = RestUtils.generateJsonResponse(transactions,
+				// "transactions");
+				result = RestUtils.generateJsonResponse(wrapper, null);
+			} else {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+			}
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		}
