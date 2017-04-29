@@ -32,4 +32,8 @@ public class CallError {
 		this.message = message;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
 }

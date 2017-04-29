@@ -21,27 +21,20 @@ public class ErrorHandler extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = -7996550252908124993L;
-	
+
 	List<CallError> errors = new Vector<CallError>();
 	String response;
 	private int status;
 
 	public ErrorHandler(String response) {
-		this.response = response;
-		try {
-			JSONObject jo = new JSONObject(response);
-			JSONArray json_errors = jo.getJSONArray("errors");
-			for (int i = 0; i < json_errors.length(); i++) {
-				JSONObject json_account = json_errors.getJSONObject(i);
-				CallError error = new CallError(json_account);
-				errors.add(error);
-			}
-		} catch (JSONException e) {
-		}
-
+		init(499, response);
 	}
 
 	public ErrorHandler(int status, String response) {
+		init(status, response);
+	}
+
+	private void init(int status, String response) {
 		this.status = status;
 		this.response = response;
 		try {
@@ -74,6 +67,15 @@ public class ErrorHandler extends Exception {
 		for (CallError error : errors) {
 			System.out.println(error);
 		}
+	}
+
+	public boolean hasCallError(String msg) {
+		for (CallError ce : errors) {
+			if (ce.getCode().equals(msg)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

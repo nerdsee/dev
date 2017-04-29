@@ -40,19 +40,18 @@ public class BankConnectionsService {
 		String output = response.readEntity(String.class);
 
 		int status = response.getStatus();
-		if (status != 201) {
-			ErrorHandler eh = new ErrorHandler(output);
+		if (status == 201) {
+			try {
+				JSONObject jo = new JSONObject(output);
+				bc = new BankConnection(jo);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return bc;
+		} else {
+			ErrorHandler eh = new ErrorHandler(status, output);
 			throw eh;
 		}
-
-		try {
-			JSONObject jo = new JSONObject(output);
-			bc = new BankConnection(jo);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		return bc;
 	}
 
 	public static boolean deleteConnection(Token userToken, int id) throws ErrorHandler {
@@ -175,7 +174,7 @@ public class BankConnectionsService {
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
 			System.out.println("getBankConnection failed: " + status);
-			//throw eh;
+			// throw eh;
 		}
 
 		return output;

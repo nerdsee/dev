@@ -34,7 +34,7 @@ public class User {
 	private String backendSecret = "";
 
 	private transient Token token = null;
-	private Set<Account> accounts;
+	private List<Account> accounts;
 
 	@Column(name = "NAME")
 	@JsonGetter
@@ -89,11 +89,11 @@ public class User {
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true) //
-	public Set<Account> getAccounts() {
+	public List<Account> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(Set<Account> a) {
+	public void setAccounts(List<Account> a) {
 		this.accounts = a;
 	}
 
@@ -138,7 +138,7 @@ public class User {
 
 	public void removeAccount(Account account) {
 		if (this.accounts != null) {
-			getAccounts().remove(account);
+			boolean removed = getAccounts().remove(account);
 			account.setUser(null);
 		}
 	}
@@ -163,6 +163,12 @@ public class User {
 		if (this.accounts != null) {
 			accounts.add(account);
 			account.setUser(this);
+		}
+	}
+
+	public void addAccounts(List<Account> accs) {
+		for (Account account : accs) {
+			addAccount(account);
 		}
 	}
 

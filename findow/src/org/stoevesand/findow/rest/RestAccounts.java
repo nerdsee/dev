@@ -1,6 +1,8 @@
 package org.stoevesand.findow.rest;
 
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -58,12 +60,17 @@ public class RestAccounts {
 
 			Account account = PersistanceManager.getInstance().getAccount(user, accountId, userToken);
 
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
-			bankingAPI.deleteAccount(userToken, account);
+			if (account != null) {
+				BankingAPI bankingAPI = FindowSystem.getBankingAPI();
+				bankingAPI.deleteAccount(userToken, account);
 
-			PersistanceManager.getInstance().deleteAccount(user, accountId, userToken);
+				PersistanceManager.getInstance().deleteAccount(user, accountId, userToken);
 
-			result = RestUtils.generateJsonResponse(Response.OK);
+				result = RestUtils.generateJsonResponse(Response.OK);
+			} else {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+			}
+
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		} catch (NumberFormatException nfe) {
@@ -96,13 +103,33 @@ public class RestAccounts {
 	public String importAccount(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
 		String result = "";
 		try {
+			// User laden
+			User user = Authenticator.getUser(userToken);
 
 			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
 			List<Account> accounts = bankingAPI.importAccount(userToken, bankId, bankingUserId, bankingPin);
-			result = RestUtils.generateJsonResponse(accounts, "accounts");
+			List<Account> nas = new Vector<Account>();
+
+			user.addAccounts(accounts);
+			for (Account acc : accounts) {
+				Account na = PersistanceManager.getInstance().persist(acc);
+				nas.add(na);
+			}
+
+			result = RestUtils.generateJsonResponse(nas, "accounts");
 
 		} catch (ErrorHandler e) {
-			result = e.getResponse();
+			if (e.hasCallError("ENTITY_EXISTS")) {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_ALREADY_EXISTS);
+			} else if (e.hasCallError("UNKNOWN_ENTITY")) {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+			} else if (e.hasCallError("BANK_SERVER_REJECTION")) {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_IMPORT_REJECTED);
+			} else if (e.hasCallError("ILLEGAL_FIELD_VALUE")) {
+				result = RestUtils.generateJsonResponse(Response.ACCOUNT_ILLEGAL_FIELD);
+			} else {
+				result = RestUtils.generateJsonResponse(Response.UNKNOWN);
+			}
 		}
 		// System.out.println("BC: " + connection);
 		return result;

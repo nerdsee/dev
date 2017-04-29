@@ -10,6 +10,9 @@ public class Response {
 	public static final Response USER_UNKNOWN = new Response(402, "USER_UNKNOWN");
 	public static final Response INVALID_ID = new Response(403, "INVALID_ID");
 	public static final Response ACCOUNT_UNKNOWN = new Response(404, "ACCOUNT_UNKNOWN");
+	public static final Response ACCOUNT_ALREADY_EXISTS = new Response(405, "ACCOUNT_ALREADY_EXISTS");
+	public static final Response ACCOUNT_IMPORT_REJECTED = new Response(406, "ACCOUNT_IMPORT_REJECTED");
+	public static final Response ACCOUNT_ILLEGAL_FIELD = new Response(407, "ACCOUNT_ILLEGAL_FIELD");
 	public static final Response UNKNOWN = new Response(999, "UNKNOWN");
 
 	String status = "";

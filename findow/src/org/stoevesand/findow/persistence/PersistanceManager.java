@@ -57,7 +57,7 @@ public class PersistanceManager {
 
 		for (Account t : accountList) {
 			System.out.println(t);
-			entityManager.persist(t);
+			persist(entityManager, t);
 		}
 
 		entityManager.getTransaction().commit();
@@ -143,8 +143,22 @@ public class PersistanceManager {
 		em.remove(em.contains(entity) ? entity : em.merge(entity));
 	}
 
-	public void persist(EntityManager em, Object entity) {
-		em.persist(em.contains(entity) ? entity : em.merge(entity));
+	public <T> T persist(T entity) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		entity = persist(entityManager, entity);
+		entityManager.flush();
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		return entity;
+	}
+
+	public <T> T persist(EntityManager em, T entity) {
+		entity = em.merge(entity);
+		em.persist(entity);
+		//em.persist(em.contains(entity) ? entity : em.merge(entity));
+		return entity;
 	}
 
 	public Transaction getTxByExternalId(Long sourceId) {
@@ -269,7 +283,9 @@ public class PersistanceManager {
 		if (account != null) {
 			int ret = account.refresh(userToken);
 			if (ret == 404) {
-				entityManager.remove(account);
+				user.removeAccount(account);
+				remove(entityManager, account);
+				persist(entityManager, user);
 			} else {
 				entityManager.persist(account);
 				retAccount = account;

@@ -3,40 +3,21 @@ package org.stoevesand.finapi;
 import java.util.List;
 
 import org.stoevesand.finapi.model.BankConnection;
-import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.bankingapi.ApiUser;
 import org.stoevesand.findow.bankingapi.BankingAPI;
-import org.stoevesand.findow.loader.DataLoader;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
-import org.stoevesand.findow.persistence.PersistanceManager;
-import org.stoevesand.findow.rest.RestUtils;
 
 public class FinapiBankingAPI implements BankingAPI {
 
 	@Override
 	public List<Account> importAccount(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler {
 		BankConnection connection = BankConnectionsService.importConnection(userToken, bankId, bankingUserId, bankingPin);
-		String result = RestUtils.generateJsonResponse(connection);
-
-		// initial die Umsätze laden
-		DataLoader.updateTransactions(userToken, null, 60);
-
-		// User laden
-		User user = Authenticator.getUser(userToken);
 
 		// Accounts laden
-		List<Account> accounts = AccountsService.searchAccounts(userToken, 0);
+		List<Account> accounts = AccountsService.searchAccounts(userToken, connection.getId());
 
-		// Den aktuellen User zuweisen
-		for (Account account : accounts) {
-			account.setUser(user);
-		}
-
-		// Accounts persistieren
-		PersistanceManager.getInstance().storeAccounts(accounts);
 		return accounts;
 	}
 

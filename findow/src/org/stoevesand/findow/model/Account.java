@@ -246,7 +246,8 @@ public class Account {
 	}
 
 	public String toString() {
-		return String.format("%s (%d)", accountName, id);
+		Long userid = user==null ? null : user.getId();
+		return String.format("%s (%d)(User %d)", accountName, id, userid);
 	}
 
 	public int refresh(String userToken) {
@@ -258,4 +259,22 @@ public class Account {
 		return 0;
 	}
 
+	@Override
+	public boolean equals(Object a) {
+		if (a instanceof Account) {
+			if (id != null) {
+				return this.id.equals(((Account) a).getId());
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return 0;
+		}
+	}
 }
