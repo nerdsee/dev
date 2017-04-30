@@ -32,7 +32,7 @@ public class RestUsers {
 	@GET
 	@Produces("application/json")
 	public String getUser(@PathParam("id") String id, @HeaderParam("password") String password) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		User user = PersistanceManager.getInstance().getUserByName(id);
@@ -56,7 +56,7 @@ public class RestUsers {
 	@POST
 	@Produces("application/json")
 	public String createUser(@PathParam("id") String id, @HeaderParam("password") String password) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);
@@ -81,7 +81,7 @@ public class RestUsers {
 	@DELETE
 	@Produces("application/json")
 	public String deleteUser(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);
 			if (user != null) {
@@ -103,7 +103,7 @@ public class RestUsers {
 	@Produces("application/json")
 	@ApiOperation(value = "Get UserInfos of all available users.")
 	public String getUserInfos() {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		List<User> userInfos = PersistanceManager.getInstance().getUsers();
 		// MandatorAdminService.getUsers(RestUtils.getAdminToken());
 

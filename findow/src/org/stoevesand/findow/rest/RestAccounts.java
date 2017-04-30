@@ -34,7 +34,7 @@ public class RestAccounts {
 	@GET
 	@Produces("application/json")
 	public String getAccount(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
@@ -56,7 +56,7 @@ public class RestAccounts {
 	@DELETE
 	@Produces("application/json")
 	public String deleteAccount(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
@@ -89,7 +89,7 @@ public class RestAccounts {
 	@GET
 	@Produces("application/json")
 	public String getAccounts(@HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
@@ -108,7 +108,7 @@ public class RestAccounts {
 	@POST
 	@Produces("application/json")
 	public String importAccount(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 		try {
 			// User laden

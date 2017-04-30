@@ -38,7 +38,7 @@ public class RestConnections {
 	@Produces("application/json")
 	@Deprecated
 	public String listConnections(@HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 		try {
 			List<BankConnection> list = BankConnectionsService.getBankConnections(userToken);
@@ -55,7 +55,7 @@ public class RestConnections {
 	@Produces("application/json")
 	@Deprecated
 	public String deleteConnection(@HeaderParam("userToken") String userToken, @PathParam("connectionId") int connectionId) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
@@ -74,7 +74,7 @@ public class RestConnections {
 	@Produces("application/json")
 	@Deprecated
 	public String importConnection(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 		try {
 			BankConnection connection = BankConnectionsService.importConnection(userToken, bankId, bankingUserId, bankingPin);

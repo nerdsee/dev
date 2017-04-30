@@ -26,7 +26,7 @@ public class RestBanks {
 	@GET
 	@Produces("application/json")
 	public String getBank(@PathParam("search") String search) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		BankingAPI api = FindowSystem.getBankingAPI();
 		List<Bank> banks = api.searchBanks(search);
 		String result = RestUtils.generateJsonResponse(banks, "banks");

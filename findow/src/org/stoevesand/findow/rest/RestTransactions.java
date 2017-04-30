@@ -32,7 +32,7 @@ public class RestTransactions {
 	@GET
 	@Produces("application/json")
 	public String getTransactions(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") long accountId, @HeaderParam("days") int days) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
@@ -63,7 +63,7 @@ public class RestTransactions {
 	@GET
 	@Produces("application/json")
 	public String getTransactionsCat(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") int accountId, @HeaderParam("days") int days) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 		String result = "";
 
 		try {

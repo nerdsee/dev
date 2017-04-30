@@ -31,7 +31,7 @@ public class RestMaintenance {
 	@PUT
 	@Produces("application/json")
 	public String checkUser(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		RestUtils.addHeader(response);
 
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);

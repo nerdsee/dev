@@ -1,5 +1,7 @@
 package org.stoevesand.findow.rest;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.stoevesand.finapi.TokenStore;
 import org.stoevesand.finapi.model.Token;
 
@@ -36,6 +38,10 @@ public class RestUtils {
 
 	public static String generateJsonResponse(Object element) {
 		return generateJsonResponse(element, null);
+	}
+
+	public static void addHeader(HttpServletResponse response) {
+		// response.addHeader("Access-Control-Allow-Origin", "*");
 	}
 
 }
