@@ -25,6 +25,8 @@ public class JobManager {
 
 		// refresh Account Job
 
+		log.info("Initialise JobManager" + this);
+
 		JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
 
 		// Trigger the job to run on the next round minute
@@ -37,8 +39,10 @@ public class JobManager {
 			// Tell quartz to schedule the job using the trigger
 			sch.scheduleJob(refreshAccountJob, trigger);
 		} catch (SchedulerException e) {
+			log.error("Initialise JobManager failed.", e);
 			e.printStackTrace();
 		}
+		log.info("Initialise JobManager done. Scheduler: " + sch);
 
 	}
 
