@@ -13,5 +13,7 @@ public class CorsResponse implements ContainerResponseFilter {
 	public void filter(ContainerRequestContext req, ContainerResponseContext res) throws IOException {
 		MultivaluedMap<String, Object> headers = res.getHeaders();
 		headers.add("Access-Control-Allow-Origin", "*");
+		headers.add("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
+		headers.add("Access-Control-Allow-Headers", "Content-Type");
 	}
 }
