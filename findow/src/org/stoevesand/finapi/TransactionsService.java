@@ -49,6 +49,7 @@ public class TransactionsService {
 		WebTarget webTarget = client.target(URL);
 		webTarget = webTarget.queryParam("access_token", userToken);
 		webTarget = webTarget.queryParam("perPage", 100);
+		webTarget = webTarget.queryParam("page", page);
 		webTarget = webTarget.queryParam("minBankBookingDate", minBankBookingDate);
 
 		// only use valid accountId

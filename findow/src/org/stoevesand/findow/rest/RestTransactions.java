@@ -41,7 +41,7 @@ public class RestTransactions {
 			Account account = user.getAccount(accountId);
 
 			if (account != null) {
-				DataLoader.updateTransactions(userToken, account.getSourceId(), days);
+				// DataLoader.updateTransactions(userToken, account.getSourceId(), days);
 
 				List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
 

@@ -42,8 +42,7 @@ public class PersistanceManager {
 		entityManager.getTransaction().begin();
 
 		for (Transaction t : transactionList) {
-			System.out.println(t);
-			entityManager.persist(t);
+			persist(entityManager, t);
 		}
 
 		entityManager.getTransaction().commit();
@@ -157,7 +156,7 @@ public class PersistanceManager {
 	public <T> T persist(EntityManager em, T entity) {
 		entity = em.merge(entity);
 		em.persist(entity);
-		//em.persist(em.contains(entity) ? entity : em.merge(entity));
+		// em.persist(em.contains(entity) ? entity : em.merge(entity));
 		return entity;
 	}
 
@@ -251,6 +250,18 @@ public class PersistanceManager {
 		em.close();
 
 		return users;
+	}
+
+	public List<Account> getRefreshableAccounts() {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<Account> accounts = entityManager.createQuery("select a from Account a", Account.class).getResultList();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return accounts;
 	}
 
 	public List<Account> getAccounts(User user, String userToken) {

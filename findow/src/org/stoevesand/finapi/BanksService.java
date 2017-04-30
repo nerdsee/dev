@@ -13,6 +13,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.stoevesand.finapi.model.Token;
+import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
 

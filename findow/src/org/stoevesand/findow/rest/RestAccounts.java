@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.bankingapi.BankingAPI;
+import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
@@ -122,6 +123,7 @@ public class RestAccounts {
 			for (Account acc : accounts) {
 				Account na = PersistanceManager.getInstance().persist(acc);
 				nas.add(na);
+				JobManager.getInstance().addImportAccountJob(na);
 			}
 
 			result = RestUtils.generateJsonResponse(nas, "accounts");

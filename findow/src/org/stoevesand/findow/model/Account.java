@@ -128,6 +128,8 @@ public class Account {
 
 	private String lastUpdateAttempt;
 
+	private String status;
+
 	public Account(JSONObject jo) {
 		update(jo);
 	}
@@ -148,9 +150,17 @@ public class Account {
 		overdraft = JSONUtils.getDouble(jo, "overdraft");
 		overdraftLimit = JSONUtils.getDouble(jo, "overdraftLimit");
 		availableFunds = JSONUtils.getDouble(jo, "availableFunds");
-
+		status = JSONUtils.getString(jo, "status");
 		lastSuccessfulUpdate = JSONUtils.getString(jo, "lastSuccessfulUpdate");
 		lastUpdateAttempt = JSONUtils.getString(jo, "lastUpdateAttempt");
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getLastSuccessfulUpdate() {

@@ -63,8 +63,6 @@ public class AccountsService {
 
 	public static void refreshAccount(String userToken, Account account) throws ErrorHandler {
 
-		Vector<Account> accounts = new Vector<Account>();
-
 		Client client = ClientBuilder.newClient();
 
 		WebTarget webTarget = client.target(URL + "/" + account.getSourceId());

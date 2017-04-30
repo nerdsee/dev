@@ -9,7 +9,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.bankingapi.BankingAPI;
+import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.server.FindowSystem;
 
@@ -19,6 +22,8 @@ import io.swagger.annotations.Api;
 @Api(value = "banks")
 public class RestBanks {
 
+	private Logger log = LoggerFactory.getLogger(RestBanks.class);
+
 	@Context
 	private HttpServletResponse response;
 
@@ -26,6 +31,9 @@ public class RestBanks {
 	@GET
 	@Produces("application/json")
 	public String getBank(@PathParam("search") String search) {
+	
+		log.info("getBank: " + search);
+		JobManager.getInstance();
 		RestUtils.addHeader(response);
 		BankingAPI api = FindowSystem.getBankingAPI();
 		List<Bank> banks = api.searchBanks(search);
