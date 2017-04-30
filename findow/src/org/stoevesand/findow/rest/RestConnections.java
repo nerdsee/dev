@@ -2,6 +2,7 @@ package org.stoevesand.findow.rest;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -9,6 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.stoevesand.finapi.AccountsService;
 import org.stoevesand.finapi.BankConnectionsService;
@@ -28,11 +30,15 @@ import io.swagger.annotations.Api;
 @Deprecated
 public class RestConnections {
 
+	@Context
+	private HttpServletResponse response;
+
 	@Path("/")
 	@GET
 	@Produces("application/json")
 	@Deprecated
 	public String listConnections(@HeaderParam("userToken") String userToken) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 		try {
 			List<BankConnection> list = BankConnectionsService.getBankConnections(userToken);
@@ -49,6 +55,7 @@ public class RestConnections {
 	@Produces("application/json")
 	@Deprecated
 	public String deleteConnection(@HeaderParam("userToken") String userToken, @PathParam("connectionId") int connectionId) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {
@@ -67,6 +74,7 @@ public class RestConnections {
 	@Produces("application/json")
 	@Deprecated
 	public String importConnection(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 		try {
 			BankConnection connection = BankConnectionsService.importConnection(userToken, bankId, bankingUserId, bankingPin);

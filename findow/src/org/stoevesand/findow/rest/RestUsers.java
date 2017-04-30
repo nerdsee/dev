@@ -2,16 +2,16 @@ package org.stoevesand.findow.rest;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
-import org.stoevesand.finapi.BankConnectionsService;
 import org.stoevesand.findow.bankingapi.ApiUser;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
@@ -25,11 +25,14 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "users")
 public class RestUsers {
 
+	@Context
+	private HttpServletResponse response;
+
 	@Path("/{id}")
 	@GET
 	@Produces("application/json")
 	public String getUser(@PathParam("id") String id, @HeaderParam("password") String password) {
-
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		User user = PersistanceManager.getInstance().getUserByName(id);
@@ -53,7 +56,7 @@ public class RestUsers {
 	@POST
 	@Produces("application/json")
 	public String createUser(@PathParam("id") String id, @HeaderParam("password") String password) {
-
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);
@@ -78,7 +81,7 @@ public class RestUsers {
 	@DELETE
 	@Produces("application/json")
 	public String deleteUser(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
-
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);
 			if (user != null) {
@@ -100,6 +103,7 @@ public class RestUsers {
 	@Produces("application/json")
 	@ApiOperation(value = "Get UserInfos of all available users.")
 	public String getUserInfos() {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		List<User> userInfos = PersistanceManager.getInstance().getUsers();
 		// MandatorAdminService.getUsers(RestUtils.getAdminToken());
 

@@ -2,10 +2,12 @@ package org.stoevesand.findow.rest;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.loader.DataLoader;
@@ -23,10 +25,14 @@ import io.swagger.annotations.Api;
 @Api(value = "transactions")
 public class RestTransactions {
 
+	@Context
+	private HttpServletResponse response;
+
 	@Path("/")
 	@GET
 	@Produces("application/json")
 	public String getTransactions(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") long accountId, @HeaderParam("days") int days) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {
@@ -57,6 +63,7 @@ public class RestTransactions {
 	@GET
 	@Produces("application/json")
 	public String getTransactionsCat(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") int accountId, @HeaderParam("days") int days) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {

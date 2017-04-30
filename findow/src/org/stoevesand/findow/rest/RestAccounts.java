@@ -1,9 +1,9 @@
 package org.stoevesand.findow.rest;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -11,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.bankingapi.BankingAPI;
@@ -26,10 +27,14 @@ import io.swagger.annotations.Api;
 @Api(value = "accounts")
 public class RestAccounts {
 
+	@Context
+	private HttpServletResponse response;
+
 	@Path("/{id}")
 	@GET
 	@Produces("application/json")
 	public String getAccount(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {
@@ -51,6 +56,7 @@ public class RestAccounts {
 	@DELETE
 	@Produces("application/json")
 	public String deleteAccount(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {
@@ -83,6 +89,7 @@ public class RestAccounts {
 	@GET
 	@Produces("application/json")
 	public String getAccounts(@HeaderParam("userToken") String userToken) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 
 		try {
@@ -101,6 +108,7 @@ public class RestAccounts {
 	@POST
 	@Produces("application/json")
 	public String importAccount(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String result = "";
 		try {
 			// User laden

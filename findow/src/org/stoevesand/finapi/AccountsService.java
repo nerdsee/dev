@@ -27,6 +27,7 @@ public class AccountsService {
 		Client client = ClientBuilder.newClient();
 
 		WebTarget webTarget = client.target(URL);
+
 		webTarget = webTarget.queryParam("access_token", userToken);
 		if (connectionId > 0) {
 			webTarget = webTarget.queryParam("bankConnectionIds", "" + connectionId);
