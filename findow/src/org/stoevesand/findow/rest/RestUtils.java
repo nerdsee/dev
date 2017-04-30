@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.stoevesand.finapi.TokenStore;
 import org.stoevesand.finapi.model.Token;
+import org.stoevesand.findow.jobs.JobManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +42,7 @@ public class RestUtils {
 	}
 
 	public static void addHeader(HttpServletResponse response) {
+		JobManager.getInstance();
 		// response.addHeader("Access-Control-Allow-Origin", "*");
 	}
 

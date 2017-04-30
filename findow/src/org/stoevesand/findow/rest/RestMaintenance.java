@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import org.stoevesand.finapi.AccountsService;
 import org.stoevesand.finapi.BankConnectionsService;
 import org.stoevesand.finapi.model.BankConnection;
+import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
@@ -31,6 +32,7 @@ public class RestMaintenance {
 	@PUT
 	@Produces("application/json")
 	public String checkUser(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
+		JobManager.getInstance();
 		RestUtils.addHeader(response);
 
 		try {

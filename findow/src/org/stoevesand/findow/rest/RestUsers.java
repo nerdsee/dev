@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.bankingapi.ApiUser;
+import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
@@ -32,6 +33,7 @@ public class RestUsers {
 	@GET
 	@Produces("application/json")
 	public String getUser(@PathParam("id") String id, @HeaderParam("password") String password) {
+		JobManager.getInstance();
 		RestUtils.addHeader(response);
 		String result = "";
 
