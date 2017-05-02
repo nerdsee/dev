@@ -13,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Account;
@@ -20,6 +22,7 @@ import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.BankingAPI;
+import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;
@@ -27,6 +30,8 @@ import io.swagger.annotations.Api;
 @Path("/accounts")
 @Api(value = "accounts")
 public class RestAccounts {
+
+	private Logger log = LoggerFactory.getLogger(RestAccounts.class);
 
 	@Context
 	private HttpServletResponse response;
@@ -38,6 +43,8 @@ public class RestAccounts {
 		RestUtils.addHeader(response);
 		String result = "";
 
+		log.info("getAccount " + id);
+		
 		try {
 			User user = Authenticator.getUser(userToken);
 
@@ -59,6 +66,8 @@ public class RestAccounts {
 	public String deleteAccount(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
 		RestUtils.addHeader(response);
 		String result = "";
+
+		log.info("deleteAccount " + id);
 
 		try {
 			User user = Authenticator.getUser(userToken);
@@ -111,6 +120,9 @@ public class RestAccounts {
 	public String importAccount(@HeaderParam("userToken") String userToken, @HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
 		RestUtils.addHeader(response);
 		String result = "";
+
+		log.info(String.format("importAccount %d %s", bankId, bankingUserId));
+		
 		try {
 			// User laden
 			User user = Authenticator.getUser(userToken);
