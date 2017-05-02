@@ -134,6 +134,7 @@ public class Account {
 
 	public Account(JSONObject jo) {
 		update(jo);
+		bankName = "";
 	}
 
 	public void update(JSONObject jo) {
@@ -155,7 +156,6 @@ public class Account {
 		status = JSONUtils.getString(jo, "status");
 		lastSuccessfulUpdate = JSONUtils.getString(jo, "lastSuccessfulUpdate");
 		lastUpdateAttempt = JSONUtils.getString(jo, "lastUpdateAttempt");
-		bankName = "";
 	}
 
 	public String getStatus() {
