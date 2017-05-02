@@ -41,7 +41,7 @@ public class RestMaintenance {
 
 				List<BankConnection> conns = BankConnectionsService.getBankConnections(userToken);
 				for (BankConnection conn : conns) {
-					List<Account> accounts = AccountsService.searchAccounts(userToken, conn.getId());
+					List<Account> accounts = AccountsService.searchAccounts(userToken, conn);
 					PersistanceManager.getInstance().checkAccounts(user, accounts);
 				}
 			} else {

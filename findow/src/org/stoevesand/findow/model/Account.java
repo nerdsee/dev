@@ -130,6 +130,8 @@ public class Account {
 
 	private String status;
 
+	private String bankName;
+
 	public Account(JSONObject jo) {
 		update(jo);
 	}
@@ -153,6 +155,7 @@ public class Account {
 		status = JSONUtils.getString(jo, "status");
 		lastSuccessfulUpdate = JSONUtils.getString(jo, "lastSuccessfulUpdate");
 		lastUpdateAttempt = JSONUtils.getString(jo, "lastUpdateAttempt");
+		bankName = "";
 	}
 
 	public String getStatus() {
@@ -256,7 +259,7 @@ public class Account {
 	}
 
 	public String toString() {
-		Long userid = user==null ? null : user.getId();
+		Long userid = user == null ? null : user.getId();
 		return String.format("%s (%d)(User %d)", accountName, id, userid);
 	}
 
@@ -287,4 +290,19 @@ public class Account {
 			return 0;
 		}
 	}
+
+	public void setBank(Bank bank) {
+		if (bank != null) {
+			this.bankName = bank.getName();
+		}
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
 }

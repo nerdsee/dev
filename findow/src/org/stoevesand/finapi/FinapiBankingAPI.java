@@ -16,7 +16,7 @@ public class FinapiBankingAPI implements BankingAPI {
 		BankConnection connection = BankConnectionsService.importConnection(userToken, bankId, bankingUserId, bankingPin);
 
 		// Accounts laden
-		List<Account> accounts = AccountsService.searchAccounts(userToken, connection.getId());
+		List<Account> accounts = AccountsService.searchAccounts(userToken, connection);
 
 		return accounts;
 	}

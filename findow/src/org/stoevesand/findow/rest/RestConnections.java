@@ -87,7 +87,7 @@ public class RestConnections {
 			User user = PersistanceManager.getInstance().getUserByExternalName(finapiUser.getId());
 
 			// Accounts laden
-			List<Account> accounts = AccountsService.searchAccounts(userToken, connection.getId());
+			List<Account> accounts = AccountsService.searchAccounts(userToken, connection);
 
 			// Den aktuellen User zuweisen
 			for (Account account : accounts) {

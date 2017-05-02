@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.stoevesand.finapi.model.BankConnection;
 import org.stoevesand.finapi.model.Token;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
@@ -20,7 +21,7 @@ public class AccountsService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/accounts";
 
-	public static List<Account> searchAccounts(String userToken, int connectionId) throws ErrorHandler {
+	public static List<Account> searchAccounts(String userToken, BankConnection connection) throws ErrorHandler {
 
 		Vector<Account> accounts = new Vector<Account>();
 
@@ -29,8 +30,8 @@ public class AccountsService {
 		WebTarget webTarget = client.target(URL);
 
 		webTarget = webTarget.queryParam("access_token", userToken);
-		if (connectionId > 0) {
-			webTarget = webTarget.queryParam("bankConnectionIds", "" + connectionId);
+		if (connection.getId() > 0) {
+			webTarget = webTarget.queryParam("bankConnectionIds", "" + connection.getId());
 		}
 		Invocation.Builder invocationBuilder = webTarget.request();
 		invocationBuilder.accept("application/json");
@@ -50,6 +51,7 @@ public class AccountsService {
 			for (int i = 0; i < json_accounts.length(); i++) {
 				JSONObject json_account = json_accounts.getJSONObject(i);
 				Account account = new Account(json_account);
+				account.setBank(connection.getBank());
 				accounts.add(account);
 			}
 
