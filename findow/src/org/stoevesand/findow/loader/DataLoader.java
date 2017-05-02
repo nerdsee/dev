@@ -5,15 +5,12 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.jobs.ImportAccountJob;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Transaction;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.finapi.AccountsService;
-import org.stoevesand.findow.provider.finapi.BankConnectionsService;
 import org.stoevesand.findow.provider.finapi.TransactionsService;
-import org.stoevesand.findow.provider.finapi.model.Token;
 import org.stoevesand.findow.provider.finapi.model.TransactionList;
 
 public class DataLoader {

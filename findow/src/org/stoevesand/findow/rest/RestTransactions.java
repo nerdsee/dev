@@ -10,7 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.auth.Authenticator;
-import org.stoevesand.findow.loader.DataLoader;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.CategorySum;
 import org.stoevesand.findow.model.ErrorHandler;

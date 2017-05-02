@@ -12,12 +12,17 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stoevesand.findow.jobs.ImportAccountJob;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 import org.stoevesand.findow.provider.finapi.model.Token;
 
 public class AccountsService {
+
+	private static Logger log = LoggerFactory.getLogger(AccountsService.class);
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/accounts";
 
@@ -52,6 +57,8 @@ public class AccountsService {
 				JSONObject json_account = json_accounts.getJSONObject(i);
 				Account account = new Account(json_account);
 				account.setBank(connection.getBank());
+				log.info("Set Bank at Account: " + connection.getBank());
+				log.info("New Account: " + account);
 				accounts.add(account);
 			}
 
