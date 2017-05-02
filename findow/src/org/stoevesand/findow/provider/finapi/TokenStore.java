@@ -1,7 +1,7 @@
-package org.stoevesand.finapi;
+package org.stoevesand.findow.provider.finapi;
 
-import org.stoevesand.finapi.model.Token;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.provider.finapi.model.Token;
 
 public class TokenStore {
 

@@ -1,4 +1,4 @@
-package org.stoevesand.finapi.model;
+package org.stoevesand.findow.provider.finapi.model;
 
 import java.util.List;
 import java.util.Vector;

@@ -8,12 +8,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import org.stoevesand.finapi.model.Category;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.CategorySum;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Transaction;
 import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.provider.finapi.model.Category;
 
 public class PersistanceManager {
 	private EntityManagerFactory entityManagerFactory;

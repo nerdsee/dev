@@ -1,10 +1,10 @@
 package org.stoevesand.findow.auth;
 
-import org.stoevesand.finapi.UsersService;
-import org.stoevesand.finapi.model.FinapiUser;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.finapi.UsersService;
+import org.stoevesand.findow.provider.finapi.model.FinapiUser;
 
 public class Authenticator {
 

@@ -1,4 +1,4 @@
-package org.stoevesand.finapi.model;
+package org.stoevesand.findow.provider.finapi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

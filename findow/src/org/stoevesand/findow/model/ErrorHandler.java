@@ -6,7 +6,7 @@ import java.util.Vector;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.finapi.model.CallError;
+import org.stoevesand.findow.provider.finapi.model.CallError;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

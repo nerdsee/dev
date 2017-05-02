@@ -1,9 +1,9 @@
-package org.stoevesand.finapi.model;
+package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.finapi.BankConnectionsService;
 import org.stoevesand.findow.model.Bank;
+import org.stoevesand.findow.provider.finapi.BankConnectionsService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

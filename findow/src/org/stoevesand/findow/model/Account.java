@@ -11,9 +11,9 @@ import javax.persistence.Table;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.finapi.AccountsService;
-import org.stoevesand.finapi.TokenService;
-import org.stoevesand.finapi.model.JSONUtils;
+import org.stoevesand.findow.provider.finapi.AccountsService;
+import org.stoevesand.findow.provider.finapi.TokenService;
+import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

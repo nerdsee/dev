@@ -12,16 +12,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.stoevesand.finapi.AccountsService;
-import org.stoevesand.finapi.BankConnectionsService;
-import org.stoevesand.finapi.UsersService;
-import org.stoevesand.finapi.model.BankConnection;
-import org.stoevesand.finapi.model.FinapiUser;
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.finapi.AccountsService;
+import org.stoevesand.findow.provider.finapi.BankConnectionsService;
+import org.stoevesand.findow.provider.finapi.UsersService;
+import org.stoevesand.findow.provider.finapi.model.BankConnection;
+import org.stoevesand.findow.provider.finapi.model.FinapiUser;
 
 import io.swagger.annotations.Api;
 

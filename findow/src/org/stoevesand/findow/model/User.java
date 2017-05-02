@@ -15,8 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.finapi.TokenService;
-import org.stoevesand.finapi.model.Token;
+import org.stoevesand.findow.provider.finapi.TokenService;
+import org.stoevesand.findow.provider.finapi.model.Token;
 import org.stoevesand.findow.rest.RestUtils;
 
 import com.fasterxml.jackson.annotation.JsonGetter;

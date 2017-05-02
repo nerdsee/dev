@@ -1,7 +1,7 @@
 package org.stoevesand.findow.server;
 
-import org.stoevesand.finapi.FinapiBankingAPI;
 import org.stoevesand.findow.bankingapi.BankingAPI;
+import org.stoevesand.findow.provider.finapi.FinapiBankingAPI;
 
 public class FindowSystem {
 

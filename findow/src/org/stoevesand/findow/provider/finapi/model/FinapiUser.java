@@ -1,10 +1,10 @@
-package org.stoevesand.finapi.model;
+package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.finapi.TokenService;
 import org.stoevesand.findow.bankingapi.ApiUser;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.provider.finapi.TokenService;
 
 public class FinapiUser implements ApiUser {
 	String id = "";

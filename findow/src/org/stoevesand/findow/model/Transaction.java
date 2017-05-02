@@ -20,8 +20,8 @@ import javax.persistence.Transient;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.finapi.model.Category;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.finapi.model.Category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

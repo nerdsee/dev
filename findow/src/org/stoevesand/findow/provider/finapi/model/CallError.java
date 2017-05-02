@@ -1,4 +1,4 @@
-package org.stoevesand.finapi.model;
+package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
