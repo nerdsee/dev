@@ -14,12 +14,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.stoevesand.findow.auth.Authenticator;
-import org.stoevesand.findow.bankingapi.BankingAPI;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;

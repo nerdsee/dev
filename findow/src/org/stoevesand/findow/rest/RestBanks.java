@@ -11,9 +11,9 @@ import javax.ws.rs.core.Context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.bankingapi.BankingAPI;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Bank;
+import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;

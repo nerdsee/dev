@@ -12,11 +12,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.stoevesand.findow.bankingapi.ApiUser;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;

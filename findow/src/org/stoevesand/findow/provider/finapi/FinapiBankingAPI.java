@@ -2,11 +2,11 @@ package org.stoevesand.findow.provider.finapi;
 
 import java.util.List;
 
-import org.stoevesand.findow.bankingapi.ApiUser;
-import org.stoevesand.findow.bankingapi.BankingAPI;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.provider.ApiUser;
+import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 
 public class FinapiBankingAPI implements BankingAPI {

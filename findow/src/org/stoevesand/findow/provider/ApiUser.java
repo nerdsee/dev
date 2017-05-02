@@ -1,4 +1,4 @@
-package org.stoevesand.findow.bankingapi;
+package org.stoevesand.findow.provider;
 
 public interface ApiUser {
 
