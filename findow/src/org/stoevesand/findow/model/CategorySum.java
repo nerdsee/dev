@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.stoevesand.findow.persistence.PersistanceManager;
-import org.stoevesand.findow.provider.finapi.model.Category;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

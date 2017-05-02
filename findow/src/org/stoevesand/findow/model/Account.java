@@ -260,7 +260,7 @@ public class Account {
 
 	public String toString() {
 		Long userid = user == null ? null : user.getId();
-		return String.format("%s %s (%d)(User %d)", getAccountName(), getBankName(), id, userid);
+		return String.format("%s - %s (%d)(User %d)", getAccountName(), getBankName(), id, userid);
 	}
 
 	public int refresh(String userToken) {
