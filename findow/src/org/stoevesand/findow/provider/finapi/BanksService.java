@@ -15,7 +15,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.provider.finapi.model.Token;
+import org.stoevesand.findow.model.Token;
 
 public class BanksService {
 

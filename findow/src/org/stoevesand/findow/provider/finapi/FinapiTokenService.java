@@ -12,9 +12,9 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.provider.finapi.model.Token;
+import org.stoevesand.findow.model.Token;
 
-public class TokenService {
+public class FinapiTokenService {
 
 	static final String POST_URL = "https://sandbox.finapi.io/oauth/token";
 	static final long VALIDITY_BUFFER_SECONDS = 200;

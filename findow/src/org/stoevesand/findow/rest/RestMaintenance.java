@@ -45,13 +45,13 @@ public class RestMaintenance {
 					PersistanceManager.getInstance().checkAccounts(user, accounts);
 				}
 			} else {
-				return RestUtils.generateJsonResponse(Response.USER_UNKNOWN);
+				return RestUtils.generateJsonResponse(FindowResponse.USER_UNKNOWN);
 			}
 		} catch (ErrorHandler e) {
 			System.out.println(e);
 			return e.getResponse();
 		}
-		return RestUtils.generateJsonResponse(Response.OK);
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
 	}
 
 }

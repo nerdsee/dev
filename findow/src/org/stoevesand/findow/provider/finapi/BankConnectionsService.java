@@ -16,10 +16,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.model.Transaction;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 import org.stoevesand.findow.provider.finapi.model.FinapiUser;
-import org.stoevesand.findow.provider.finapi.model.Token;
 
 public class BankConnectionsService {
 

@@ -55,7 +55,7 @@ public class RestAccounts {
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		} catch (NumberFormatException nfe) {
-			result = RestUtils.generateJsonResponse(Response.INVALID_ID);
+			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_ID);
 		}
 		return result;
 	}
@@ -82,15 +82,15 @@ public class RestAccounts {
 
 				PersistanceManager.getInstance().deleteAccount(user, accountId, userToken);
 
-				result = RestUtils.generateJsonResponse(Response.OK);
+				result = RestUtils.generateJsonResponse(FindowResponse.OK);
 			} else {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			}
 
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		} catch (NumberFormatException nfe) {
-			result = RestUtils.generateJsonResponse(Response.INVALID_ID);
+			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_ID);
 		}
 		return result;
 	}
@@ -142,15 +142,15 @@ public class RestAccounts {
 
 		} catch (ErrorHandler e) {
 			if (e.hasCallError("ENTITY_EXISTS")) {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_ALREADY_EXISTS);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ALREADY_EXISTS);
 			} else if (e.hasCallError("UNKNOWN_ENTITY")) {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			} else if (e.hasCallError("BANK_SERVER_REJECTION")) {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_IMPORT_REJECTED);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_IMPORT_REJECTED);
 			} else if (e.hasCallError("ILLEGAL_FIELD_VALUE")) {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_ILLEGAL_FIELD);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ILLEGAL_FIELD);
 			} else {
-				result = RestUtils.generateJsonResponse(Response.UNKNOWN);
+				result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 			}
 		}
 		// System.out.println("BC: " + connection);

@@ -3,8 +3,8 @@ package org.stoevesand.findow.rest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.stoevesand.findow.jobs.JobManager;
+import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.provider.finapi.TokenStore;
-import org.stoevesand.findow.provider.finapi.model.Token;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

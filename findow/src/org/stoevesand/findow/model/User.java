@@ -15,8 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.findow.provider.finapi.TokenService;
-import org.stoevesand.findow.provider.finapi.model.Token;
+import org.stoevesand.findow.provider.figo.FigoTokenService;
+import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 import org.stoevesand.findow.rest.RestUtils;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -32,6 +32,7 @@ public class User {
 	private String password = "";
 	private String backendName = "";
 	private String backendSecret = "";
+	private String api = "";
 
 	private transient Token token = null;
 	private List<Account> accounts;
@@ -112,7 +113,7 @@ public class User {
 	public String getToken() {
 		if ((token == null) || (!token.isValid())) {
 			try {
-				token = TokenService.requestUserToken(RestUtils.getClientToken(), backendName, backendSecret);
+				token = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), backendName, backendSecret);
 			} catch (ErrorHandler e) {
 				token = null;
 				e.printStackTrace();
@@ -123,6 +124,14 @@ public class User {
 
 	public void setToken(Token token) {
 		this.token = token;
+	}
+
+	public String getApi() {
+		return api;
+	}
+
+	public void setApi(String api) {
+		this.api = api;
 	}
 
 	public Account getAccount(long accountId) {
@@ -155,7 +164,12 @@ public class User {
 	}
 
 	public void refreshToken() throws ErrorHandler {
-		Token userToken = TokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
+		Token userToken;
+		if ("FINAPI".equals(getApi())) {
+			userToken = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
+		} else {
+			userToken = FigoTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
+		}
 		setToken(userToken);
 	}
 

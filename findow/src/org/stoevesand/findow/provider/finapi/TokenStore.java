@@ -1,7 +1,7 @@
 package org.stoevesand.findow.provider.finapi;
 
 import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.provider.finapi.model.Token;
+import org.stoevesand.findow.model.Token;
 
 public class TokenStore {
 
@@ -19,8 +19,8 @@ public class TokenStore {
 
 	private TokenStore() {
 		try {
-			clientToken = TokenService.requestClientToken(client_id, client_secret);
-			adminToken = TokenService.requestClientToken(admin_client_id, admin_client_secret);
+			clientToken = FinapiTokenService.requestClientToken(client_id, client_secret);
+			adminToken = FinapiTokenService.requestClientToken(admin_client_id, admin_client_secret);
 		} catch (ErrorHandler e) {
 			e.printStackTrace();
 		}
@@ -39,7 +39,7 @@ public class TokenStore {
 		if ((clientToken == null) || (!clientToken.isValid())) {
 			System.out.println("Refresh Token.");
 			try {
-				clientToken = TokenService.requestClientToken(client_id, client_secret);
+				clientToken = FinapiTokenService.requestClientToken(client_id, client_secret);
 			} catch (ErrorHandler e) {
 				e.printStackTrace();
 			}
@@ -53,7 +53,7 @@ public class TokenStore {
 		if (!adminToken.isValid()) {
 			System.out.println("Refresh AdminToken.");
 			try {
-				adminToken = TokenService.requestClientToken(admin_client_id, admin_client_secret);
+				adminToken = FinapiTokenService.requestClientToken(admin_client_id, admin_client_secret);
 			} catch (ErrorHandler e) {
 				e.printStackTrace();
 			}

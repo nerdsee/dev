@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.ImportAccountJob;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
-import org.stoevesand.findow.provider.finapi.model.Token;
 
 public class AccountsService {
 

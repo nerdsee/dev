@@ -50,7 +50,7 @@ public class RestTransactions {
 				// "transactions");
 				result = RestUtils.generateJsonResponse(wrapper, null);
 			} else {
-				result = RestUtils.generateJsonResponse(Response.ACCOUNT_UNKNOWN);
+				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			}
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
@@ -69,7 +69,7 @@ public class RestTransactions {
 			List<CategorySum> cs = PersistanceManager.getInstance().getCategorySummary();
 			result = RestUtils.generateJsonResponse(cs, "categorySummary");
 		} catch (Exception e) {
-			result = RestUtils.generateJsonResponse(Response.UNKNOWN);
+			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 		}
 		return result;
 	}

@@ -1,4 +1,4 @@
-package org.stoevesand.findow.provider.finapi.model;
+package org.stoevesand.findow.provider.figo;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -7,7 +7,7 @@ import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 
-public class FinapiUser implements ApiUser {
+public class FigoUser implements ApiUser {
 	String id = "";
 
 	public String getId() {
@@ -16,7 +16,7 @@ public class FinapiUser implements ApiUser {
 
 	String password = "";
 
-	public FinapiUser(JSONObject json_user) {
+	public FigoUser(JSONObject json_user) {
 		try {
 			id = json_user.getString("id");
 			password = json_user.getString("password");
@@ -26,7 +26,7 @@ public class FinapiUser implements ApiUser {
 		}
 	}
 
-	public FinapiUser(String id, String password) {
+	public FigoUser(String id, String password) {
 		this.id = id;
 		this.password = password;
 	}
@@ -45,7 +45,7 @@ public class FinapiUser implements ApiUser {
 
 	@Override
 	public String getApi() {
-		return "FINAPI";
+		return "FIGO";
 	}
 
 }

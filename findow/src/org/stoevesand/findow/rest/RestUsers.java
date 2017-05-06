@@ -1,5 +1,6 @@
 package org.stoevesand.findow.rest;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +12,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
@@ -26,8 +30,13 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "users")
 public class RestUsers {
 
+	private Logger log = LoggerFactory.getLogger(RestUsers.class);
+
 	@Context
 	private HttpServletResponse response;
+	
+	@Context
+	SecurityContext securityContext;
 
 	@Path("/{id}")
 	@GET
@@ -48,11 +57,46 @@ public class RestUsers {
 			}
 
 		} else {
-			result = RestUtils.generateJsonResponse(Response.USER_OR_PASSWORD_INVALID);
+			result = RestUtils.generateJsonResponse(FindowResponse.USER_OR_PASSWORD_INVALID);
 		}
 
 		return result;
 	}
+
+	@Path("/")
+	@GET
+	@Secured
+	@Produces("application/json")
+	public String getUserFromToken() {
+		JobManager.getInstance();
+		RestUtils.addHeader(response);
+		String result = "";
+
+		log.info("get user from token");
+		
+		Principal principal = securityContext.getUserPrincipal();
+		String jwsUser = principal.getName();
+
+		log.info("user: " + jwsUser);
+
+		User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+		if (user != null) {
+
+			try {
+				user.refreshToken();
+				result = RestUtils.generateJsonResponse(user, "user");
+			} catch (ErrorHandler e) {
+				result = e.getResponse();
+			}
+
+		} else {
+			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_JWT);
+		}
+
+		return result;
+	}
+
+
 
 	@Path("/{id}")
 	@POST
@@ -67,9 +111,9 @@ public class RestUsers {
 				ApiUser apiUser = FindowSystem.getBankingAPI().createUser(null, null);
 				user = new User(id, password, apiUser.getId(), apiUser.getPassword());
 				PersistanceManager.getInstance().store(user);
-				result = RestUtils.generateJsonResponse(Response.OK);
+				result = RestUtils.generateJsonResponse(FindowResponse.OK);
 			} else {
-				result = RestUtils.generateJsonResponse(Response.USER_ALREADY_USED);
+				result = RestUtils.generateJsonResponse(FindowResponse.USER_ALREADY_USED);
 			}
 
 		} catch (ErrorHandler e) {
@@ -89,7 +133,7 @@ public class RestUsers {
 			if (user != null) {
 				FindowSystem.getBankingAPI().deleteUser(userToken);
 			} else {
-				return RestUtils.generateJsonResponse(Response.USER_UNKNOWN);
+				return RestUtils.generateJsonResponse(FindowResponse.USER_UNKNOWN);
 			}
 
 			PersistanceManager.getInstance().deleteUserByName(id);
@@ -97,10 +141,10 @@ public class RestUsers {
 			System.out.println(e);
 			return e.getResponse();
 		}
-		return RestUtils.generateJsonResponse(Response.OK);
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
 	}
 
-	@Path("/")
+	@Path("/infos")
 	@GET
 	@Produces("application/json")
 	@ApiOperation(value = "Get UserInfos of all available users.")

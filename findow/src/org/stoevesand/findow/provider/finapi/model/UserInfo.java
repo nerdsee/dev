@@ -2,7 +2,7 @@ package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.findow.provider.finapi.TokenService;
+import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonRootName;

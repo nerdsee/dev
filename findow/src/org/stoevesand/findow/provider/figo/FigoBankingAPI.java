@@ -2,17 +2,18 @@ package org.stoevesand.findow.provider.figo;
 
 import java.util.List;
 
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.provider.BankingAPI;
-import org.stoevesand.findow.provider.finapi.model.BankConnection;
+
+import me.figo.FigoSession;
+import me.figo.models.Account;
+import me.figo.models.Transaction;
 
 public class FigoBankingAPI implements BankingAPI {
 
 	@Override
-	public List<Account> importAccount(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler {
+	public List<org.stoevesand.findow.model.Account> importAccount(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler {
 		return null;
 	}
 
@@ -38,12 +39,28 @@ public class FigoBankingAPI implements BankingAPI {
 	}
 
 	@Override
-	public List<Bank> searchBanks(String search) {
+	public List<org.stoevesand.findow.model.Bank> searchBanks(String search) {
+		FigoSession session = new FigoSession("ASHWLIkouP2O6_bgA2wWReRhletgWKHYjLqDaqb0LFfamim9RjexTo22ujRIP_cjLiRiSyQXyt2kM1eXU2XLFZQ0Hro15HikJQT_eNeT_9XQ");
+
+		try {
+		// print out a list of accounts including its balance
+		for (Account account : session.getAccounts()) {
+			System.out.println(account.getName());
+			System.out.println(session.getAccountBalance(account).getBalance());
+		}
+
+		// print out the list of all transactions on a specific account
+		for (Transaction transaction : session.getTransactions(session.getAccount("A1.2"))) {
+			System.out.println(transaction.getPurposeText());
+		}
+		} catch (Exception e) {
+			
+		}
 		return null;
 	}
 
 	@Override
-	public void deleteAccount(String userToken, Account account) throws ErrorHandler {
+	public void deleteAccount(String userToken, org.stoevesand.findow.model.Account account) throws ErrorHandler {
 	}
 
 }
