@@ -81,7 +81,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	}
 
 	
-	private void replaceSecurityContext(String username, ContainerRequestContext requestContext) throws Exception {
+	private void replaceSecurityContext(final String username, ContainerRequestContext requestContext) throws Exception {
 
 		final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
 		requestContext.setSecurityContext(new SecurityContext() {
