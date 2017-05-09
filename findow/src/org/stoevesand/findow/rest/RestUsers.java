@@ -34,34 +34,9 @@ public class RestUsers {
 
 	@Context
 	private HttpServletResponse response;
-	
+
 	@Context
 	SecurityContext securityContext;
-
-	@Path("/{id}")
-	@GET
-	@Produces("application/json")
-	public String getUser(@PathParam("id") String id, @HeaderParam("password") String password) {
-		JobManager.getInstance();
-		RestUtils.addHeader(response);
-		String result = "";
-
-		User user = PersistanceManager.getInstance().getUserByName(id);
-		if ((user != null) && (user.getPassword().equals(password))) {
-
-			try {
-				user.refreshToken();
-				result = RestUtils.generateJsonResponse(user, "user");
-			} catch (ErrorHandler e) {
-				result = e.getResponse();
-			}
-
-		} else {
-			result = RestUtils.generateJsonResponse(FindowResponse.USER_OR_PASSWORD_INVALID);
-		}
-
-		return result;
-	}
 
 	@Path("/")
 	@GET
@@ -73,13 +48,16 @@ public class RestUsers {
 		String result = "";
 
 		log.info("get user from token");
-		
+
 		Principal principal = securityContext.getUserPrincipal();
 		String jwsUser = principal.getName();
-
-		log.info("user: " + jwsUser);
-
 		User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+
+		// Neue User mit einem gültigen Token werden neu angelegt
+		if (user == null) {
+			user = createNewUser(jwsUser);
+		} 
+		
 		if (user != null) {
 
 			try {
@@ -96,31 +74,41 @@ public class RestUsers {
 		return result;
 	}
 
-
-
 	@Path("/{id}")
 	@POST
 	@Produces("application/json")
 	public String createUser(@PathParam("id") String id, @HeaderParam("password") String password) {
 		RestUtils.addHeader(response);
 		String result = "";
-		try {
-			User user = PersistanceManager.getInstance().getUserByName(id);
+		User user = PersistanceManager.getInstance().getUserByName(id);
 
-			if (user == null) {
-				ApiUser apiUser = FindowSystem.getBankingAPI().createUser(null, null);
-				user = new User(id, password, apiUser.getId(), apiUser.getPassword());
-				PersistanceManager.getInstance().store(user);
-				result = RestUtils.generateJsonResponse(FindowResponse.OK);
-			} else {
-				result = RestUtils.generateJsonResponse(FindowResponse.USER_ALREADY_USED);
-			}
-
-		} catch (ErrorHandler e) {
-			result = e.getResponse();
+		if (user == null) {
+			user = createNewUser(id);
+			result = RestUtils.generateJsonResponse(FindowResponse.OK);
+		} else {
+			result = RestUtils.generateJsonResponse(FindowResponse.USER_ALREADY_USED);
 		}
 
 		return result;
+	}
+
+	/**
+	 * Auslagerung der Funktion einen neuen User anzulegen. Wird an zwei Stellen benötigt.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private User createNewUser(String id) {
+		User user = null;
+		try {
+			ApiUser apiUser = FindowSystem.getBankingAPI().createUser(null, null);
+			user = new User(id, apiUser.getId(), apiUser.getPassword());
+			PersistanceManager.getInstance().store(user);
+		} catch (ErrorHandler e) {
+			log.error("Failed to create user: " + id);
+			log.error("Reason: " + e.getMessage());
+		}
+		return user;
 	}
 
 	@Path("/{id}")

@@ -29,7 +29,6 @@ public class User {
 	// internal id used for persistance
 	private Long id;
 	private String name = "";
-	private String password = "";
 	private String backendName = "";
 	private String backendSecret = "";
 	private String api = "";
@@ -70,9 +69,8 @@ public class User {
 	public User() {
 	}
 
-	public User(String name, String password, String backendName, String backendSecret) {
+	public User(String name, String backendName, String backendSecret) {
 		this.name = name;
-		this.password = password;
 		this.backendName = backendName;
 		this.backendSecret = backendSecret;
 	}
@@ -96,16 +94,6 @@ public class User {
 
 	public void setAccounts(List<Account> a) {
 		this.accounts = a;
-	}
-
-	@Column(name = "PASSWORD")
-	@JsonIgnore
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	@Transient
@@ -165,10 +153,10 @@ public class User {
 
 	public void refreshToken() throws ErrorHandler {
 		Token userToken;
-		if ("FINAPI".equals(getApi())) {
-			userToken = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
-		} else {
+		if ("FIGO".equals(getApi())) {
 			userToken = FigoTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
+		} else {
+			userToken = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
 		}
 		setToken(userToken);
 	}

@@ -53,17 +53,19 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			replaceSecurityContext(username, requestContext);
 
 		} catch (Exception e) {
+			log.error("JWTExcpetion: " + e.getMessage());
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 		}
 	}
 
-	private String extractUserFromToken(String token) {
-		//token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Imhhbm5lcyIsImFkbWluIjp0cnVlLCJpc3MiOiJhdXRoMCJ9.E6Z9SYZdYKzfnLLu7IP2s6QRwYOO1XXxZWvpUpwela0";
-		String name="";
+	private String extractUserFromToken(String token) throws JWTVerificationException {
+		// token =
+		// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Imhhbm5lcyIsImFkbWluIjp0cnVlLCJpc3MiOiJhdXRoMCJ9.E6Z9SYZdYKzfnLLu7IP2s6QRwYOO1XXxZWvpUpwela0";
+		String name = "";
 		try {
 			// secret für auth0 von simprove
 			Algorithm algorithm = Algorithm.HMAC256("ZQxW0vT_YNz5Xe3X9iCU63qycwtwQcElyZoR683goSvONaXdIyXfq9TCd75yZpJK");
-			 // Reusable verifier instance
+			// Reusable verifier instance
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer("https://simprove.eu.auth0.com/").build();
 			DecodedJWT jwt = verifier.verify(token);
 
@@ -71,16 +73,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			Date d = jwt.getExpiresAt();
 			name = jwt.getSubject();
 			issuer = jwt.getIssuer();
-			
+
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (JWTVerificationException e) {
 			e.printStackTrace();
 		}
 		return name;
 	}
 
-	
 	private void replaceSecurityContext(final String username, ContainerRequestContext requestContext) throws Exception {
 
 		final SecurityContext currentSecurityContext = requestContext.getSecurityContext();

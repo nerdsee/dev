@@ -110,9 +110,10 @@ public class PersistanceManager {
 		if (result.size() > 0) {
 			ret = (User) result.get(0);
 		}
+		
 		entityManager.getTransaction().commit();
 		entityManager.close();
-
+		
 		return ret;
 	}
 
@@ -208,12 +209,12 @@ public class PersistanceManager {
 		return ret;
 	}
 
-	public List<CategorySum> getCategorySummary() {
+	public List<CategorySum> getCategorySummary(User user, long accountId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-		// Query q = entityManager.createNamedQuery("sumQuery",
-		// CategorySum.class);
-		Query q = entityManager.createNativeQuery("select coalesce(category_id,0) as category_id, count(*) as count, sum(amount) as sum from transactions t group by t.category_id", CategorySum.class);
+		Account account = user.getAccount(accountId);
+
+		Query q = entityManager.createNativeQuery("select coalesce(category_id,0) as category_id, count(*) as count, sum(amount) as sum from transactions t where t.account_id=:aid group by t.category_id", CategorySum.class).setParameter("aid", account.getSourceId());
 		List<CategorySum> catsum = q.getResultList();
 
 		entityManager.close();

@@ -1,5 +1,6 @@
 package org.stoevesand.findow.rest;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +9,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.Account;
@@ -27,16 +29,23 @@ public class RestTransactions {
 	@Context
 	private HttpServletResponse response;
 
+	@Context
+	SecurityContext securityContext;
+
 	@Path("/")
 	@GET
+	@Secured
 	@Produces("application/json")
-	public String getTransactions(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") long accountId, @HeaderParam("days") int days) {
+	public String getTransactions(@HeaderParam("accountId") long accountId, @HeaderParam("days") int days) {
 		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
 			// User laden
-			User user = Authenticator.getUser(userToken);
+			Principal principal = securityContext.getUserPrincipal();
+			String jwsUser = principal.getName();
+			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+
 			Account account = user.getAccount(accountId);
 
 			if (account != null) {
@@ -60,13 +69,19 @@ public class RestTransactions {
 
 	@Path("/categorized")
 	@GET
+	@Secured
 	@Produces("application/json")
-	public String getTransactionsCat(@HeaderParam("userToken") String userToken, @HeaderParam("accountId") int accountId, @HeaderParam("days") int days) {
+	public String getTransactionsCat(@HeaderParam("accountId") int accountId, @HeaderParam("days") int days) {
 		RestUtils.addHeader(response);
 		String result = "";
 
 		try {
-			List<CategorySum> cs = PersistanceManager.getInstance().getCategorySummary();
+			// User laden
+			Principal principal = securityContext.getUserPrincipal();
+			String jwsUser = principal.getName();
+			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+
+			List<CategorySum> cs = PersistanceManager.getInstance().getCategorySummary(user, accountId);
 			result = RestUtils.generateJsonResponse(cs, "categorySummary");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);

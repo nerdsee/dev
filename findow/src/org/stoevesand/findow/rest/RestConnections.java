@@ -11,7 +11,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
@@ -30,8 +33,13 @@ import io.swagger.annotations.Api;
 @Deprecated
 public class RestConnections {
 
+	private Logger log = LoggerFactory.getLogger(RestConnections.class);
+
 	@Context
 	private HttpServletResponse response;
+
+	@Context
+	SecurityContext securityContext;
 
 	@Path("/")
 	@GET
