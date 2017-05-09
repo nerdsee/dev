@@ -40,6 +40,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		// Check if the HTTP Authorization header is present and formatted
 		// correctly
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			log.error("No Token: Authorization header must be provided");
 			throw new NotAuthorizedException("Authorization header must be provided");
 		}
 
@@ -75,6 +76,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			issuer = jwt.getIssuer();
 
 		} catch (UnsupportedEncodingException e) {
+			log.error("Unsup" + e.getMessage());
 			e.printStackTrace();
 		}
 		return name;
