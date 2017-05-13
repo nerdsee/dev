@@ -36,6 +36,7 @@ public class DataLoader {
 		}
 
 		if (transactions != null) {
+			log.info("account updated. New transactions: " + newTransactions.size());
 			PersistanceManager.getInstance().storeTx(newTransactions);
 		}
 
