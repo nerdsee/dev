@@ -9,11 +9,13 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.provider.finapi.model.TransactionList;
+import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.TransactionList;
+import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 public class TransactionsService {
 
@@ -74,8 +76,29 @@ public class TransactionsService {
 		}
 
 		try {
+
+			ret = new TransactionList();
+
 			JSONObject jo = new JSONObject(output);
-			ret = new TransactionList(jo);
+			JSONArray json_txs = jo.getJSONArray("transactions");
+
+			for (int i = 0; i < json_txs.length(); i++) {
+				JSONObject json_account = json_txs.getJSONObject(i);
+				Transaction transaction = new Transaction(json_account);
+				ret.addTransaction(transaction);
+			}
+
+			ret.setIncome(JSONUtils.getDouble(jo, "income"));
+			ret.setSpending(JSONUtils.getDouble(jo, "spending"));
+			ret.setBalance(JSONUtils.getDouble(jo, "balance"));
+
+			JSONObject paging = JSONUtils.getJSONObject(jo, "paging");
+
+			ret.setPage(JSONUtils.getInt(paging, "page"));
+			ret.setPerPage(JSONUtils.getInt(paging, "perPage"));
+			ret.setPageCount(JSONUtils.getInt(paging, "pageCount"));
+			ret.setTotalCount(JSONUtils.getInt(paging, "totalCount"));
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

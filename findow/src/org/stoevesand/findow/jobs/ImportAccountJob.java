@@ -29,7 +29,7 @@ public class ImportAccountJob implements Job {
 			try {
 				log.info("Import transactions of account " + account);
 				user.refreshToken();
-				DataLoader.updateTransactions(user.getToken(), account, 120);
+				DataLoader.updateTransactions(user, account, 120);
 			} catch (ErrorHandler e) {
 				log.error("Failed to refresh account " + account, e);
 			}

@@ -3,6 +3,8 @@ package org.stoevesand.findow.provider.figo;
 import java.util.List;
 
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.model.TransactionList;
+import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.provider.BankingAPI;
 
@@ -61,6 +63,24 @@ public class FigoBankingAPI implements BankingAPI {
 
 	@Override
 	public void deleteAccount(String userToken, org.stoevesand.findow.model.Account account) throws ErrorHandler {
+	}
+
+	@Override
+	public TransactionList searchTransactions(User user, org.stoevesand.findow.model.Account account, int days) throws ErrorHandler {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void refreshAccount(User user, org.stoevesand.findow.model.Account account) throws ErrorHandler {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reloadAccountContent(User user, org.stoevesand.findow.model.Account account) throws ErrorHandler {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

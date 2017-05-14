@@ -200,7 +200,7 @@ public class BankConnectionsService {
 		return ret;
 	}
 
-	public static BankConnection updateConnection(Token userToken, int bankConnectionId, String connectionPin) throws ErrorHandler {
+	public static BankConnection updateConnection(String userToken, int bankConnectionId, String connectionPin) throws ErrorHandler {
 		BankConnection bc = null;
 
 		Client client = ClientBuilder.newClient();
@@ -208,7 +208,7 @@ public class BankConnectionsService {
 		String message = generateUpdateConnectionMessage(bankConnectionId, connectionPin);
 
 		WebTarget webTarget = client.target(URL + "/update");
-		webTarget = webTarget.queryParam("access_token", userToken.getToken());
+		webTarget = webTarget.queryParam("access_token", userToken);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		invocationBuilder = invocationBuilder.accept("application/json");
 		Response response = invocationBuilder.post(Entity.json(message), Response.class);

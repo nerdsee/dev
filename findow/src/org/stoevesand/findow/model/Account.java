@@ -1,5 +1,7 @@
 package org.stoevesand.findow.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,11 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
 import org.stoevesand.findow.provider.finapi.AccountsService;
-import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -124,9 +124,9 @@ public class Account {
 
 	private double availableFunds;
 
-	private String lastSuccessfulUpdate;
+	private Date lastSuccessfulUpdate;
 
-	private String lastUpdateAttempt;
+	private Date lastUpdateAttempt;
 
 	private String status;
 
@@ -154,8 +154,8 @@ public class Account {
 		overdraftLimit = JSONUtils.getDouble(jo, "overdraftLimit");
 		availableFunds = JSONUtils.getDouble(jo, "availableFunds");
 		status = JSONUtils.getString(jo, "status");
-		lastSuccessfulUpdate = JSONUtils.getString(jo, "lastSuccessfulUpdate");
-		lastUpdateAttempt = JSONUtils.getString(jo, "lastUpdateAttempt");
+		lastSuccessfulUpdate = JSONUtils.getDate(jo, "lastSuccessfulUpdate", "yyyy-MM-dd HH:mm:ss.SSS");
+		lastUpdateAttempt = JSONUtils.getDate(jo, "lastUpdateAttempt", "yyyy-MM-dd HH:mm:ss.SSS");
 	}
 
 	public String getStatus() {
@@ -166,19 +166,19 @@ public class Account {
 		this.status = status;
 	}
 
-	public String getLastSuccessfulUpdate() {
+	public Date getLastSuccessfulUpdate() {
 		return lastSuccessfulUpdate;
 	}
 
-	public void setLastSuccessfulUpdate(String lastSuccessfulUpdate) {
+	public void setLastSuccessfulUpdate(Date lastSuccessfulUpdate) {
 		this.lastSuccessfulUpdate = lastSuccessfulUpdate;
 	}
 
-	public String getLastUpdateAttempt() {
+	public Date getLastUpdateAttempt() {
 		return lastUpdateAttempt;
 	}
 
-	public void setLastUpdateAttempt(String lastUpdateAttempt) {
+	public void setLastUpdateAttempt(Date lastUpdateAttempt) {
 		this.lastUpdateAttempt = lastUpdateAttempt;
 	}
 

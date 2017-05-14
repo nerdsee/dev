@@ -1,5 +1,6 @@
 package org.stoevesand.findow.jobs;
 
+import java.util.Date;
 import java.util.List;
 
 import org.quartz.DisallowConcurrentExecution;
@@ -28,8 +29,15 @@ public class RefreshAccountJob implements Job {
 			User user = account.getUser();
 			try {
 				log.info("Update transactions of account " + account);
+				Date lastUpdate = account.getLastSuccessfulUpdate();
+				int diff = 120;
+				if (lastUpdate != null) {
+					Date now = new Date();
+					// Zeit seit dem letzten update plus eine Woche
+					diff = daysBetween(lastUpdate, now) + 7;
+				}
 				user.refreshToken();
-				DataLoader.updateTransactions(user.getToken(), account, 7);
+				DataLoader.updateTransactions(user, account, diff);
 			} catch (ErrorHandler e) {
 				log.error("Failed to refresh account " + account, e);
 			}
@@ -37,4 +45,7 @@ public class RefreshAccountJob implements Job {
 		log.info("Refresh Account Transactions ... done.");
 	}
 
+	public int daysBetween(Date d1, Date d2) {
+		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+	}
 }

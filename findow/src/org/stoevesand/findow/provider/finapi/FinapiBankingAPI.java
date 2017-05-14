@@ -5,6 +5,8 @@ import java.util.List;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
+import org.stoevesand.findow.model.TransactionList;
+import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
@@ -53,6 +55,22 @@ public class FinapiBankingAPI implements BankingAPI {
 	@Override
 	public void deleteAccount(String userToken, Account account) throws ErrorHandler {
 		AccountsService.deleteAccount(userToken, account);
+	}
+
+	@Override
+	public TransactionList searchTransactions(User user, Account account, int days) throws ErrorHandler {
+		TransactionList transactions = TransactionsService.searchTransactions(user.getToken(), account.getSourceId(), days);
+		return transactions;
+	}
+
+	@Override
+	public void refreshAccount(User user, Account account) throws ErrorHandler {
+		AccountsService.refreshAccount(user.getToken(), account);
+	}
+
+	@Override
+	public void reloadAccountContent(User user, Account account) throws ErrorHandler {
+		BankConnectionsService.updateConnection(user.getToken(), account.getBankConnectionId(), null);
 	}
 
 }
