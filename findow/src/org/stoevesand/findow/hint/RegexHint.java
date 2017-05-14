@@ -26,12 +26,18 @@ public class RegexHint implements HintAnalyzer {
 
 	@Override
 	public Hint search(Transaction transaction) {
-		Hint hint = null;
-		if (transaction.getPurpose().toUpperCase().matches(content)) {
-			hint = new Hint(name, transaction);
+
+		String purpose = transaction.getPurpose();
+		if ((purpose != null) && (purpose.toUpperCase().matches(content))) {
+			return new Hint(name, transaction);
 		}
-		;
-		return hint;
+
+		String cp = transaction.getCounterpartName();
+		if ((cp != null) && (cp.toUpperCase().matches(content))) {
+			return new Hint(name, transaction);
+		}
+
+		return null;
 	}
 
 	@Id
