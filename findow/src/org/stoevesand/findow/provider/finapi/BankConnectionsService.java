@@ -14,14 +14,15 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.findow.model.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
-import org.stoevesand.findow.model.Transaction;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
-import org.stoevesand.findow.provider.finapi.model.FinapiUser;
 
 public class BankConnectionsService {
+
+	private static Logger log = LoggerFactory.getLogger(BankConnectionsService.class);
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/bankConnections";
 
@@ -68,7 +69,7 @@ public class BankConnectionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBankConnections failed: " + status);
+			log.error("getBankConnections failed: " + status);
 			throw eh;
 		}
 
@@ -92,13 +93,10 @@ public class BankConnectionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBankConnections failed: " + status);
+			log.error("getBankConnections failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
-
-		System.out.println("Status: " + response.getStatus());
-		System.out.println(output);
 
 		try {
 			JSONObject jo = new JSONObject(output);
@@ -140,7 +138,7 @@ public class BankConnectionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBankConnection failed: " + status);
+			log.error("getBankConnection failed: " + status);
 			eh.printErrors();
 			return null;
 		}
@@ -173,7 +171,7 @@ public class BankConnectionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBankConnection failed: " + status);
+			log.error("getBankConnection failed: " + status);
 			// throw eh;
 		}
 
@@ -192,7 +190,6 @@ public class BankConnectionsService {
 			jo.put("bankingPin", bankingPin);
 			jo.put("storePin", true);
 			ret = jo.toString();
-			// System.out.println("JO: " + jo.toString(4));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -226,8 +223,6 @@ public class BankConnectionsService {
 			throw eh;
 		}
 
-		System.out.println(output);
-
 		try {
 			JSONObject jo = new JSONObject(output);
 			bc = new BankConnection(jo);
@@ -249,7 +244,6 @@ public class BankConnectionsService {
 				jo.put("bankingPin", bankingPin);
 			}
 			ret = jo.toString();
-			// System.out.println("JO: " + jo.toString(4));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

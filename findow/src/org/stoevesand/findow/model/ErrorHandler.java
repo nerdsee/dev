@@ -6,7 +6,10 @@ import java.util.Vector;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.provider.finapi.model.CallError;
+import org.stoevesand.findow.rest.RestAccounts;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonIgnoreProperties({ "stackTrace", "localizedMessage", "message", "cause", "suppressed" })
 @JsonRootName(value = "error")
 public class ErrorHandler extends Exception {
+
+	private Logger log = LoggerFactory.getLogger(ErrorHandler.class);
 
 	/**
 	 * 
@@ -65,7 +70,7 @@ public class ErrorHandler extends Exception {
 
 	public void printErrors() {
 		for (CallError error : errors) {
-			System.out.println(error);
+			log.error(error.toString());
 		}
 	}
 

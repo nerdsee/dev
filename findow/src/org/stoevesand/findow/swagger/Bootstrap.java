@@ -4,14 +4,21 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stoevesand.findow.provider.figo.FigoBankingAPI;
+
 import io.swagger.jaxrs.config.BeanConfig;
 
 public class Bootstrap extends HttpServlet {
+	
+	private Logger log = LoggerFactory.getLogger(Bootstrap.class);
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        System.out.println("Init Bootstrap for Swagger");
+        log.info("Init Bootstrap for Swagger");
         
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.1");

@@ -12,12 +12,16 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Transaction;
 import org.stoevesand.findow.model.TransactionList;
 import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 public class TransactionsService {
+
+	private static Logger log = LoggerFactory.getLogger(TransactionsService.class);
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/transactions";
 
@@ -70,7 +74,7 @@ public class TransactionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("searchTransactions failed: " + status);
+			log.error("searchTransactions failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}

@@ -10,11 +10,16 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.provider.figo.FigoTokenService;
 import org.stoevesand.findow.provider.finapi.model.FinapiUser;
 
 public class UsersService {
+
+	private static Logger log = LoggerFactory.getLogger(UsersService.class);
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/users";
 
@@ -34,7 +39,7 @@ public class UsersService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBankConnections failed: " + status);
+			log.error("getBankConnections failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
@@ -63,7 +68,7 @@ public class UsersService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("delete user failed: " + status);
+			log.error("delete user failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
@@ -86,7 +91,7 @@ public class UsersService {
 		int status = response.getStatus();
 		if (status != 201) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("createUser failed: " + status);
+			log.error("createUser failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
@@ -117,8 +122,7 @@ public class UsersService {
 			}
 
 			ret = jo.toString();
-			System.out.println("IDS: " + ret);
-			// System.out.println("JO: " + jo.toString(4));
+			log.info("IDS: " + ret);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

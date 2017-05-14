@@ -2,6 +2,8 @@ package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
@@ -9,6 +11,8 @@ import org.stoevesand.findow.provider.finapi.BankConnectionsService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class BankConnection {
+
+	private Logger log = LoggerFactory.getLogger(BankConnection.class);
 
 	private static final int MAXTRIES = 5;
 	int id = 0;
@@ -69,7 +73,7 @@ public class BankConnection {
 		int tries = 0;
 		while (!"READY".equals(updateStatus) && tries < MAXTRIES) {
 			tries++;
-			System.out.println("Retry: " + tries);
+			log.info("Retry: " + tries);
 			BankConnectionsService.getBankConnection(userToken, id, this);
 			try {
 				Thread.sleep(2000);

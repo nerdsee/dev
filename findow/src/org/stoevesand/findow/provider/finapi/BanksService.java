@@ -12,14 +12,19 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Bank;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.rest.RestBanks;
 
 public class BanksService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/banks";
+
+	private static Logger log = LoggerFactory.getLogger(BanksService.class);
 
 	public static List<Bank> searchBanks(Token clientToken, String search) {
 
@@ -38,7 +43,7 @@ public class BanksService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("searchBanks failed: " + status);
+			log.error("searchBanks failed: " + status);
 			eh.printErrors();
 			return null;
 		}
@@ -77,7 +82,7 @@ public class BanksService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("getBank failed: " + status);
+			log.error("getBank failed: " + status);
 			eh.printErrors();
 			return null;
 		}

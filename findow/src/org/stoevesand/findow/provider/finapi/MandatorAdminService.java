@@ -14,12 +14,16 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 import org.stoevesand.findow.provider.finapi.model.UserInfo;
 
 public class MandatorAdminService {
+
+	private static Logger log = LoggerFactory.getLogger(MandatorAdminService.class);
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/mandatorAdmin/getUserList";
 
@@ -41,7 +45,7 @@ public class MandatorAdminService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("searchBanks failed: " + status);
+			log.error("searchBanks failed: " + status);
 			eh.printErrors();
 			return null;
 		}
@@ -98,8 +102,7 @@ public class MandatorAdminService {
 			ids.put(id);
 			jo.put("userIds", ids);
 			ret = jo.toString();
-			System.out.println("IDS: " + ret);
-			// System.out.println("JO: " + jo.toString(4));
+			log.info("IDS: " + ret);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

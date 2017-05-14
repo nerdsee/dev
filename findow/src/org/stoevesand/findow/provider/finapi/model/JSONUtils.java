@@ -19,7 +19,6 @@ public class JSONUtils {
 		try {
 			ret = jo.getJSONObject(key);
 		} catch (JSONException e) {
-			// System.out.println("Cannot read from JSON: " + key);
 		}
 		return ret;
 	}
@@ -29,7 +28,6 @@ public class JSONUtils {
 		try {
 			ret = jo.getDouble(key);
 		} catch (JSONException e) {
-			// System.out.println("Cannot read from JSON: " + key);
 		}
 		return ret;
 	}
@@ -39,7 +37,6 @@ public class JSONUtils {
 		try {
 			ret = jo.getInt(key);
 		} catch (JSONException e) {
-			// System.out.println("Cannot read from JSON: " + key);
 		}
 		return ret;
 	}
@@ -49,7 +46,6 @@ public class JSONUtils {
 		try {
 			ret = jo.getString(key);
 		} catch (JSONException e) {
-			// System.out.println("Cannot read from JSON: " + key);
 		}
 		return ret;
 	}
@@ -59,7 +55,6 @@ public class JSONUtils {
 		try {
 			ret = jo.getLong(key);
 		} catch (JSONException e) {
-			// System.out.println("Cannot read from JSON: " + key);
 		}
 		return ret;
 	}

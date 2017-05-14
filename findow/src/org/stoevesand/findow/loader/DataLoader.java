@@ -37,6 +37,7 @@ public class DataLoader {
 			for (Transaction tx : transactions.getTransactions()) {
 				Transaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
 				if (knownTx == null) {
+					tx.lookForHints();
 					newTransactions.add(tx);
 				}
 			}

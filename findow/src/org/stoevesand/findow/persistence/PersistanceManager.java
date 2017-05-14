@@ -8,6 +8,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stoevesand.findow.hint.RegexHint;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.Category;
 import org.stoevesand.findow.model.CategorySum;
@@ -19,6 +22,8 @@ public class PersistanceManager {
 	private EntityManagerFactory entityManagerFactory;
 
 	private static PersistanceManager _instance = null;
+
+	private Logger log = LoggerFactory.getLogger(PersistanceManager.class);
 
 	// @PersistenceContext(unitName = "org.stoevesand.finapi.persistence")
 	// EntityManager entityManager;
@@ -55,7 +60,6 @@ public class PersistanceManager {
 		entityManager.getTransaction().begin();
 
 		for (Account t : accountList) {
-			System.out.println(t);
 			persist(entityManager, t);
 		}
 
@@ -244,7 +248,7 @@ public class PersistanceManager {
 
 		// DEBUG
 		for (User user : users) {
-			System.out.println("User: " + user.getClass() + " " + user);
+			log.info("User: " + user.getClass() + " " + user);
 		}
 
 		// em.getTransaction().commit();
@@ -284,6 +288,18 @@ public class PersistanceManager {
 		entityManager.close();
 
 		return accounts;
+	}
+
+	public List<RegexHint> getRegexHints() {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<RegexHint> hints = entityManager.createQuery("select a from RegexHint a", RegexHint.class).getResultList();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return hints;
 	}
 
 	public Account getAccount(User user, long accountId, String userToken) {

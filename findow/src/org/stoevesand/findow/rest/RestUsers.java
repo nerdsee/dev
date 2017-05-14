@@ -56,8 +56,8 @@ public class RestUsers {
 		// Neue User mit einem gültigen Token werden neu angelegt
 		if (user == null) {
 			user = createNewUser(jwsUser);
-		} 
-		
+		}
+
 		if (user != null) {
 
 			try {
@@ -93,7 +93,8 @@ public class RestUsers {
 	}
 
 	/**
-	 * Auslagerung der Funktion einen neuen User anzulegen. Wird an zwei Stellen benötigt.
+	 * Auslagerung der Funktion einen neuen User anzulegen. Wird an zwei Stellen
+	 * benötigt.
 	 * 
 	 * @param id
 	 * @return
@@ -126,7 +127,7 @@ public class RestUsers {
 
 			PersistanceManager.getInstance().deleteUserByName(id);
 		} catch (ErrorHandler e) {
-			System.out.println(e);
+			log.error(e.toString());
 			return e.getResponse();
 		}
 		return RestUtils.generateJsonResponse(FindowResponse.OK);

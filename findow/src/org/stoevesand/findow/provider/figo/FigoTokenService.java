@@ -13,8 +13,11 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.rest.RestAccounts;
 
 import me.figo.FigoConnection;
 import me.figo.FigoException;
@@ -22,11 +25,12 @@ import me.figo.internal.TokenResponse;
 
 public class FigoTokenService {
 
+	private static Logger log = LoggerFactory.getLogger(FigoTokenService.class);
+
 	static final String POST_URL = "https://sandbox.finapi.io/oauth/token";
 	static final long VALIDITY_BUFFER_SECONDS = 200;
 
 	public static Token requestUserToken(Token clientToken, String username, String password) throws ErrorHandler {
-		//System.out.println("Request User Token.");
 
 		Token user_token = null;
 		
@@ -60,7 +64,7 @@ public class FigoTokenService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("requestUserToken failed: " + status);
+			log.error("requestUserToken failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
@@ -77,8 +81,6 @@ public class FigoTokenService {
 	}
 
 	public static Token requestClientToken(String client_id, String client_secret) throws ErrorHandler {
-		//System.out.println("Request Token.");
-
 		Token client_token = null;
 
 		Client client = ClientBuilder.newClient();
@@ -98,7 +100,7 @@ public class FigoTokenService {
 		int status = response.getStatus();
 		if (status != 200) {
 			ErrorHandler eh = new ErrorHandler(output);
-			System.out.println("requestClientToken failed: " + status);
+			log.error("requestClientToken failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}

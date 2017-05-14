@@ -4,7 +4,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,6 +23,8 @@ import javax.persistence.Transient;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
+import org.stoevesand.findow.hint.Hint;
+import org.stoevesand.findow.hint.HintEngine;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,6 +61,17 @@ public class Transaction {
 	private Category category;
 
 	private String type;
+
+	private List<Hint> hints;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction", fetch = FetchType.EAGER, orphanRemoval = true)
+	public List<Hint> getHints() {
+		return hints;
+	}
+
+	public void setHints(List<Hint> hints) {
+		this.hints = hints;
+	}
 
 	public Transaction() {
 		purpose = "-";
@@ -192,6 +208,13 @@ public class Transaction {
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public void lookForHints() {
+		List<Hint> hints = HintEngine.getInstance().search(this);
+		if (hints.size()>0) {
+			this.hints = hints;
+		}
 	}
 
 }

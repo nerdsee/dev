@@ -108,7 +108,6 @@ public class RestConnections {
 		} catch (ErrorHandler e) {
 			result = e.getResponse();
 		}
-		// System.out.println("BC: " + connection);
 		return result;
 	}
 

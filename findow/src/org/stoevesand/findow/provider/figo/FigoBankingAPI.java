@@ -2,6 +2,8 @@ package org.stoevesand.findow.provider.figo;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.TransactionList;
 import org.stoevesand.findow.model.User;
@@ -14,6 +16,8 @@ import me.figo.models.Transaction;
 
 public class FigoBankingAPI implements BankingAPI {
 
+	private Logger log = LoggerFactory.getLogger(FigoBankingAPI.class);
+	
 	@Override
 	public List<org.stoevesand.findow.model.Account> importAccount(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler {
 		return null;
@@ -47,13 +51,13 @@ public class FigoBankingAPI implements BankingAPI {
 		try {
 		// print out a list of accounts including its balance
 		for (Account account : session.getAccounts()) {
-			System.out.println(account.getName());
-			System.out.println(session.getAccountBalance(account).getBalance());
+			log.info(account.getName());
+			log.info("Balance: " + session.getAccountBalance(account).getBalance());
 		}
 
 		// print out the list of all transactions on a specific account
 		for (Transaction transaction : session.getTransactions(session.getAccount("A1.2"))) {
-			System.out.println(transaction.getPurposeText());
+			log.info(transaction.getPurposeText());
 		}
 		} catch (Exception e) {
 			

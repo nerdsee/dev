@@ -17,14 +17,12 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.User;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.BankingAPI;
-import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;
@@ -171,7 +169,6 @@ public class RestAccounts {
 				result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 			}
 		}
-		// System.out.println("BC: " + connection);
 		return result;
 	}
 }

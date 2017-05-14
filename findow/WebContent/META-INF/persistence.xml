@@ -11,6 +11,8 @@
 		<class>org.stoevesand.findow.model.Account</class>
 		<class>org.stoevesand.findow.model.User</class>
 		<class>org.stoevesand.findow.model.CategorySum</class>
+		<class>org.stoevesand.findow.hint.Hint</class>
+		<class>org.stoevesand.findow.hint.RegexHint</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />

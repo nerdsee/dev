@@ -1,9 +1,13 @@
 package org.stoevesand.findow.provider.finapi;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.ErrorHandler;
 import org.stoevesand.findow.model.Token;
 
 public class TokenStore {
+
+	private Logger log = LoggerFactory.getLogger(TokenStore.class);
 
 	static final String client_id = "7fbb36a6-e886-41fc-9a0a-3ead413cddb8";
 	static final String client_secret = "3122d123-fdeb-498c-93c4-5eda3c10d396";
@@ -37,28 +41,28 @@ public class TokenStore {
 
 	public void validateClientToken() {
 		if ((clientToken == null) || (!clientToken.isValid())) {
-			System.out.println("Refresh Token.");
+			log.info("Refresh Token.");
 			try {
 				clientToken = FinapiTokenService.requestClientToken(client_id, client_secret);
 			} catch (ErrorHandler e) {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Token still valid.");
+			log.info("Token still valid.");
 		}
 
 	}
 
 	public void validateAdminToken() {
 		if (!adminToken.isValid()) {
-			System.out.println("Refresh AdminToken.");
+			log.info("Refresh AdminToken.");
 			try {
 				adminToken = FinapiTokenService.requestClientToken(admin_client_id, admin_client_secret);
 			} catch (ErrorHandler e) {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("AdminToken still valid.");
+			log.info("AdminToken still valid.");
 		}
 
 	}
