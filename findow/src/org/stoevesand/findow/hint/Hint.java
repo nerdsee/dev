@@ -25,8 +25,9 @@ public class Hint {
 		this.name = "";
 	}
 
-	public Hint(String name) {
+	public Hint(String name, Transaction transaction) {
 		this.name = name;
+		this.transaction=transaction;
 	}
 
 	public String getName() {

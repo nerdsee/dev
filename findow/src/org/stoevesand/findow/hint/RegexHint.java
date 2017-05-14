@@ -28,7 +28,7 @@ public class RegexHint implements HintAnalyzer {
 	public Hint search(Transaction transaction) {
 		Hint hint = null;
 		if (transaction.getPurpose().toUpperCase().matches(content)) {
-			hint = new Hint(name);
+			hint = new Hint(name, transaction);
 		}
 		;
 		return hint;
