@@ -20,13 +20,15 @@ public class Hint {
 	private String name;
 	private Transaction transaction;
 	private Long id;
+	private String link;
 
 	public Hint() {
 		this.name = "";
 	}
 
-	public Hint(String name, Transaction transaction) {
+	public Hint(String name, String link, Transaction transaction) {
 		this.name = name;
+		this.link = link;
 		this.transaction=transaction;
 	}
 
@@ -61,4 +63,13 @@ public class Hint {
 		this.transaction = transaction;
 	}
 
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	
 }

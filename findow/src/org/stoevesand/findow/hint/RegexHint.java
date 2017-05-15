@@ -16,6 +16,7 @@ public class RegexHint implements HintAnalyzer {
 	String name;
 	String type;
 	String content;
+	String link;
 	private Long id;
 
 	public RegexHint() {
@@ -29,12 +30,12 @@ public class RegexHint implements HintAnalyzer {
 
 		String purpose = transaction.getPurpose();
 		if ((purpose != null) && (purpose.toUpperCase().matches(content))) {
-			return new Hint(name, transaction);
+			return new Hint(name, link, transaction);
 		}
 
 		String cp = transaction.getCounterpartName();
 		if ((cp != null) && (cp.toUpperCase().matches(content))) {
-			return new Hint(name, transaction);
+			return new Hint(name, link, transaction);
 		}
 
 		return null;
@@ -74,6 +75,14 @@ public class RegexHint implements HintAnalyzer {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 }
