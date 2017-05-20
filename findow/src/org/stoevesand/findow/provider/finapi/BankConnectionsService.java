@@ -221,6 +221,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
+			log.error("Failed to update connection. Status:" + status);
 			ErrorHandler eh = new ErrorHandler(output);
 			throw eh;
 		}

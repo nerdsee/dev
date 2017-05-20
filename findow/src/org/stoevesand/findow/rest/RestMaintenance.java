@@ -45,7 +45,7 @@ public class RestMaintenance {
 		try {
 			User user = PersistanceManager.getInstance().getUserByName(id);
 			if (user != null) {
-
+				userToken = user.getToken();
 				List<BankConnection> conns = BankConnectionsService.getBankConnections(userToken);
 				for (BankConnection conn : conns) {
 					List<Account> accounts = AccountsService.searchAccounts(userToken, conn);

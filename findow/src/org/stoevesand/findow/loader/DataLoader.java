@@ -57,8 +57,13 @@ public class DataLoader {
 			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
 
 			int tries = 0;
+			// erst die Connection zum update auffordern
 			bankingAPI.reloadAccountContent(user, account);
+
+			// dann warten, bis der Account wieder ready (UPDATED) ist.
 			bankingAPI.refreshAccount(user, account);
+			
+			// Zustand des accounts speichern
 			PersistanceManager.getInstance().persist(account);
 			log.info("Account status is " + account.getStatus());
 			while (!"UPDATED".equals(account.getStatus()) && tries < MAXTRIES) {
@@ -74,7 +79,8 @@ public class DataLoader {
 			}
 			return "UPDATED".equals(account.getStatus()) || "UPDATED_FIXED".equals(account.getStatus());
 		} catch (ErrorHandler e) {
-			log.error("Failed to refresh account", e);
+			log.error("Failed to refresh account");
+			e.printErrors();
 		}
 		return false;
 	}
