@@ -29,25 +29,32 @@ public class DataLoader {
 		List<Transaction> newTransactions = new Vector<Transaction>();
 		TransactionList transactions = null;
 
+		int totalTx = 0;
+
 		if (ready) {
 
 			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
 			transactions = bankingAPI.searchTransactions(user, account, days);
 
-			for (Transaction tx : transactions.getTransactions()) {
-				Transaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
-				if (knownTx == null) {
-					tx.lookForHints();
-					newTransactions.add(tx);
+			if (transactions.getTransactions() != null) {
+				totalTx = transactions.getTransactions().size();
+				for (Transaction tx : transactions.getTransactions()) {
+					Transaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
+					if (knownTx == null) {
+						tx.lookForHints();
+						newTransactions.add(tx);
+					}
 				}
 			}
 		}
 
+		log.info("Transactions [new/total]: [" + newTransactions.size() + "/" + totalTx + "]");
+
 		if (newTransactions.size() > 0) {
-			log.info("account updated. New transactions: " + newTransactions.size());
+			log.info("account updated");
 			PersistanceManager.getInstance().storeTx(newTransactions);
 		} else {
-			log.info("account not updated. account ready [" + ready + "]");
+			log.info("No update. Account ready [" + ready + "]");
 		}
 
 	}
@@ -62,7 +69,7 @@ public class DataLoader {
 
 			// dann warten, bis der Account wieder ready (UPDATED) ist.
 			bankingAPI.refreshAccount(user, account);
-			
+
 			// Zustand des accounts speichern
 			PersistanceManager.getInstance().persist(account);
 			log.info("Account status is " + account.getStatus());
@@ -77,6 +84,7 @@ public class DataLoader {
 					e.printStackTrace();
 				}
 			}
+			log.info("New account status is " + account.getStatus() + " (" + tries + "/" + MAXTRIES + ")");
 			return "UPDATED".equals(account.getStatus()) || "UPDATED_FIXED".equals(account.getStatus());
 		} catch (ErrorHandler e) {
 			log.error("Failed to refresh account");
