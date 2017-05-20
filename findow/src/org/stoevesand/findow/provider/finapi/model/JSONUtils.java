@@ -64,8 +64,10 @@ public class JSONUtils {
 		String ds = null;
 		try {
 			ds = jo.getString(key);
-			DateFormat df = new SimpleDateFormat(dateFormat);
-			ret = df.parse(ds);
+			if (ds != null) {
+				DateFormat df = new SimpleDateFormat(dateFormat);
+				ret = df.parse(ds);
+			}
 		} catch (ParseException e) {
 			log.error("Failed to parse date: " + ds);
 		} catch (JSONException e) {

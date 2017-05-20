@@ -42,6 +42,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status == 201) {
+			log.error("Successfully imported account. Status:" + status);
 			try {
 				JSONObject jo = new JSONObject(output);
 				bc = new BankConnection(jo);
@@ -50,6 +51,7 @@ public class BankConnectionsService {
 			}
 			return bc;
 		} else {
+			log.error("Failed to import account. Status:" + status);
 			ErrorHandler eh = new ErrorHandler(status, output);
 			throw eh;
 		}
