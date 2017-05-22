@@ -11,6 +11,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.Account;
 import org.stoevesand.findow.model.CategorySum;
@@ -25,6 +27,8 @@ import io.swagger.annotations.Api;
 @Path("/transactions")
 @Api(value = "transactions")
 public class RestTransactions {
+
+	private Logger log = LoggerFactory.getLogger(RestTransactions.class);
 
 	@Context
 	private HttpServletResponse response;
@@ -49,7 +53,8 @@ public class RestTransactions {
 			Account account = user.getAccount(accountId);
 
 			if (account != null) {
-				// DataLoader.updateTransactions(userToken, account.getSourceId(), days);
+				// DataLoader.updateTransactions(userToken,
+				// account.getSourceId(), days);
 
 				List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
 
@@ -59,9 +64,12 @@ public class RestTransactions {
 				// "transactions");
 				result = RestUtils.generateJsonResponse(wrapper, null);
 			} else {
+				log.error("Failed to getTransactions. Account not found (id): " + accountId);
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			}
 		} catch (ErrorHandler e) {
+			log.error("Failed to getTransactions");
+			e.printErrors();
 			result = e.getResponse();
 		}
 		return result;

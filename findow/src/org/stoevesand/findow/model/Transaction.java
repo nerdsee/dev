@@ -110,7 +110,7 @@ public class Transaction {
 	public String getType() {
 		return type;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
@@ -126,9 +126,10 @@ public class Transaction {
 		return bookingDate;
 	}
 
-	@Column(name = "PURPOSE", columnDefinition="text")
+	@Column(name = "PURPOSE", columnDefinition = "text")
 	public String getPurpose() {
-		return purpose;
+		String p = purpose.replaceAll(" +", " "); 
+		return p.trim();
 	}
 
 	@Column(name = "COUNTERPART_NAME")
@@ -164,12 +165,15 @@ public class Transaction {
 			}
 
 			purpose = jo.getString("purpose");
+
+			purpose = purpose.replaceAll("[\\t\\n\\r]", "");
+
 			counterpartName = jo.getString("counterpartName");
 			type = jo.getString("type");
 
 			JSONObject jocat = jo.getJSONObject("category");
 			if (jocat != null) {
-				category = PersistanceManager.getInstance().getCategory( new Category(jocat));
+				category = PersistanceManager.getInstance().getCategory(new Category(jocat));
 			}
 
 		} catch (JSONException e) {
@@ -212,7 +216,7 @@ public class Transaction {
 
 	public void lookForHints() {
 		List<Hint> hints = HintEngine.getInstance().search(this);
-		if (hints.size()>0) {
+		if (hints.size() > 0) {
 			this.hints = hints;
 		}
 	}
