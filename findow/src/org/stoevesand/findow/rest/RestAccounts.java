@@ -2,7 +2,6 @@ package org.stoevesand.findow.rest;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
@@ -17,15 +16,16 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;
+import me.figo.FigoSession;
+import me.figo.models.Bank;
 
 @Path("/accounts")
 @Api(value = "accounts")
@@ -43,20 +43,19 @@ public class RestAccounts {
 	@GET
 	@Secured
 	@Produces("application/json")
-	public String getAccount(@PathParam("id") String id) {
+	public String getAccount(@PathParam("id") Long accountId) {
 		RestUtils.addHeader(response);
 		String result = "";
-		log.info("getAccount " + id);
+		log.info("getAccount " + accountId);
 
 		try {
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 			String userToken = user.getToken();
 
-			long accountId = Long.parseLong(id);
+			FinAccount account = PersistanceManager.getInstance().getAccount(user, accountId);
 
-			Account account = PersistanceManager.getInstance().getAccount(user, accountId, userToken);
 			result = RestUtils.generateJsonResponse(account, "account");
 		} catch (NumberFormatException nfe) {
 			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_ID);
@@ -77,25 +76,25 @@ public class RestAccounts {
 		try {
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
-			String userToken = user.getToken();
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
 			long accountId = Long.parseLong(id);
 
-			Account account = PersistanceManager.getInstance().getAccount(user, accountId, userToken);
+			FinAccount account = PersistanceManager.getInstance().getAccount(user, accountId);
 
 			if (account != null) {
-				BankingAPI bankingAPI = FindowSystem.getBankingAPI();
-				bankingAPI.deleteAccount(userToken, account);
-
-				PersistanceManager.getInstance().deleteAccount(user, accountId, userToken);
+				BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
+				if (bankingAPI.deleteAccount(user, account)) {
+					user.removeAccount(account);
+					user = PersistanceManager.getInstance().persist(user);
+				}
 
 				result = RestUtils.generateJsonResponse(FindowResponse.OK);
 			} else {
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			}
 
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			result = e.getResponse();
 		} catch (NumberFormatException nfe) {
 			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_ID);
@@ -115,10 +114,9 @@ public class RestAccounts {
 			// User laden
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
-			String userToken = user.getToken();
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			List<Account> accounts = PersistanceManager.getInstance().getAccounts(user, userToken);
+			List<FinAccount> accounts = PersistanceManager.getInstance().getAccounts(user);
 			result = RestUtils.generateJsonResponse(accounts, "accounts");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
@@ -140,23 +138,14 @@ public class RestAccounts {
 			// User laden
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
-			String userToken = user.getToken();
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
-			List<Account> accounts = bankingAPI.importAccount(userToken, bankId, bankingUserId, bankingPin);
-			List<Account> nas = new Vector<Account>();
+			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
+			bankingAPI.importAccount(user, bankId, bankingUserId, bankingPin);
 
-			user.addAccounts(accounts);
-			for (Account acc : accounts) {
-				Account na = PersistanceManager.getInstance().persist(acc);
-				nas.add(na);
-				JobManager.getInstance().addImportAccountJob(na);
-			}
+			result = RestUtils.generateJsonResponse(FindowResponse.OK);
 
-			result = RestUtils.generateJsonResponse(nas, "accounts");
-
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			if (e.hasCallError("ENTITY_EXISTS")) {
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ALREADY_EXISTS);
 			} else if (e.hasCallError("UNKNOWN_ENTITY")) {

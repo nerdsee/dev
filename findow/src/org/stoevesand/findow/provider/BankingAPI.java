@@ -2,28 +2,36 @@ package org.stoevesand.findow.provider;
 
 import java.util.List;
 
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.Bank;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.TransactionList;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinBank;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
+import org.stoevesand.findow.model.FinTransactionList;
+import org.stoevesand.findow.model.FinUser;
 
 public interface BankingAPI {
 
-	public List<Account> importAccount(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler;
+	public String importAccount(FinUser user, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler;
 
-	public ApiUser createUser(String username, String password) throws ErrorHandler;
+	public ApiUser createUser(String username, String password) throws FinErrorHandler;
 
-	public void deleteUser(String userToken) throws ErrorHandler;
+	public void deleteUser(String userToken) throws FinErrorHandler;
 
-	public List<Bank> searchBanks(String search);
+	public List<FinBank> searchBanks(String search);
 
-	public void deleteAccount(String userToken, Account account) throws ErrorHandler;
+	public boolean deleteAccount(FinUser user, FinAccount account) throws FinErrorHandler;
 
-	public TransactionList searchTransactions(User user, Account account, int days) throws ErrorHandler;
+	public FinTransactionList searchTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler;
 
-	public void refreshAccount(User user, Account account) throws ErrorHandler;
+	public void refreshAccount(FinUser user, FinAccount account) throws FinErrorHandler;
 
-	public void reloadAccountContent(User user, Account account) throws ErrorHandler;
+	public void reloadAccountContent(FinUser user, FinAccount account) throws FinErrorHandler;
 
+	public String getClientId();
+
+	public String getClientSecret();
+
+	FinToken requestUserToken(String username, String password) throws FinErrorHandler;
+
+	List<FinAccount> getAccounts(FinUser user) throws FinErrorHandler;
 }

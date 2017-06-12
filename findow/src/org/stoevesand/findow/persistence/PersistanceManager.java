@@ -11,12 +11,15 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.hint.RegexHint;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.Category;
-import org.stoevesand.findow.model.CategorySum;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Transaction;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinCategory;
+import org.stoevesand.findow.model.FinCategorySum;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinTask;
+import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinUser;
+import org.stoevesand.findow.provider.BankingAPI;
+import org.stoevesand.findow.server.FindowSystem;
 
 public class PersistanceManager {
 	private EntityManagerFactory entityManagerFactory;
@@ -41,12 +44,12 @@ public class PersistanceManager {
 		entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence");
 	}
 
-	public void storeTx(List<Transaction> transactionList) {
+	public void storeTx(List<FinTransaction> transactionList) {
 		// create a couple of events...
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		for (Transaction t : transactionList) {
+		for (FinTransaction t : transactionList) {
 			persist(entityManager, t);
 		}
 
@@ -54,12 +57,12 @@ public class PersistanceManager {
 		entityManager.close();
 	}
 
-	public void storeAccounts(List<Account> accountList) {
+	public void storeAccounts(List<FinAccount> accountList) {
 		// create a couple of events...
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		for (Account t : accountList) {
+		for (FinAccount t : accountList) {
 			persist(entityManager, t);
 		}
 
@@ -67,33 +70,33 @@ public class PersistanceManager {
 		entityManager.close();
 	}
 
-	public List<Transaction> getTx(User user, long accountId, int days) throws ErrorHandler {
+	public List<FinTransaction> getTx(FinUser user, Long accountId, int days) throws FinErrorHandler {
 
 		// create a couple of events...
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
 
-		List<Transaction> result = new Vector<Transaction>();
+		List<FinTransaction> result = new Vector<FinTransaction>();
 
-		if (accountId > 0) {
+		if (accountId != null) {
 			// TODO: wieder heil machen
-			Account account = user.getAccount(accountId);
+			FinAccount account = user.getAccount(accountId);
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<Transaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
 				result.addAll(subResult);
 			} else {
-				throw new ErrorHandler(500, "NO SUCH ACCOUNT");
+				throw new FinErrorHandler(500, "NO SUCH ACCOUNT");
 			}
 
 		} else {
 			// wenn keine accountId angegeben ist, dann werden die Tx von allen
 			// Accounts geladen
-			List<Account> accounts = em.createQuery("select a from Account a where user=:id", Account.class).setParameter("id", user).getResultList();
+			List<FinAccount> accounts = em.createQuery("select a from Account a where user=:id", FinAccount.class).setParameter("id", user).getResultList();
 			if (accounts != null) {
-				for (Account account : accounts) {
-					List<Transaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", Transaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+				for (FinAccount account : accounts) {
+					List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
 					result.addAll(subResult);
 				}
 			}
@@ -105,30 +108,47 @@ public class PersistanceManager {
 		return result;
 	}
 
-	public User getUserByName(String id) {
-		User ret = null;
+	public List<FinTransaction> getTx() throws FinErrorHandler {
+
+		// create a couple of events...
+		EntityManager em = entityManagerFactory.createEntityManager();
+		em.getTransaction().begin();
+
+		List<FinTransaction> result = new Vector<FinTransaction>();
+
+		List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.category!=null", FinTransaction.class).getResultList();
+		result.addAll(subResult);
+
+		em.getTransaction().commit();
+		em.close();
+
+		return result;
+	}
+
+	public FinUser getUserByName(String id) {
+		FinUser ret = null;
 		// create a couple of events...
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		List<User> result = entityManager.createQuery("select t from User t where t.name = :username", User.class).setParameter("username", id).getResultList();
+		List<FinUser> result = entityManager.createQuery("select t from User t where t.name = :username", FinUser.class).setParameter("username", id).getResultList();
 		if (result.size() > 0) {
-			ret = (User) result.get(0);
+			ret = (FinUser) result.get(0);
 		}
-		
+
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		
+
 		return ret;
 	}
 
-	public User getUserByExternalName(String id) {
-		User ret = null;
+	public FinUser getUserByExternalName(String id) {
+		FinUser ret = null;
 		// create a couple of events...
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		List<User> result = entityManager.createQuery("select t from User t where t.backendName = :username", User.class).setParameter("username", id).getResultList();
+		List<FinUser> result = entityManager.createQuery("select t from User t where t.backendName = :username", FinUser.class).setParameter("username", id).getResultList();
 		if (result.size() > 0) {
-			ret = (User) result.get(0);
+			ret = (FinUser) result.get(0);
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -165,15 +185,15 @@ public class PersistanceManager {
 		return entity;
 	}
 
-	public Transaction getTxByExternalId(Long sourceId) {
-		Transaction ret = null;
+	public FinTransaction getTxByExternalId(String sourceId) {
+		FinTransaction ret = null;
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<Transaction> result = entityManager.createQuery("select t from Transaction t where t.sourceId=:sourceid").setParameter("sourceid", sourceId).getResultList();
+		List<FinTransaction> result = entityManager.createQuery("select t from Transaction t where t.sourceId=:sourceid").setParameter("sourceid", sourceId).getResultList();
 		if (result.size() > 0) {
-			ret = (Transaction) result.get(0);
+			ret = (FinTransaction) result.get(0);
 		}
 
 		entityManager.getTransaction().commit();
@@ -182,12 +202,12 @@ public class PersistanceManager {
 		return ret;
 	}
 
-	public Category getCategory(Category category) {
+	public FinCategory getCategory(FinCategory category) {
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		Category ret = entityManager.find(Category.class, category.getId());
+		FinCategory ret = entityManager.find(FinCategory.class, category.getId());
 
 		if (ret == null) {
 			entityManager.persist(category);
@@ -200,12 +220,12 @@ public class PersistanceManager {
 		return ret;
 	}
 
-	public Category getCategory(long categoryId) {
+	public FinUser getUser(long userId) {
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		Category ret = entityManager.find(Category.class, categoryId);
+		FinUser ret = entityManager.find(FinUser.class, userId);
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -213,41 +233,54 @@ public class PersistanceManager {
 		return ret;
 	}
 
-	public List<CategorySum> getCategorySummary(User user, long accountId) {
+	public FinCategory getCategory(long categoryId) {
+
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		FinCategory ret = entityManager.find(FinCategory.class, categoryId);
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return ret;
+	}
+
+	public List<FinCategorySum> getCategorySummary(FinUser user, Long accountId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
-		Account account = user.getAccount(accountId);
+		FinAccount account = user.getAccount(accountId);
 
-		Query q = entityManager.createNativeQuery("select coalesce(category_id,0) as category_id, count(*) as count, sum(amount) as sum from transactions t where t.account_id=:aid group by t.category_id", CategorySum.class).setParameter("aid", account.getSourceId());
-		List<CategorySum> catsum = q.getResultList();
+		Query q = entityManager.createNativeQuery("select coalesce(category_id,0) as category_id, count(*) as count, sum(amount) as sum from transactions t where t.account_id=:aid group by t.category_id", FinCategorySum.class).setParameter("aid", account.getSourceId());
+		List<FinCategorySum> catsum = q.getResultList();
 
 		entityManager.close();
 		return catsum;
 	}
 
 	public void deleteUserByName(String id) {
-		User ret = null;
+		FinUser ret = null;
 		// create a couple of events...
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
-		List<User> result = em.createQuery("select t from User t where t.name = :username", User.class).setParameter("username", id).getResultList();
+		List<FinUser> result = em.createQuery("select t from User t where t.name = :username", FinUser.class).setParameter("username", id).getResultList();
 		if (result.size() > 0) {
-			ret = (User) result.get(0);
+			ret = (FinUser) result.get(0);
 		}
 		em.remove(ret);
 		em.getTransaction().commit();
 		em.close();
 	}
 
-	public List<User> getUsers() {
+	public List<FinUser> getUsers() {
 
 		EntityManager em = entityManagerFactory.createEntityManager();
 		// em.getTransaction().begin();
 
-		List<User> users = em.createQuery("select u from User u", User.class).getResultList();
+		List<FinUser> users = em.createQuery("select u from User u", FinUser.class).getResultList();
 
 		// DEBUG
-		for (User user : users) {
+		for (FinUser user : users) {
 			log.info("User: " + user.getClass() + " " + user);
 		}
 
@@ -257,11 +290,11 @@ public class PersistanceManager {
 		return users;
 	}
 
-	public List<Account> getRefreshableAccounts() {
+	public List<FinAccount> getAllAccounts() {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<Account> accounts = entityManager.createQuery("select a from Account a", Account.class).getResultList();
+		List<FinAccount> accounts = entityManager.createQuery("select a from Account a", FinAccount.class).getResultList();
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -269,20 +302,26 @@ public class PersistanceManager {
 		return accounts;
 	}
 
-	public List<Account> getAccounts(User user, String userToken) {
+	public List<FinAccount> getAccounts(FinUser user) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<Account> accounts = entityManager.createQuery("select a from Account a where a.user=:user", Account.class).setParameter("user", user).getResultList();
+		List<FinAccount> accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
 
-		for (Account account : accounts) {
-			int ret = account.refresh(userToken);
-			if (ret == 404) {
-				entityManager.remove(account);
-			} else {
+		for (FinAccount account : accounts) {
+			BankingAPI api = FindowSystem.getBankingAPI(user);
+			try {
+				api.refreshAccount(user, account);
 				entityManager.persist(account);
+			} catch (FinErrorHandler e) {
+				log.error("Failed to refresh account. Removed account: " + account.getId());
+				user.removeAccount(account);
+				persist(entityManager, user);
 			}
 		}
+
+		// am ende nochmal neu laden, damit alle neue und entfernten Accounts richtig sind.
+		accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -302,14 +341,47 @@ public class PersistanceManager {
 		return hints;
 	}
 
-	public Account getAccount(User user, long accountId, String userToken) {
+	public FinAccount getAccountByExternalId(FinUser user, String accountId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		Account retAccount = null;
+		FinAccount retAccount = null;
 
-		Account account = entityManager.find(Account.class, accountId);
+		List<FinAccount> result = entityManager.createQuery("select t from Account t where t.sourceId = :sid", FinAccount.class).setParameter("sid", accountId).getResultList();
+
+		if (result.size() > 0) {
+
+			if (result.size() > 1) {
+				log.error("Multiple accounts with identical external id.");
+			}
+
+			retAccount = result.get(0);
+
+		} else {
+			log.info("No account with external id " + accountId);
+		}
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return retAccount;
+	}
+
+	public FinAccount getAccount(FinUser user, Long accountId) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		FinAccount retAccount = null;
+
+		FinAccount account = entityManager.find(FinAccount.class, accountId);
 		if (account != null) {
-			int ret = account.refresh(userToken);
+
+			try {
+				BankingAPI api = FindowSystem.getBankingAPI(user);
+				api.refreshAccount(user, account);
+			} catch (FinErrorHandler e) {
+				e.printStackTrace();
+			}
+
+			int ret = 0;
+
 			if (ret == 404) {
 				user.removeAccount(account);
 				remove(entityManager, account);
@@ -326,7 +398,7 @@ public class PersistanceManager {
 		return retAccount;
 	}
 
-	public void deleteAccount(User user, long accountId, String userToken) throws ErrorHandler {
+	public void deleteAccount(FinUser user, Long accountId) throws FinErrorHandler {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
@@ -337,13 +409,13 @@ public class PersistanceManager {
 		entityManager.close();
 	}
 
-	public void deleteAccounts(User user, int connectionId) {
+	public void deleteAccounts(FinUser user, int connectionId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<Account> accounts = entityManager.createQuery("select a from Account a where a.bankConnectionId=:bcid", Account.class).setParameter("bcid", connectionId).getResultList();
+		List<FinAccount> accounts = entityManager.createQuery("select a from Account a where a.bankConnectionId=:bcid", FinAccount.class).setParameter("bcid", connectionId).getResultList();
 
-		for (Account account : accounts) {
+		for (FinAccount account : accounts) {
 			user.removeAccount(account);
 		}
 		persist(entityManager, user);
@@ -352,11 +424,11 @@ public class PersistanceManager {
 		entityManager.close();
 	}
 
-	public void checkAccount(User user, Account account) {
+	public void checkAccount(FinUser user, FinAccount account) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<Account> accounts = entityManager.createQuery("select a from Account a where a.sourceId=:sid", Account.class).setParameter("sid", account.getSourceId()).getResultList();
+		List<FinAccount> accounts = entityManager.createQuery("select a from Account a where a.sourceId=:sid", FinAccount.class).setParameter("sid", account.getSourceId()).getResultList();
 
 		if (accounts.isEmpty()) {
 			account.setUser(user);
@@ -367,13 +439,13 @@ public class PersistanceManager {
 
 	}
 
-	public void checkAccounts(User user, List<Account> accounts) {
+	public void checkAccounts(FinUser user, List<FinAccount> accounts) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		for (Account account : accounts) {
+		for (FinAccount account : accounts) {
 
-			List<Account> accs = entityManager.createQuery("select a from Account a where a.sourceId=:sid", Account.class).setParameter("sid", account.getSourceId()).getResultList();
+			List<FinAccount> accs = entityManager.createQuery("select a from Account a where a.sourceId=:sid", FinAccount.class).setParameter("sid", account.getSourceId()).getResultList();
 
 			if (accs.isEmpty()) {
 				user.addAccount(account);
@@ -384,4 +456,17 @@ public class PersistanceManager {
 		entityManager.close();
 
 	}
+
+	public List<FinTask> getActiveTasks() {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<FinTask> accounts = entityManager.createQuery("select a from Task a where a.active", FinTask.class).getResultList();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return accounts;
+	}
+
 }

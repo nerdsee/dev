@@ -7,10 +7,10 @@ import javax.persistence.Entity;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 @Entity
-public class TransactionWrapper {
+public class FinTransactionWrapper {
 
 	@JsonGetter
-	public List<Transaction> getTransactions() {
+	public List<FinTransaction> getTransactions() {
 		return transactions;
 	}
 
@@ -26,28 +26,27 @@ public class TransactionWrapper {
 
 	@JsonGetter
 	public double getTxSum() {
-		return txSum;
+		return (double) txSum / 100;
 	}
 
-	private List<Transaction> transactions;
+	private List<FinTransaction> transactions;
 	private double balanceAfter = 0;
 	private double balanceBefore = 0;
-	private double txSum = 0;
+	private long txSum = 0;
 
-	public TransactionWrapper(List<Transaction> transactions, Account account) {
+	public FinTransactionWrapper(List<FinTransaction> transactions, FinAccount account) {
 		this.transactions = transactions;
 		sumTransactions(transactions);
-		balanceAfter = account.getBalance();
+		balanceAfter = (double) account.getBalanceCent() / 100;
 		balanceBefore = balanceAfter - txSum;
 	}
 
-	private void sumTransactions(List<Transaction> transactions) {
-		long sum = 0;
-		for (Transaction tx : transactions) {
-			long amount = Math.round(tx.getAmount() * 100);
-			sum += amount;
+	private void sumTransactions(List<FinTransaction> transactions) {
+		txSum = 0;
+		for (FinTransaction tx : transactions) {
+			long amount = tx.getAmountCent();
+			txSum += amount;
 		}
-		txSum = (double)sum / 100;
 	}
 
 }

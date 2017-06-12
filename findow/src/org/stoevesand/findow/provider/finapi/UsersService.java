@@ -12,8 +12,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.figo.FigoTokenService;
 import org.stoevesand.findow.provider.finapi.model.FinapiUser;
 
@@ -23,7 +23,7 @@ public class UsersService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/users";
 
-	public static FinapiUser getUser(String userToken) throws ErrorHandler {
+	public static FinapiUser getUser(String userToken) throws FinErrorHandler {
 
 		FinapiUser user = null;
 
@@ -38,7 +38,7 @@ public class UsersService {
 		
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBankConnections failed: " + status);
 			eh.printErrors();
 			throw eh;
@@ -55,7 +55,7 @@ public class UsersService {
 
 	}
 
-	public static void deleteUser(String userToken) throws ErrorHandler {
+	public static void deleteUser(String userToken) throws FinErrorHandler {
 		Client client = ClientBuilder.newClient();
 
 		WebTarget webTarget = client.target(URL);
@@ -67,14 +67,14 @@ public class UsersService {
 		
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("delete user failed: " + status);
 			eh.printErrors();
 			throw eh;
 		}
 	}
 
-	public static FinapiUser createUser(Token clientToken, String id, String password) throws ErrorHandler {
+	public static FinapiUser createUser(FinToken clientToken, String id, String password) throws FinErrorHandler {
 		FinapiUser user = null;
 
 		Client client = ClientBuilder.newClient();
@@ -90,7 +90,7 @@ public class UsersService {
 
 		int status = response.getStatus();
 		if (status != 201) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("createUser failed: " + status);
 			eh.printErrors();
 			throw eh;

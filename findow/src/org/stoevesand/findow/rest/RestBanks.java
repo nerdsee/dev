@@ -14,7 +14,9 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.Bank;
+import org.stoevesand.findow.model.FinBank;
+import org.stoevesand.findow.model.FinUser;
+import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
 
@@ -39,14 +41,15 @@ public class RestBanks {
 	public String getBank(@PathParam("search") String search) {
 
 		Principal principal = securityContext.getUserPrincipal();
-		String username = principal.getName();
+		String jwsUser = principal.getName();
+		FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-		log.info("getBank: " + search + " (for user " + username + ")");
+		log.info("getBank: " + search + " (for user " + jwsUser + ")");
 		JobManager.getInstance();
 		RestUtils.addHeader(response);
 		// BankingAPI api = FindowSystem.getBankingAPI("FIGO");
-		BankingAPI api = FindowSystem.getBankingAPI("FINAPI");
-		List<Bank> banks = api.searchBanks(search);
+		BankingAPI api = FindowSystem.getBankingAPI(user);
+		List<FinBank> banks = api.searchBanks(search);
 		String result = RestUtils.generateJsonResponse(banks, "banks");
 		return result;
 	}

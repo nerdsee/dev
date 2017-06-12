@@ -29,9 +29,9 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+@Entity(name = "Transaction")
 @Table(name = "TRANSACTIONS")
-public class Transaction {
+public class FinTransaction {
 
 	JSONObject jo = null;
 
@@ -39,12 +39,12 @@ public class Transaction {
 	private Long id;
 
 	// id coming from a source system
-	private Long sourceId;
+	private String sourceId;
 	private String sourceSystem = "FINAPI";
 
 	private transient int parentId;
-	private Long accountId;
-	private double amount;
+	private String accountId;
+	private long amount;
 	private transient String valueDate;
 	private Date bookingDate;
 	private String purpose;
@@ -58,7 +58,7 @@ public class Transaction {
 		this.counterpartName = counterpartName;
 	}
 
-	private Category category;
+	private FinCategory category;
 
 	private String type;
 
@@ -73,14 +73,19 @@ public class Transaction {
 		this.hints = hints;
 	}
 
-	public Transaction() {
+	public FinTransaction() {
 		purpose = "-";
 		counterpartName = "-";
 	}
 
-	@Column(name = "AMOUNT")
-	public double getAmount() {
+	@Column(name = "AMOUNT_CENT")
+	public long getAmountCent() {
 		return amount;
+	}
+
+	@Transient
+	public double getAmount() {
+		return (double) amount / 100;
 	}
 
 	@Id
@@ -102,7 +107,7 @@ public class Transaction {
 
 	@Column(name = "ACCOUNT_ID")
 	@JsonIgnore
-	public Long getAccountId() {
+	public String getAccountId() {
 		return accountId;
 	}
 
@@ -128,8 +133,11 @@ public class Transaction {
 
 	@Column(name = "PURPOSE", columnDefinition = "text")
 	public String getPurpose() {
-		String p = purpose.replaceAll(" +", " "); 
-		return p.trim();
+		String p = purpose;
+		if (purpose != null) {
+			p = purpose.replaceAll(" +", " ").trim();
+		}
+		return p;
 	}
 
 	@Column(name = "COUNTERPART_NAME")
@@ -139,21 +147,21 @@ public class Transaction {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "CATEGORY_ID", nullable = true)
-	public Category getCategory() {
+	public FinCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(FinCategory category) {
 		this.category = category;
 	}
 
-	public Transaction(JSONObject jo) {
+	public FinTransaction(JSONObject jo) {
 		this.jo = jo;
 		try {
-			sourceId = jo.getLong("id");
+			sourceId = jo.getString("id");
 			// parentId = jo.getInt("parentId");
-			accountId = jo.getLong("accountId");
-			amount = jo.getDouble("amount");
+			accountId = jo.getString("accountId");
+			amount = (long) (jo.getDouble("amount") * 100);
 			valueDate = jo.getString("valueDate");
 
 			String bookingDateText = jo.getString("finapiBookingDate");
@@ -173,14 +181,24 @@ public class Transaction {
 
 			JSONObject jocat = jo.getJSONObject("category");
 			if (jocat != null) {
-				category = PersistanceManager.getInstance().getCategory(new Category(jocat));
+				category = PersistanceManager.getInstance().getCategory(new FinCategory(jocat));
 			}
 
 		} catch (JSONException e) {
 		}
 	}
 
-	public void setAmount(double amount) {
+	public FinTransaction(me.figo.models.Transaction tx) {
+		accountId = tx.getAccountId();
+		amount = (long) (tx.getAmount().doubleValue() * 100);
+		bookingDate = tx.getBookingDate();
+		type = tx.getBookingText();
+		purpose = tx.getPurposeText();
+		counterpartName = tx.getName();
+		sourceId = tx.getTransactionId();
+	}
+
+	public void setAmountCent(long amount) {
 		this.amount = amount;
 	}
 
@@ -194,11 +212,11 @@ public class Transaction {
 	}
 
 	@Column(name = "SOURCE_ID")
-	public Long getSourceId() {
+	public String getSourceId() {
 		return sourceId;
 	}
 
-	public void setSourceId(Long sourceid) {
+	public void setSourceId(String sourceid) {
 		this.sourceId = sourceid;
 	}
 
@@ -210,7 +228,7 @@ public class Transaction {
 		this.sourceSystem = sourceSystem;
 	}
 
-	public void setAccountId(Long accountId) {
+	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
 

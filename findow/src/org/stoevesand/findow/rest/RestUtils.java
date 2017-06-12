@@ -3,7 +3,7 @@ package org.stoevesand.findow.rest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.TokenStore;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,11 +12,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class RestUtils {
 
-	public static Token getClientToken() {
+	public static FinToken getClientToken() {
 		return TokenStore.getInstance().getClientToken();
 	}
 
-	public static Token getAdminToken() {
+	public static FinToken getAdminToken() {
 		return TokenStore.getInstance().getAdminToken();
 	}
 

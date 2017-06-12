@@ -17,8 +17,8 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.server.FindowSystem;
@@ -51,7 +51,7 @@ public class RestUsers {
 
 		Principal principal = securityContext.getUserPrincipal();
 		String jwsUser = principal.getName();
-		User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+		FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
 		// Neue User mit einem gültigen Token werden neu angelegt
 		if (user == null) {
@@ -59,14 +59,7 @@ public class RestUsers {
 		}
 
 		if (user != null) {
-
-			try {
-				user.refreshToken();
-				result = RestUtils.generateJsonResponse(user, "user");
-			} catch (ErrorHandler e) {
-				result = e.getResponse();
-			}
-
+			result = RestUtils.generateJsonResponse(user, "user");
 		} else {
 			result = RestUtils.generateJsonResponse(FindowResponse.INVALID_JWT);
 		}
@@ -80,7 +73,7 @@ public class RestUsers {
 	public String createUser(@PathParam("id") String id, @HeaderParam("password") String password) {
 		RestUtils.addHeader(response);
 		String result = "";
-		User user = PersistanceManager.getInstance().getUserByName(id);
+		FinUser user = PersistanceManager.getInstance().getUserByName(id);
 
 		if (user == null) {
 			user = createNewUser(id);
@@ -99,13 +92,13 @@ public class RestUsers {
 	 * @param id
 	 * @return
 	 */
-	private User createNewUser(String id) {
-		User user = null;
+	private FinUser createNewUser(String id) {
+		FinUser user = null;
 		try {
-			ApiUser apiUser = FindowSystem.getBankingAPI().createUser(null, null);
-			user = new User(id, apiUser.getId(), apiUser.getPassword());
-			PersistanceManager.getInstance().store(user);
-		} catch (ErrorHandler e) {
+			ApiUser apiUser = FindowSystem.getBankingAPI("FIGO").createUser(id, id);
+			user = new FinUser(id, apiUser.getId(), apiUser.getPassword(), "FIGO");
+			user = PersistanceManager.getInstance().persist(user);
+		} catch (FinErrorHandler e) {
 			log.error("Failed to create user: " + id);
 			log.error("Reason: " + e.getMessage());
 		}
@@ -118,15 +111,15 @@ public class RestUsers {
 	public String deleteUser(@PathParam("id") String id, @HeaderParam("userToken") String userToken) {
 		RestUtils.addHeader(response);
 		try {
-			User user = PersistanceManager.getInstance().getUserByName(id);
+			FinUser user = PersistanceManager.getInstance().getUserByName(id);
 			if (user != null) {
-				FindowSystem.getBankingAPI().deleteUser(userToken);
+				FindowSystem.getBankingAPI(user).deleteUser(userToken);
 			} else {
 				return RestUtils.generateJsonResponse(FindowResponse.USER_UNKNOWN);
 			}
 
 			PersistanceManager.getInstance().deleteUserByName(id);
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			log.error(e.toString());
 			return e.getResponse();
 		}
@@ -139,7 +132,7 @@ public class RestUsers {
 	@ApiOperation(value = "Get UserInfos of all available users.")
 	public String getUserInfos() {
 		RestUtils.addHeader(response);
-		List<User> userInfos = PersistanceManager.getInstance().getUsers();
+		List<FinUser> userInfos = PersistanceManager.getInstance().getUsers();
 		// MandatorAdminService.getUsers(RestUtils.getAdminToken());
 
 		String result = RestUtils.generateJsonResponse(userInfos, "users");

@@ -10,21 +10,21 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+@Entity(name = "Category")
 @Table(name = "CATEGORIES")
-public class Category {
+public class FinCategory {
 
 	private Long id;
 	private String name;
 	private transient String parentName;
 
-	public Category() {
+	public FinCategory() {
 		id = null;
 		name = "NONE";
 		parentName = "NO PARENT";
 	}
 
-	public Category(JSONObject jo) {
+	public FinCategory(JSONObject jo) {
 		// this.jo = jo;
 		try {
 			id = jo.getLong("id");
@@ -35,7 +35,7 @@ public class Category {
 		}
 	}
 
-	public Category(String name, String parentName) {
+	public FinCategory(String name, String parentName) {
 		id = null;
 		this.name = name;
 		this.parentName = parentName;

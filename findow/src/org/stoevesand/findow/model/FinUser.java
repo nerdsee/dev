@@ -15,16 +15,19 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.stoevesand.findow.provider.ApiUser;
+import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.provider.figo.FigoTokenService;
 import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 import org.stoevesand.findow.rest.RestUtils;
+import org.stoevesand.findow.server.FindowSystem;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+@Entity(name = "User")
 @Table(name = "USERS")
-public class User {
+public class FinUser {
 
 	// internal id used for persistance
 	private Long id;
@@ -33,8 +36,8 @@ public class User {
 	private String backendSecret = "";
 	private String api = "";
 
-	private transient Token token = null;
-	private List<Account> accounts;
+	private transient FinToken token = null;
+	private List<FinAccount> accounts;
 
 	@Column(name = "NAME")
 	@JsonGetter
@@ -66,13 +69,14 @@ public class User {
 		this.backendSecret = backendSecret;
 	}
 
-	public User() {
+	public FinUser() {
 	}
 
-	public User(String name, String backendName, String backendSecret) {
+	public FinUser(String name, String backendName, String backendSecret, String api) {
 		this.name = name;
 		this.backendName = backendName;
 		this.backendSecret = backendSecret;
+		this.api = api;
 	}
 
 	@Id
@@ -88,21 +92,23 @@ public class User {
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true) //
-	public List<Account> getAccounts() {
+	public List<FinAccount> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(List<Account> a) {
+	public void setAccounts(List<FinAccount> a) {
 		this.accounts = a;
 	}
 
 	@Transient
-	@JsonGetter
+	@JsonIgnore
 	public String getToken() {
 		if ((token == null) || (!token.isValid())) {
 			try {
-				token = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), backendName, backendSecret);
-			} catch (ErrorHandler e) {
+				BankingAPI bankingAPI = FindowSystem.getBankingAPI(this);
+
+				token = bankingAPI.requestUserToken(backendName, backendSecret);
+			} catch (FinErrorHandler e) {
 				token = null;
 				e.printStackTrace();
 			}
@@ -110,7 +116,7 @@ public class User {
 		return token.getToken();
 	}
 
-	public void setToken(Token token) {
+	public void setToken(FinToken token) {
 		this.token = token;
 	}
 
@@ -122,10 +128,10 @@ public class User {
 		this.api = api;
 	}
 
-	public Account getAccount(long accountId) {
+	public FinAccount getAccount(Long accountId) {
 
-		for (Account acc : accounts) {
-			if (acc.getId().longValue() == accountId) {
+		for (FinAccount acc : accounts) {
+			if (acc.getId().equals(accountId)) {
 				return acc;
 			}
 		}
@@ -133,17 +139,17 @@ public class User {
 		return null;
 	}
 
-	public void removeAccount(Account account) {
+	public void removeAccount(FinAccount account) {
 		if (this.accounts != null) {
 			boolean removed = getAccounts().remove(account);
 			account.setUser(null);
 		}
 	}
 
-	public void removeAccount(long accountId) {
-		List<Account> remacc = new Vector<Account>();
-		for (Account account : getAccounts()) {
-			if (account.getId() == accountId) {
+	public void removeAccount(Long accountId) {
+		List<FinAccount> remacc = new Vector<FinAccount>();
+		for (FinAccount account : getAccounts()) {
+			if (account.getId().equals(accountId)) {
 				account.setUser(null);
 				remacc.add(account);
 			}
@@ -151,25 +157,29 @@ public class User {
 		getAccounts().removeAll(remacc);
 	}
 
-	public void refreshToken() throws ErrorHandler {
-		Token userToken;
+	public FinToken refreshToken() throws FinErrorHandler {
+		FinToken userToken;
 		if ("FIGO".equals(getApi())) {
-			userToken = FigoTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
+			String clientId = FindowSystem.getBankingAPI(this).getClientId();
+			String clientSecret = FindowSystem.getBankingAPI(this).getClientSecret();
+
+			userToken = FigoTokenService.requestUserToken(clientId, clientSecret, getBackendName(), getBackendSecret());
 		} else {
 			userToken = FinapiTokenService.requestUserToken(RestUtils.getClientToken(), getBackendName(), getBackendSecret());
 		}
 		setToken(userToken);
+		return userToken;
 	}
 
-	public void addAccount(Account account) {
+	public void addAccount(FinAccount account) {
 		if (this.accounts != null) {
 			accounts.add(account);
 			account.setUser(this);
 		}
 	}
 
-	public void addAccounts(List<Account> accs) {
-		for (Account account : accs) {
+	public void addAccounts(List<FinAccount> accs) {
+		for (FinAccount account : accs) {
 			addAccount(account);
 		}
 	}

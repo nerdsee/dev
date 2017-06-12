@@ -16,9 +16,9 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.auth.Authenticator;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
@@ -51,7 +51,7 @@ public class RestConnections {
 		try {
 			List<BankConnection> list = BankConnectionsService.getBankConnections(userToken);
 			result = RestUtils.generateJsonResponse(list, "connections");
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			result = e.getResponse();
 		}
 
@@ -67,10 +67,10 @@ public class RestConnections {
 		String result = "";
 
 		try {
-			User user = Authenticator.getUser(userToken);
+			FinUser user = Authenticator.getUser(userToken);
 			result = BankConnectionsService.deleteBankConnection(userToken, connectionId);
 			PersistanceManager.getInstance().deleteAccounts(user, connectionId);
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			result = e.getResponse();
 		}
 
@@ -92,20 +92,20 @@ public class RestConnections {
 
 			// User laden
 			FinapiUser finapiUser = UsersService.getUser(userToken);
-			User user = PersistanceManager.getInstance().getUserByExternalName(finapiUser.getId());
+			FinUser user = PersistanceManager.getInstance().getUserByExternalName(finapiUser.getId());
 
 			// Accounts laden
-			List<Account> accounts = AccountsService.searchAccounts(userToken, connection);
+			List<FinAccount> accounts = AccountsService.searchAccounts(userToken, connection);
 
 			// Den aktuellen User zuweisen
-			for (Account account : accounts) {
+			for (FinAccount account : accounts) {
 				account.setUser(user);
 			}
 
 			// Accounts persistieren
 			PersistanceManager.getInstance().storeAccounts(accounts);
 
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			result = e.getResponse();
 		}
 		return result;

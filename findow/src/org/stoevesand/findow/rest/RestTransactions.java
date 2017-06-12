@@ -14,12 +14,12 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.auth.Authenticator;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.CategorySum;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Transaction;
-import org.stoevesand.findow.model.TransactionWrapper;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinCategorySum;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinTransactionWrapper;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
 import io.swagger.annotations.Api;
@@ -40,7 +40,7 @@ public class RestTransactions {
 	@GET
 	@Secured
 	@Produces("application/json")
-	public String getTransactions(@HeaderParam("accountId") long accountId, @HeaderParam("days") int days) {
+	public String getTransactions(@HeaderParam("accountId") Long accountId, @HeaderParam("days") int days) {
 		RestUtils.addHeader(response);
 		String result = "";
 
@@ -48,17 +48,17 @@ public class RestTransactions {
 			// User laden
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			Account account = user.getAccount(accountId);
+			FinAccount account = user.getAccount(accountId);
 
 			if (account != null) {
 				// DataLoader.updateTransactions(userToken,
 				// account.getSourceId(), days);
 
-				List<Transaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
+				List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
 
-				TransactionWrapper wrapper = new TransactionWrapper(transactions, account);
+				FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions, account);
 
 				// result = RestUtils.generateJsonResponse(transactions,
 				// "transactions");
@@ -67,7 +67,7 @@ public class RestTransactions {
 				log.error("Failed to getTransactions. Account not found (id): " + accountId);
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			}
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			log.error("Failed to getTransactions");
 			e.printErrors();
 			result = e.getResponse();
@@ -79,7 +79,7 @@ public class RestTransactions {
 	@GET
 	@Secured
 	@Produces("application/json")
-	public String getTransactionsCat(@HeaderParam("accountId") int accountId, @HeaderParam("days") int days) {
+	public String getTransactionsCat(@HeaderParam("accountId") Long accountId, @HeaderParam("days") int days) {
 		RestUtils.addHeader(response);
 		String result = "";
 
@@ -87,9 +87,9 @@ public class RestTransactions {
 			// User laden
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
-			User user = PersistanceManager.getInstance().getUserByName(jwsUser);
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			List<CategorySum> cs = PersistanceManager.getInstance().getCategorySummary(user, accountId);
+			List<FinCategorySum> cs = PersistanceManager.getInstance().getCategorySummary(user, accountId);
 			result = RestUtils.generateJsonResponse(cs, "categorySummary");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);

@@ -13,8 +13,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 
 public class FinapiTokenService {
 
@@ -23,9 +23,9 @@ public class FinapiTokenService {
 	static final String POST_URL = "https://sandbox.finapi.io/oauth/token";
 	static final long VALIDITY_BUFFER_SECONDS = 200;
 
-	public static Token requestUserToken(Token clientToken, String username, String password) throws ErrorHandler {
+	public static FinToken requestUserToken(FinToken clientToken, String username, String password) throws FinErrorHandler {
 
-		Token user_token = null;
+		FinToken user_token = null;
 		
 		Client client = ClientBuilder.newClient();
 
@@ -45,7 +45,7 @@ public class FinapiTokenService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("requestUserToken failed: " + status);
 			eh.printErrors();
 			throw eh;
@@ -53,7 +53,7 @@ public class FinapiTokenService {
 
 		try {
 			JSONObject jo = new JSONObject(output);
-			user_token = new Token(username, password, jo);
+			user_token = new FinToken(username, password, jo);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -62,9 +62,9 @@ public class FinapiTokenService {
 
 	}
 
-	public static Token requestClientToken(String client_id, String client_secret) throws ErrorHandler {
+	public static FinToken requestClientToken(String client_id, String client_secret) throws FinErrorHandler {
 
-		Token client_token = null;
+		FinToken client_token = null;
 
 		Client client = ClientBuilder.newClient();
 		
@@ -82,7 +82,7 @@ public class FinapiTokenService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("requestClientToken failed: " + status);
 			eh.printErrors();
 			throw eh;
@@ -90,7 +90,7 @@ public class FinapiTokenService {
 
 		try {
 			JSONObject jo = new JSONObject(output);
-			client_token = new Token(client_id, client_secret, jo);
+			client_token = new FinToken(client_id, client_secret, jo);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

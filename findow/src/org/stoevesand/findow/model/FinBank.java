@@ -5,7 +5,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
-public class Bank {
+public class FinBank {
 
 	int id = 0;
 	String name = "";
@@ -33,7 +33,7 @@ public class Bank {
 	private String blz;
 	private String bic;
 
-	public Bank(JSONObject json_bank) {
+	public FinBank(JSONObject json_bank) {
 		try {
 			id = json_bank.getInt("id");
 			name = json_bank.getString("name");

@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.hint.HintEngine;
 import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
@@ -43,18 +43,18 @@ public class RestMaintenance {
 		RestUtils.addHeader(response);
 
 		try {
-			User user = PersistanceManager.getInstance().getUserByName(id);
+			FinUser user = PersistanceManager.getInstance().getUserByName(id);
 			if (user != null) {
 				userToken = user.getToken();
 				List<BankConnection> conns = BankConnectionsService.getBankConnections(userToken);
 				for (BankConnection conn : conns) {
-					List<Account> accounts = AccountsService.searchAccounts(userToken, conn);
+					List<FinAccount> accounts = AccountsService.searchAccounts(userToken, conn);
 					PersistanceManager.getInstance().checkAccounts(user, accounts);
 				}
 			} else {
 				return RestUtils.generateJsonResponse(FindowResponse.USER_UNKNOWN);
 			}
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			log.error(e.toString());
 			return e.getResponse();
 		}

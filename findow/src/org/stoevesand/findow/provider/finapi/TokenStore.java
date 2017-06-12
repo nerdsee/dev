@@ -2,8 +2,8 @@ package org.stoevesand.findow.provider.finapi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 
 public class TokenStore {
 
@@ -18,14 +18,14 @@ public class TokenStore {
 	static final String admin_client_secret = "f3e251db-be41-46cc-a438-ecd55e4a7abc";
 	static final String admin_data_decryption_key = "eeb4561adf992fc44313468e4035ccac";
 
-	private Token clientToken;
-	private Token adminToken;
+	private FinToken clientToken;
+	private FinToken adminToken;
 
 	private TokenStore() {
 		try {
 			clientToken = FinapiTokenService.requestClientToken(client_id, client_secret);
 			adminToken = FinapiTokenService.requestClientToken(admin_client_id, admin_client_secret);
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			e.printStackTrace();
 		}
 	}
@@ -44,7 +44,7 @@ public class TokenStore {
 			log.info("Refresh Token.");
 			try {
 				clientToken = FinapiTokenService.requestClientToken(client_id, client_secret);
-			} catch (ErrorHandler e) {
+			} catch (FinErrorHandler e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -58,7 +58,7 @@ public class TokenStore {
 			log.info("Refresh AdminToken.");
 			try {
 				adminToken = FinapiTokenService.requestClientToken(admin_client_id, admin_client_secret);
-			} catch (ErrorHandler e) {
+			} catch (FinErrorHandler e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -67,12 +67,12 @@ public class TokenStore {
 
 	}
 
-	public Token getClientToken() {
+	public FinToken getClientToken() {
 		validateClientToken();
 		return clientToken;
 	}
 
-	public Token getAdminToken() {
+	public FinToken getAdminToken() {
 		validateAdminToken();
 		return adminToken;
 	}

@@ -5,11 +5,11 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Transaction;
-import org.stoevesand.findow.model.TransactionList;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinTransactionList;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
@@ -20,26 +20,26 @@ public class DataLoader {
 
 	private static final int MAXTRIES = 5;
 
-	public static void updateTransactions(User user, Account account, int days) throws ErrorHandler {
+	public static void updateTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler {
 
 		log.info("Update account " + account + " - days: " + days);
 
 		boolean ready = waitUntilReady(user, account);
 
-		List<Transaction> newTransactions = new Vector<Transaction>();
-		TransactionList transactions = null;
+		List<FinTransaction> newTransactions = new Vector<FinTransaction>();
+		FinTransactionList transactions = null;
 
-		int totalTx = 0;
+		int totalTx = 1-1;
 
 		if (ready) {
 
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
+			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
 			transactions = bankingAPI.searchTransactions(user, account, days);
 
 			if (transactions.getTransactions() != null) {
 				totalTx = transactions.getTransactions().size();
-				for (Transaction tx : transactions.getTransactions()) {
-					Transaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
+				for (FinTransaction tx : transactions.getTransactions()) {
+					FinTransaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
 					if (knownTx == null) {
 						tx.lookForHints();
 						newTransactions.add(tx);
@@ -59,9 +59,9 @@ public class DataLoader {
 
 	}
 
-	public static boolean waitUntilReady(User user, Account account) {
+	public static boolean waitUntilReady(FinUser user, FinAccount account) {
 		try {
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI();
+			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
 
 			int tries = 0;
 			// erst die Connection zum update auffordern
@@ -86,7 +86,7 @@ public class DataLoader {
 			}
 			log.info("New account status is " + account.getStatus() + " (" + tries + "/" + MAXTRIES + ")");
 			return "UPDATED".equals(account.getStatus()) || "UPDATED_FIXED".equals(account.getStatus());
-		} catch (ErrorHandler e) {
+		} catch (FinErrorHandler e) {
 			log.error("Failed to refresh account");
 			e.printErrors();
 		}

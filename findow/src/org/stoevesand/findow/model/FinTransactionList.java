@@ -3,9 +3,9 @@ package org.stoevesand.findow.model;
 import java.util.List;
 import java.util.Vector;
 
-public class TransactionList {
+public class FinTransactionList {
 
-	List<Transaction> transactions;
+	List<FinTransaction> transactions;
 	private double income=0;
 	private double spending=0;
 	private double balance=0;
@@ -14,8 +14,8 @@ public class TransactionList {
 	private int pageCount=0;
 	private int totalCount=0;
 
-	public TransactionList() {
-		transactions = new Vector<Transaction>();
+	public FinTransactionList() {
+		transactions = new Vector<FinTransaction>();
 	}
 
 	public void setIncome(double income) {
@@ -62,11 +62,11 @@ public class TransactionList {
 		return totalCount;
 	}
 
-	public TransactionList(List<Transaction> list) {
+	public FinTransactionList(List<FinTransaction> list) {
 		this.transactions = list;
 	}
 
-	public List<Transaction> getTransactions() {
+	public List<FinTransaction> getTransactions() {
 		return transactions;
 	}
 
@@ -82,11 +82,11 @@ public class TransactionList {
 		return balance;
 	}
 
-	public void append(TransactionList txPage) {
+	public void append(FinTransactionList txPage) {
 		transactions.addAll(txPage.getTransactions());
 	}
 
-	public void addTransaction(Transaction transaction) {
+	public void addTransaction(FinTransaction transaction) {
 		transactions.add(transaction);
 	}
 

@@ -16,11 +16,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import me.figo.FigoException;
+
 @JsonIgnoreProperties({ "stackTrace", "localizedMessage", "message", "cause", "suppressed" })
 @JsonRootName(value = "error")
-public class ErrorHandler extends Exception {
+public class FinErrorHandler extends Exception {
 
-	private Logger log = LoggerFactory.getLogger(ErrorHandler.class);
+	private Logger log = LoggerFactory.getLogger(FinErrorHandler.class);
 
 	/**
 	 * 
@@ -31,12 +33,17 @@ public class ErrorHandler extends Exception {
 	String response;
 	private int status;
 
-	public ErrorHandler(String response) {
+	public FinErrorHandler(String response) {
 		init(499, response);
 	}
 
-	public ErrorHandler(int status, String response) {
+	public FinErrorHandler(int status, String response) {
 		init(status, response);
+	}
+
+	public FinErrorHandler(FigoException e) {
+		this.status = 0;
+		this.response = e.getErrorMessage();
 	}
 
 	private void init(int status, String response) {

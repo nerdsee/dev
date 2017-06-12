@@ -6,8 +6,10 @@ import org.codehaus.jettison.json.JSONObject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import me.figo.internal.TokenResponse;
+
 @JsonRootName(value = "token")
-public class Token {
+public class FinToken {
 
 	static final long VALIDITY_BUFFER_SECONDS = 200;
 
@@ -19,7 +21,7 @@ public class Token {
 
 	long valid_until = 0;
 
-	public Token(String id, String secret, JSONObject json_token) {
+	public FinToken(String id, String secret, JSONObject json_token) {
 		try {
 			access_token = json_token.getString("access_token");
 			token_type = json_token.getString("token_type");
@@ -33,6 +35,13 @@ public class Token {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public FinToken(TokenResponse t) {
+		this.access_token = t.getAccessToken();
+		this.token_type = "FIGO_TOKEN";
+		this.expires_in = t.getExpiresIn().toString();
+		valid_until = System.currentTimeMillis() + (t.getExpiresIn() * 1000);
 	}
 
 	public String getId() {

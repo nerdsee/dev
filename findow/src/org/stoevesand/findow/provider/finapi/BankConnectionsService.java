@@ -16,8 +16,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 
 public class BankConnectionsService {
@@ -26,7 +26,7 @@ public class BankConnectionsService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/bankConnections";
 
-	public static BankConnection importConnection(String userToken, int bankId, String bankingUserId, String bankingPin) throws ErrorHandler {
+	public static BankConnection importConnection(String userToken, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
 		BankConnection bc = null;
 
 		Client client = ClientBuilder.newClient();
@@ -52,12 +52,12 @@ public class BankConnectionsService {
 			return bc;
 		} else {
 			log.error("Failed to import account. Status:" + status);
-			ErrorHandler eh = new ErrorHandler(status, output);
+			FinErrorHandler eh = new FinErrorHandler(status, output);
 			throw eh;
 		}
 	}
 
-	public static boolean deleteConnection(Token userToken, int id) throws ErrorHandler {
+	public static boolean deleteConnection(FinToken userToken, int id) throws FinErrorHandler {
 
 		Client client = ClientBuilder.newClient();
 
@@ -70,7 +70,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBankConnections failed: " + status);
 			throw eh;
 		}
@@ -79,7 +79,7 @@ public class BankConnectionsService {
 
 	}
 
-	public static List<BankConnection> getBankConnections(String userToken) throws ErrorHandler {
+	public static List<BankConnection> getBankConnections(String userToken) throws FinErrorHandler {
 
 		Vector<BankConnection> connections = new Vector<BankConnection>();
 
@@ -94,7 +94,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBankConnections failed: " + status);
 			eh.printErrors();
 			throw eh;
@@ -126,7 +126,7 @@ public class BankConnectionsService {
 	 *            Ansonsten wird eine neues Connection Objekt erzeugt
 	 * @return
 	 */
-	public static BankConnection getBankConnection(Token userToken, int id, BankConnection bankConnection) {
+	public static BankConnection getBankConnection(FinToken userToken, int id, BankConnection bankConnection) {
 
 		Client client = ClientBuilder.newClient();
 
@@ -139,7 +139,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBankConnection failed: " + status);
 			eh.printErrors();
 			return null;
@@ -160,7 +160,7 @@ public class BankConnectionsService {
 
 	}
 
-	public static String deleteBankConnection(String userToken, int connectionId) throws ErrorHandler {
+	public static String deleteBankConnection(String userToken, int connectionId) throws FinErrorHandler {
 		Client client = ClientBuilder.newClient();
 
 		WebTarget webTarget = client.target(URL + "/" + connectionId);
@@ -172,7 +172,7 @@ public class BankConnectionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBankConnection failed: " + status);
 			// throw eh;
 		}
@@ -199,7 +199,7 @@ public class BankConnectionsService {
 		return ret;
 	}
 
-	public static BankConnection updateConnection(String userToken, int bankConnectionId, String connectionPin) throws ErrorHandler {
+	public static BankConnection updateConnection(String userToken, int bankConnectionId, String connectionPin) throws FinErrorHandler {
 		BankConnection bc = null;
 
 		Client client = ClientBuilder.newClient();
@@ -222,7 +222,7 @@ public class BankConnectionsService {
 		int status = response.getStatus();
 		if (status != 200) {
 			log.error("Failed to update connection. Status:" + status);
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			throw eh;
 		}
 

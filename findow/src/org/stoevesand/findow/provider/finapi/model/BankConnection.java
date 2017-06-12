@@ -4,8 +4,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.Bank;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinBank;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +22,7 @@ public class BankConnection {
 	private String bankingPin;
 	private String type;
 	private String updateStatus;
-	private Bank bank;
+	private FinBank bank;
 	private String pin = null;
 
 	public BankConnection(JSONObject jo) {
@@ -38,7 +38,7 @@ public class BankConnection {
 			bankingPin = jo.getString("bankingPin");
 			type = jo.getString("type");
 			updateStatus = jo.getString("updateStatus");
-			bank = new Bank(jo.getJSONObject("bank"));
+			bank = new FinBank(jo.getJSONObject("bank"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -64,12 +64,12 @@ public class BankConnection {
 		return updateStatus;
 	}
 
-	public Bank getBank() {
+	public FinBank getBank() {
 		return bank;
 	}
 
 	@JsonIgnore
-	public boolean waitUntilReady(Token userToken) {
+	public boolean waitUntilReady(FinToken userToken) {
 		int tries = 0;
 		while (!"READY".equals(updateStatus) && tries < MAXTRIES) {
 			tries++;

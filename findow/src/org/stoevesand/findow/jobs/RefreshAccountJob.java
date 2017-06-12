@@ -10,9 +10,9 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.loader.DataLoader;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
 @DisallowConcurrentExecution
@@ -23,10 +23,10 @@ public class RefreshAccountJob implements Job {
 	public void execute(JobExecutionContext jExeCtx) throws JobExecutionException {
 		log.info("Refresh Account Transactions ...");
 
-		List<Account> accounts = PersistanceManager.getInstance().getRefreshableAccounts();
+		List<FinAccount> accounts = PersistanceManager.getInstance().getAllAccounts();
 
-		for (Account account : accounts) {
-			User user = account.getUser();
+		for (FinAccount account : accounts) {
+			FinUser user = account.getUser();
 			try {
 				log.info("Update transactions of account " + account);
 				Date lastUpdate = account.getLastSuccessfulUpdate();
@@ -38,7 +38,7 @@ public class RefreshAccountJob implements Job {
 				}
 				user.refreshToken();
 				DataLoader.updateTransactions(user, account, diff);
-			} catch (ErrorHandler e) {
+			} catch (FinErrorHandler e) {
 				log.error("Failed to refresh account " + account, e);
 			}
 		}

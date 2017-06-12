@@ -1,10 +1,10 @@
 package org.stoevesand.findow.hint;
 
-import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.FinTransaction;
 
 public interface HintAnalyzer {
 
-	public Hint search(Transaction transaction);
+	public Hint search(FinTransaction transaction);
 	public String getName();
 	
 }

@@ -1,5 +1,7 @@
 package org.stoevesand.findow.jobs;
 
+import java.util.Date;
+
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -11,7 +13,9 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.Account;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinTask;
+import org.stoevesand.findow.server.FindowSystem;
 
 public class JobManager {
 
@@ -34,8 +38,10 @@ public class JobManager {
 
 		try {
 			sch = schFactory.getScheduler();
+
 			// Start the schedule
 			sch.start();
+
 			// Tell quartz to schedule the job using the trigger
 			sch.scheduleJob(refreshAccountJob, trigger);
 		} catch (SchedulerException e) {
@@ -46,19 +52,19 @@ public class JobManager {
 
 	}
 
-	public void addImportAccountJob(Account account) {
+	public void addSingleTaskJob(FinTask task, Date start) {
 		try {
-			JobDetail refreshAccountJob = JobBuilder.newJob(ImportAccountJob.class).withIdentity("importAccountJob").build();
-			refreshAccountJob.getJobDataMap().put(ImportAccountJob.ACCOUNT_KEY, account);
+			JobDetail taskJob = JobBuilder.newJob(SingleTaskJob.class).build();
+			taskJob.getJobDataMap().put(SingleTaskJob.TASK_KEY, task);
 
 			// Trigger the job to run on the next round minute
-			Trigger trigger = TriggerBuilder.newTrigger().startNow().build();
+			Trigger triggerNow = TriggerBuilder.newTrigger().startAt(start).build();
 
-			sch.scheduleJob(refreshAccountJob, trigger);
+			sch.scheduleJob(taskJob, triggerNow);
 		} catch (SchedulerException e) {
-			log.error("addImportAccountJob", e);
+			log.error("addSingleTaskJob", e);
 		} catch (Exception e) {
-			log.error("addImportAccountJob", e);
+			log.error("addSingleTaskJob", e);
 		}
 	}
 

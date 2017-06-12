@@ -10,8 +10,7 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
-public class CategorySum {
+public class FinCategorySum {
 
 	private double sum = 0;
 	private long categoryId = 0;
@@ -23,13 +22,13 @@ public class CategorySum {
 	}
 
 	@Transient
-	public Category getCategory() {
+	public FinCategory getCategory() {
 		return category;
 	}
 
-	private Category category;
+	private FinCategory category;
 
-	public CategorySum() {
+	public FinCategorySum() {
 		this.category = null;
 		sum = 0;
 	}
@@ -38,7 +37,7 @@ public class CategorySum {
 		this.sum = sum;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(FinCategory category) {
 		this.category = category;
 	}
 

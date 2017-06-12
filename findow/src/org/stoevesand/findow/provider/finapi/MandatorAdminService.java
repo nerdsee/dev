@@ -16,8 +16,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 import org.stoevesand.findow.provider.finapi.model.UserInfo;
 
@@ -27,7 +27,7 @@ public class MandatorAdminService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/mandatorAdmin/getUserList";
 
-	public static List<UserInfo> getUsers(Token adminToken) {
+	public static List<UserInfo> getUsers(FinToken adminToken) {
 
 		Vector<UserInfo> users = new Vector<UserInfo>();
 
@@ -44,7 +44,7 @@ public class MandatorAdminService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("searchBanks failed: " + status);
 			eh.printErrors();
 			return null;
@@ -68,7 +68,7 @@ public class MandatorAdminService {
 
 	}
 
-	public static String deleteUser(Token adminToken, String id) throws ErrorHandler {
+	public static String deleteUser(FinToken adminToken, String id) throws FinErrorHandler {
 		BankConnection bc = null;
 
 		Client client = ClientBuilder.newClient();
@@ -84,7 +84,7 @@ public class MandatorAdminService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			throw eh;
 		}
 

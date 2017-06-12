@@ -2,8 +2,8 @@ package org.stoevesand.findow.provider.finapi.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.ApiUser;
 import org.stoevesand.findow.provider.finapi.FinapiTokenService;
 
@@ -35,7 +35,7 @@ public class FinapiUser implements ApiUser {
 		return String.format("\"%s\", \"%s\"", id, password);
 	}
 
-	public Token getToken(Token clientToken) throws ErrorHandler {
+	public FinToken getToken(FinToken clientToken) throws FinErrorHandler {
 		return FinapiTokenService.requestUserToken(clientToken, id, password);
 	}
 
@@ -46,6 +46,11 @@ public class FinapiUser implements ApiUser {
 	@Override
 	public String getApi() {
 		return "FINAPI";
+	}
+
+	@Override
+	public String getRecoveryPassword() {
+		return null;
 	}
 
 }

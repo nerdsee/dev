@@ -12,34 +12,45 @@ import javax.persistence.Table;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+@Entity(name = "Account")
 @Table(name = "ACCOUNTS")
-public class Account {
+public class FinAccount {
 
 	// internal id used for persistance
 	private Long id;
 
 	// id coming from a source system
-	private Long sourceId;
+	private String sourceId;
 	private String sourceSystem = "FINAPI";
 
-	private User user = null;
+	private FinUser user = null;
 
-	public Account() {
+	private String taskId;
+
+	public FinAccount() {
 
 	}
 
-	public Long getSourceId() {
+	@Column(name = "SOURCE_ID")
+	public String getSourceId() {
 		return sourceId;
 	}
 
-	public void setSourceId(Long sourceId) {
+	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	@Column(name = "TASK_ID")
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 
 	@JsonIgnore
@@ -54,16 +65,12 @@ public class Account {
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", nullable = false)
 	@JsonIgnore
-	public User getUser() {
+	public FinUser getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(FinUser user) {
 		this.user = user;
-	}
-
-	public void setBalance(double balance) {
-		this.balance = balance;
 	}
 
 	@Id
@@ -116,13 +123,13 @@ public class Account {
 
 	private String accountTypeName;
 
-	private double balance;
+	private long balance;
 
-	private double overdraft;
+	private long overdraft;
 
-	private double overdraftLimit;
+	private long overdraftLimit;
 
-	private double availableFunds;
+	private long availableFunds;
 
 	private Date lastSuccessfulUpdate;
 
@@ -132,13 +139,24 @@ public class Account {
 
 	private String bankName;
 
-	public Account(JSONObject jo) {
+	public FinAccount(JSONObject jo) {
 		update(jo);
 		bankName = "";
 	}
 
+	public FinAccount(String accountId, String task) {
+		sourceId = accountId;
+		status = "PENDING";
+		taskId = task;
+		sourceSystem = "FIGO";
+	}
+
+	public FinAccount(me.figo.models.Account acc) {
+		refresh(acc);
+	}
+
 	public void update(JSONObject jo) {
-		sourceId = JSONUtils.getLong(jo, "id");
+		sourceId = JSONUtils.getString(jo, "id");
 		bankConnectionId = JSONUtils.getInt(jo, "bankConnectionId");
 		accountName = JSONUtils.getString(jo, "accountName");
 		accountNumber = JSONUtils.getString(jo, "accountNumber");
@@ -149,10 +167,19 @@ public class Account {
 		accountCurrency = JSONUtils.getString(jo, "accountCurrency");
 		accountTypeId = JSONUtils.getInt(jo, "accountTypeId");
 		accountTypeName = JSONUtils.getString(jo, "accountTypeName");
-		balance = JSONUtils.getDouble(jo, "balance");
-		overdraft = JSONUtils.getDouble(jo, "overdraft");
-		overdraftLimit = JSONUtils.getDouble(jo, "overdraftLimit");
-		availableFunds = JSONUtils.getDouble(jo, "availableFunds");
+
+		double bd = JSONUtils.getDouble(jo, "balance");
+		balance = (long) (bd * 100);
+
+		double dov = JSONUtils.getDouble(jo, "overdraft");
+		overdraft = (long) (dov * 100);
+
+		double dol = JSONUtils.getDouble(jo, "overdraftLimit");
+		overdraftLimit = (long) (dol * 100);
+
+		double daf = JSONUtils.getDouble(jo, "availableFunds");
+		availableFunds = (long) (daf * 100);
+
 		status = JSONUtils.getString(jo, "status");
 		lastSuccessfulUpdate = JSONUtils.getDate(jo, "lastSuccessfulUpdate", "yyyy-MM-dd HH:mm:ss.SSS");
 		lastUpdateAttempt = JSONUtils.getDate(jo, "lastUpdateAttempt", "yyyy-MM-dd HH:mm:ss.SSS");
@@ -206,31 +233,36 @@ public class Account {
 		this.accountTypeName = accountTypeName;
 	}
 
-	public double getBalance() {
+	@Column(name = "BALANCE_CENT")
+	public long getBalanceCent() {
 		return balance;
 	}
 
-	public double getOverdraft() {
+	public void setBalanceCent(long balance) {
+		this.balance = balance;
+	}
+
+	public long getOverdraft() {
 		return overdraft;
 	}
 
-	public void setOverdraft(double overdraft) {
+	public void setOverdraft(long overdraft) {
 		this.overdraft = overdraft;
 	}
 
-	public double getOverdraftLimit() {
+	public long getOverdraftLimit() {
 		return overdraftLimit;
 	}
 
-	public void setOverdraftLimit(double overdraftLimit) {
+	public void setOverdraftLimit(long overdraftLimit) {
 		this.overdraftLimit = overdraftLimit;
 	}
 
-	public double getAvailableFunds() {
+	public long getAvailableFunds() {
 		return availableFunds;
 	}
 
-	public void setAvailableFunds(double availableFunds) {
+	public void setAvailableFunds(long availableFunds) {
 		this.availableFunds = availableFunds;
 	}
 
@@ -263,20 +295,20 @@ public class Account {
 		return String.format("%s - %s (%d)(User %d)", getAccountName(), getBankName(), id, userid);
 	}
 
-	public int refresh(String userToken) {
-		try {
-			AccountsService.refreshAccount(userToken, this);
-		} catch (ErrorHandler e) {
-			return e.getStatus();
-		}
-		return 0;
-	}
+	// public int refresh(String userToken) {
+	// try {
+	// AccountsService.refreshAccount(userToken, this);
+	// } catch (ErrorHandler e) {
+	// return e.getStatus();
+	// }
+	// return 0;
+	// }
 
 	@Override
 	public boolean equals(Object a) {
-		if (a instanceof Account) {
+		if (a instanceof FinAccount) {
 			if (id != null) {
-				return this.id.equals(((Account) a).getId());
+				return this.id.equals(((FinAccount) a).getId());
 			}
 		}
 		return false;
@@ -291,7 +323,7 @@ public class Account {
 		}
 	}
 
-	public void setBank(Bank bank) {
+	public void setBank(FinBank bank) {
 		if (bank != null) {
 			this.bankName = bank.getName();
 		}
@@ -303,6 +335,18 @@ public class Account {
 
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
+	}
+
+	public void refresh(me.figo.models.Account acc) {
+		sourceId = acc.getAccountId();
+		accountNumber = acc.getAccountNumber();
+		bankName = acc.getBankName();
+		double dba = acc.getBalance().getBalance().doubleValue();
+		balance = (long) (dba * 100);
+		accountCurrency = acc.getCurrency();
+		accountHolderName = acc.getOwner();
+		accountTypeName = acc.getType();
+		status = "UPDATED";
 	}
 
 }

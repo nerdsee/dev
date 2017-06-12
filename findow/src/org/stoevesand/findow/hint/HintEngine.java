@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.FinTransaction;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
 public class HintEngine {
@@ -34,13 +34,13 @@ public class HintEngine {
 		return _instance;
 	}
 
-	public List<Hint> search(Transaction transaction) {
+	public List<Hint> search(FinTransaction transaction) {
 		List<Hint> hints = new Vector<Hint>();
 
 		for (HintAnalyzer hintAnalyzer : hintAnalyzers) {
 			Hint hint = hintAnalyzer.search(transaction);
 			if (hint != null) {
-				log.info("Fount hint: " + "[" + hint.getName() + "] " + transaction.getPurpose());
+				log.info("Found hint: " + "[" + hint.getName() + "] " + transaction.getPurpose());
 				hints.add(hint);
 			}
 		}

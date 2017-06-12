@@ -7,9 +7,9 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.loader.DataLoader;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.User;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinUser;
 
 public class ImportAccountJob implements Job {
 
@@ -22,15 +22,15 @@ public class ImportAccountJob implements Job {
 		JobDataMap data = jExeCtx.getJobDetail().getJobDataMap();
 		Object ao = data.get(ACCOUNT_KEY);
 
-		if (ao instanceof Account) {
-			Account account = (Account) ao;
+		if (ao instanceof FinAccount) {
+			FinAccount account = (FinAccount) ao;
 			log.info("Initial import of account " + account);
-			User user = account.getUser();
+			FinUser user = account.getUser();
 			try {
 				log.info("Import transactions of account " + account);
 				user.refreshToken();
 				DataLoader.updateTransactions(user, account, 120);
-			} catch (ErrorHandler e) {
+			} catch (FinErrorHandler e) {
 				log.error("Failed to refresh account " + account, e);
 			}
 		} else {

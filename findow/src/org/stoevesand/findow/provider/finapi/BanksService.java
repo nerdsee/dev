@@ -15,9 +15,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.JobManager;
-import org.stoevesand.findow.model.Bank;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinBank;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.rest.RestBanks;
 
 public class BanksService {
@@ -26,9 +26,9 @@ public class BanksService {
 
 	private static Logger log = LoggerFactory.getLogger(BanksService.class);
 
-	public static List<Bank> searchBanks(Token clientToken, String search) {
+	public static List<FinBank> searchBanks(FinToken clientToken, String search) {
 
-		Vector<Bank> banks = new Vector<Bank>();
+		Vector<FinBank> banks = new Vector<FinBank>();
 		
 		Client client = ClientBuilder.newClient();
 
@@ -42,7 +42,7 @@ public class BanksService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("searchBanks failed: " + status);
 			eh.printErrors();
 			return null;
@@ -54,7 +54,7 @@ public class BanksService {
 
 			for (int i = 0; i < json_banks.length(); i++) {
 				JSONObject json_bank = json_banks.getJSONObject(i);
-				Bank bank = new Bank(json_bank);
+				FinBank bank = new FinBank(json_bank);
 				banks.add(bank);
 			}
 
@@ -66,9 +66,9 @@ public class BanksService {
 
 	}
 
-	public static Bank getBank(Token clientToken, int bankId) {
+	public static FinBank getBank(FinToken clientToken, int bankId) {
 
-		Bank bank = null;
+		FinBank bank = null;
 
 		Client client = ClientBuilder.newClient();
 
@@ -81,7 +81,7 @@ public class BanksService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("getBank failed: " + status);
 			eh.printErrors();
 			return null;
@@ -89,7 +89,7 @@ public class BanksService {
 		
 		try {
 			JSONObject jo = new JSONObject(output);
-			bank = new Bank(jo);
+			bank = new FinBank(jo);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

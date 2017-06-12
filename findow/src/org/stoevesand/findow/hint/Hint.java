@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.FinTransaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Hint {
 
 	private String name;
-	private Transaction transaction;
+	private FinTransaction transaction;
 	private Long id;
 	private String link;
 
@@ -26,7 +26,7 @@ public class Hint {
 		this.name = "";
 	}
 
-	public Hint(String name, String link, Transaction transaction) {
+	public Hint(String name, String link, FinTransaction transaction) {
 		this.name = name;
 		this.link = link;
 		this.transaction=transaction;
@@ -55,11 +55,11 @@ public class Hint {
 	@ManyToOne
 	@JoinColumn(name = "TX_ID", nullable = false)
 	@JsonIgnore
-	public Transaction getTransaction() {
+	public FinTransaction getTransaction() {
 		return transaction;
 	}
 
-	public void setTransaction(Transaction transaction) {
+	public void setTransaction(FinTransaction transaction) {
 		this.transaction = transaction;
 	}
 

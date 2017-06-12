@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.findow.model.Transaction;
+import org.stoevesand.findow.model.FinTransaction;
 
 @Entity
 @Table(name = "REGEXHINTS")
@@ -26,7 +26,7 @@ public class RegexHint implements HintAnalyzer {
 	}
 
 	@Override
-	public Hint search(Transaction transaction) {
+	public Hint search(FinTransaction transaction) {
 
 		String purpose = transaction.getPurpose();
 		if ((purpose != null) && (purpose.toUpperCase().matches(content))) {

@@ -15,9 +15,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.jobs.ImportAccountJob;
-import org.stoevesand.findow.model.Account;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Token;
+import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 
 public class AccountsService {
@@ -26,9 +26,9 @@ public class AccountsService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/accounts";
 
-	public static List<Account> searchAccounts(String userToken, BankConnection connection) throws ErrorHandler {
+	public static List<FinAccount> searchAccounts(String userToken, BankConnection connection) throws FinErrorHandler {
 
-		Vector<Account> accounts = new Vector<Account>();
+		Vector<FinAccount> accounts = new Vector<FinAccount>();
 
 		Client client = ClientBuilder.newClient();
 
@@ -45,7 +45,7 @@ public class AccountsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			throw eh;
 		}
 
@@ -55,7 +55,7 @@ public class AccountsService {
 
 			for (int i = 0; i < json_accounts.length(); i++) {
 				JSONObject json_account = json_accounts.getJSONObject(i);
-				Account account = new Account(json_account);
+				FinAccount account = new FinAccount(json_account);
 				account.setBank(connection.getBank());
 				log.info("Set Bank at Account: " + connection.getBank());
 				log.info("New Account: " + account);
@@ -70,7 +70,7 @@ public class AccountsService {
 
 	}
 
-	public static void refreshAccount(String userToken, Account account) throws ErrorHandler {
+	public static void refreshAccount(String userToken, FinAccount account) throws FinErrorHandler {
 
 		Client client = ClientBuilder.newClient();
 
@@ -83,7 +83,7 @@ public class AccountsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(status, output);
+			FinErrorHandler eh = new FinErrorHandler(status, output);
 			throw eh;
 		}
 
@@ -95,7 +95,7 @@ public class AccountsService {
 		}
 	}
 
-	public static void deleteAccount(String userToken, Account account) throws ErrorHandler {
+	public static boolean deleteAccount(String userToken, FinAccount account) throws FinErrorHandler {
 
 		Client client = ClientBuilder.newClient();
 
@@ -108,10 +108,10 @@ public class AccountsService {
 
 		int status = response.getStatus();
 		if ((status != 200) && (status != 404)) {
-			ErrorHandler eh = new ErrorHandler(status, output);
+			FinErrorHandler eh = new FinErrorHandler(status, output);
 			throw eh;
 		}
-
+		return true;
 	}
 
 }

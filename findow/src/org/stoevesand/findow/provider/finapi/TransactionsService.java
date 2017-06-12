@@ -14,9 +14,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.model.ErrorHandler;
-import org.stoevesand.findow.model.Transaction;
-import org.stoevesand.findow.model.TransactionList;
+import org.stoevesand.findow.model.FinErrorHandler;
+import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinTransactionList;
 import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 public class TransactionsService {
@@ -25,12 +25,12 @@ public class TransactionsService {
 
 	static final String URL = "https://sandbox.finapi.io/api/v1/transactions";
 
-	public static TransactionList searchTransactions(String userToken, Long accountId, int days) throws ErrorHandler {
-		TransactionList ret = searchTransactions(userToken, accountId, days, 1);
+	public static FinTransactionList searchTransactions(String userToken, String accountId, int days) throws FinErrorHandler {
+		FinTransactionList ret = searchTransactions(userToken, accountId, days, 1);
 		int pageCount = ret.getPageCount();
 		if (pageCount > 1) {
 			for (int page = 2; page <= pageCount; page++) {
-				TransactionList txPage = searchTransactions(userToken, accountId, days, page);
+				FinTransactionList txPage = searchTransactions(userToken, accountId, days, page);
 				ret.append(txPage);
 			}
 		}
@@ -38,9 +38,9 @@ public class TransactionsService {
 		return ret;
 	}
 
-	public static TransactionList searchTransactions(String userToken, Long accountId, int days, int page) throws ErrorHandler {
+	public static FinTransactionList searchTransactions(String userToken, String accountId, int days, int page) throws FinErrorHandler {
 
-		TransactionList ret = null;
+		FinTransactionList ret = null;
 
 		long minDateMillis = System.currentTimeMillis();
 		Date curDate = new Date(minDateMillis);
@@ -60,7 +60,7 @@ public class TransactionsService {
 
 		// only use valid accountId
 		if (accountId != null) {
-			webTarget = webTarget.queryParam("accountIds", accountId.toString());
+			webTarget = webTarget.queryParam("accountIds", accountId);
 		}
 
 		webTarget = webTarget.queryParam("view", "userView");
@@ -73,7 +73,7 @@ public class TransactionsService {
 
 		int status = response.getStatus();
 		if (status != 200) {
-			ErrorHandler eh = new ErrorHandler(output);
+			FinErrorHandler eh = new FinErrorHandler(output);
 			log.error("searchTransactions failed: " + status);
 			eh.printErrors();
 			throw eh;
@@ -81,14 +81,14 @@ public class TransactionsService {
 
 		try {
 
-			ret = new TransactionList();
+			ret = new FinTransactionList();
 
 			JSONObject jo = new JSONObject(output);
 			JSONArray json_txs = jo.getJSONArray("transactions");
 
 			for (int i = 0; i < json_txs.length(); i++) {
 				JSONObject json_account = json_txs.getJSONObject(i);
-				Transaction transaction = new Transaction(json_account);
+				FinTransaction transaction = new FinTransaction(json_account);
 				ret.addTransaction(transaction);
 			}
 
