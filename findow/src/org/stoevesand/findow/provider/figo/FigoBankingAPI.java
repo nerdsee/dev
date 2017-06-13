@@ -38,10 +38,10 @@ public class FigoBankingAPI implements BankingAPI {
 	@Override
 	public String importAccount(FinUser user, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
 		FigoSession fs = new FigoSession(user.getToken());
-		List<FinAccount> ret = new Vector<FinAccount>();
 		String taskToken = null;
 		try {
-			TaskTokenResponse er = fs.setupNewAccount(Integer.toString(bankId), "de", bankingUserId, bankingPin);
+
+			TaskTokenResponse er = fs.setupNewAccount(Integer.toString(bankId), "de", bankingUserId, bankingPin, null, true, true);
 			if (er != null) {
 				taskToken = er.getTaskToken();
 				FinTask task = new FinTask(user, taskToken, TaskSolver.IMPORT_ACCOUNT);
@@ -129,6 +129,25 @@ public class FigoBankingAPI implements BankingAPI {
 		return null;
 	}
 
+	@Override
+	public List<org.stoevesand.findow.model.FinBank> refreshServices() {
+		FigoConnection fc = new FigoConnection(client_id, client_secret, "http://localhost:3000");
+		FigoSession fs = fc.
+		Bank bank = null;
+
+		try {
+			bank = fc.queryApi("/catalog/banks/de/" + search, null, "GET", Bank.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FigoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
 	@Override
 	public FinToken requestUserToken(String username, String password) throws FinErrorHandler {
 
@@ -231,10 +250,39 @@ public class FigoBankingAPI implements BankingAPI {
 		return ret;
 	}
 
+	/**
+	 * Fordert eine Konten synchronisation an und startet dann einen Task, der wartet
+	 * bis der synch durch ist. Dieser Task lädt am Ende erst die Transaktionen nach.
+	 */
 	@Override
-	public void reloadAccountContent(FinUser user, org.stoevesand.findow.model.FinAccount account) throws FinErrorHandler {
-		// TODO Auto-generated method stub
+	public void reloadAccountContent(FinUser user, FinAccount account) throws FinErrorHandler {
+		FigoSession fs = new FigoSession(user.getToken());
 
+		String taskToken = null;
+		try {
+			TaskTokenResponse er = fs.createSyncTask(user.getName(), "", null, null);
+			if (er != null) {
+				taskToken = er.getTaskToken();
+				FinTask task = new FinTask(user, taskToken, TaskSolver.UPDATE_TX);
+				// erste Statusabfrage, damit der Request losläuft
+				boolean changed = task.getTaskState(fs);
+				if (changed) {
+					task = PersistanceManager.getInstance().persist(task);
+				}
+
+				log.info("Update Tx Task startet: " + task.getMessage());
+				log.info("User: " + user);
+
+				JobManager.getInstance().addSingleTaskJob(task, new Date());
+
+			}
+		} catch (FigoException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// return taskToken;
 	}
 
 	@Override

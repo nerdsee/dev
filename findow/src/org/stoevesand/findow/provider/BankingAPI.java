@@ -34,4 +34,5 @@ public interface BankingAPI {
 	FinToken requestUserToken(String username, String password) throws FinErrorHandler;
 
 	List<FinAccount> getAccounts(FinUser user) throws FinErrorHandler;
+
 }

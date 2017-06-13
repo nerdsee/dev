@@ -43,6 +43,12 @@ public class FinTask {
 	private Date created;
 	private Date lastUpdated;
 
+	private boolean erroneous;
+
+	private boolean waitingForResponse;
+
+	private boolean waitingForPin;
+
 	public FinTask() {
 
 	}
@@ -164,6 +170,30 @@ public class FinTask {
 		this.retries = retries;
 	}
 
+	public boolean isErroneous() {
+		return erroneous;
+	}
+
+	public void setErroneous(boolean erroneous) {
+		this.erroneous = erroneous;
+	}
+
+	public boolean isWaitingForResponse() {
+		return waitingForResponse;
+	}
+
+	public void setWaitingForResponse(boolean waitingForResponse) {
+		this.waitingForResponse = waitingForResponse;
+	}
+
+	public boolean isWaitingForPin() {
+		return waitingForPin;
+	}
+
+	public void setWaitingForPin(boolean waitingForPin) {
+		this.waitingForPin = waitingForPin;
+	}
+
 	@Transient
 	public void getTaskState(FinUser user) {
 		FigoSession fs = new FigoSession(user.getToken());
@@ -181,6 +211,9 @@ public class FinTask {
 				challenge = tsr.getChallenge();
 				error = tsr.getError();
 				message = tsr.getMessage();
+				erroneous = tsr.isErroneous();
+				waitingForResponse = tsr.isWaitingForResponse();
+				waitingForPin = tsr.isWaitingForPin();
 				active = !tsr.isEnded();
 				retries++;
 				lastUpdated = new Date();
@@ -196,6 +229,6 @@ public class FinTask {
 	}
 
 	public String toString() {
-		return String.format("Task (%d) account:%s type:%s", id, sourceId, taskType);
+		return String.format("Task (%d) account:%s type:%s message:%s", id, sourceId, taskType, message);
 	}
 }

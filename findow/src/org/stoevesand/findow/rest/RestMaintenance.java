@@ -1,5 +1,6 @@
 package org.stoevesand.findow.rest;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,10 +22,13 @@ import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
-import org.stoevesand.findow.provider.finapi.MandatorAdminService;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
+import org.stoevesand.findow.rest.figo.Bank;
 
 import io.swagger.annotations.Api;
+import me.figo.FigoException;
+import me.figo.FigoSession;
+import me.figo.models.Service;
 
 @Path("/mtc/users")
 @Api(value = "maintenance")
@@ -69,4 +73,59 @@ public class RestMaintenance {
 		return RestUtils.generateJsonResponse(FindowResponse.OK);
 	}
 
+	@Path("/readservices")
+	@GET
+	@Produces("application/json")
+	public String readServices() {
+		FinUser user = PersistanceManager.getInstance().getUser(1);
+		FigoSession fs = new FigoSession(user.getToken());
+		try {
+			List<Service> services = fs.getSupportedServices();
+			for (Service service : services) {
+				log.info(String.format("Service: %s %s %s", service.getName(), service.getBankCode(), service.getIcon()));
+			}
+		} catch (FigoException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
+	}
+
+	@Path("/readbanks")
+	@GET
+	@Produces("application/json")
+	public String readBanks() {
+		FinUser user = PersistanceManager.getInstance().getUser(1);
+		FigoSession fs = new FigoSession(user.getToken());
+		try {
+			List<Bank> banks = getSupportedBanks(fs);
+			for (Bank bank : banks) {
+				log.info(String.format("Service: %s %s", bank.getBankName(), bank.getBankCode()));
+			}
+		} catch (FigoException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
+	}
+
+	// FAKE Endpoints, weil die Funktion im SDK fehlt
+
+	/**
+	 * Returns a list of all supported credit cards and payment services for all
+	 * countries
+	 * 
+	 * @param fs
+	 * @return List of Services
+	 * @exception FigoException
+	 *                Base class for all figoExceptions
+	 * @exception IOException
+	 *                IOException
+	 */
+	public List<Bank> getSupportedBanks(FigoSession fs) throws FigoException, IOException {
+		Bank.BankResponse response = fs.queryApi("/rest/catalog/banks", null, "GET", Bank.BankResponse.class);
+		return response == null ? null : response.getBanks();
+	}
 }

@@ -17,6 +17,7 @@ import org.stoevesand.findow.model.FinCategorySum;
 import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinTask;
 import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinTransactionList;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
@@ -84,7 +85,8 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId())
+						.getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new FinErrorHandler(500, "NO SUCH ACCOUNT");
@@ -320,7 +322,8 @@ public class PersistanceManager {
 			}
 		}
 
-		// am ende nochmal neu laden, damit alle neue und entfernten Accounts richtig sind.
+		// am ende nochmal neu laden, damit alle neue und entfernten Accounts
+		// richtig sind.
 		accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
 
 		entityManager.getTransaction().commit();
@@ -467,6 +470,40 @@ public class PersistanceManager {
 		entityManager.close();
 
 		return accounts;
+	}
+
+	public void updateTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler {
+
+		log.info("Update account " + account + " - days: " + days);
+
+		List<FinTransaction> newTransactions = new Vector<FinTransaction>();
+		FinTransactionList transactions = null;
+
+		int totalTx = 1 - 1;
+
+		BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
+		transactions = bankingAPI.searchTransactions(user, account, days);
+
+		if (transactions.getTransactions() != null) {
+			totalTx = transactions.getTransactions().size();
+			for (FinTransaction tx : transactions.getTransactions()) {
+				FinTransaction knownTx = getTxByExternalId(tx.getSourceId());
+				if (knownTx == null) {
+					tx.lookForHints();
+					newTransactions.add(tx);
+				}
+			}
+		}
+
+		log.info("Transactions [new/total]: [" + newTransactions.size() + "/" + totalTx + "]");
+
+		if (newTransactions.size() > 0) {
+			log.info("account updated");
+			storeTx(newTransactions);
+		} else {
+			log.info("No update.");
+		}
+
 	}
 
 }

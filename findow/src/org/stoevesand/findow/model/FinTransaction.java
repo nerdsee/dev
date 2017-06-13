@@ -40,12 +40,12 @@ public class FinTransaction {
 
 	// id coming from a source system
 	private String sourceId;
-	private String sourceSystem = "FINAPI";
+	private String sourceSystem = "FIGO";
 
 	private transient int parentId;
 	private String accountId;
 	private long amount;
-	private transient String valueDate;
+	private Date valueDate;
 	private Date bookingDate;
 	private String purpose;
 	private String counterpartName;
@@ -120,9 +120,12 @@ public class FinTransaction {
 		this.type = type;
 	}
 
-	@Transient
-	public String getValueDate() {
+	public Date getValueDate() {
 		return valueDate;
+	}
+
+	public void setValueDate(Date date) {
+		valueDate = date;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -162,7 +165,14 @@ public class FinTransaction {
 			// parentId = jo.getInt("parentId");
 			accountId = jo.getString("accountId");
 			amount = (long) (jo.getDouble("amount") * 100);
-			valueDate = jo.getString("valueDate");
+
+			String valueDateText = jo.getString("valueDate");
+			try {
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+				valueDate = df.parse(valueDateText);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 
 			String bookingDateText = jo.getString("finapiBookingDate");
 			try {
@@ -192,6 +202,7 @@ public class FinTransaction {
 		accountId = tx.getAccountId();
 		amount = (long) (tx.getAmount().doubleValue() * 100);
 		bookingDate = tx.getBookingDate();
+		valueDate = tx.getValueDate();
 		type = tx.getBookingText();
 		purpose = tx.getPurposeText();
 		counterpartName = tx.getName();

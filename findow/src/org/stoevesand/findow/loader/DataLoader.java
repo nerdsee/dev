@@ -20,46 +20,13 @@ public class DataLoader {
 
 	private static final int MAXTRIES = 5;
 
-	public static void updateTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler {
-
-		log.info("Update account " + account + " - days: " + days);
-
-		boolean ready = waitUntilReady(user, account);
-
-		List<FinTransaction> newTransactions = new Vector<FinTransaction>();
-		FinTransactionList transactions = null;
-
-		int totalTx = 1-1;
-
-		if (ready) {
-
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
-			transactions = bankingAPI.searchTransactions(user, account, days);
-
-			if (transactions.getTransactions() != null) {
-				totalTx = transactions.getTransactions().size();
-				for (FinTransaction tx : transactions.getTransactions()) {
-					FinTransaction knownTx = PersistanceManager.getInstance().getTxByExternalId(tx.getSourceId());
-					if (knownTx == null) {
-						tx.lookForHints();
-						newTransactions.add(tx);
-					}
-				}
-			}
-		}
-
-		log.info("Transactions [new/total]: [" + newTransactions.size() + "/" + totalTx + "]");
-
-		if (newTransactions.size() > 0) {
-			log.info("account updated");
-			PersistanceManager.getInstance().storeTx(newTransactions);
-		} else {
-			log.info("No update. Account ready [" + ready + "]");
-		}
-
-	}
-
-	public static boolean waitUntilReady(FinUser user, FinAccount account) {
+	/** wird nicht mehr gebraucht
+	 * 
+	 * @param user
+	 * @param account
+	 * @return
+	 */
+	private static boolean DELETE_waitUntilReady(FinUser user, FinAccount account) {
 		try {
 			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
 

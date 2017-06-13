@@ -10,6 +10,7 @@ import org.stoevesand.findow.loader.DataLoader;
 import org.stoevesand.findow.model.FinAccount;
 import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinUser;
+import org.stoevesand.findow.persistence.PersistanceManager;
 
 public class ImportAccountJob implements Job {
 
@@ -29,7 +30,7 @@ public class ImportAccountJob implements Job {
 			try {
 				log.info("Import transactions of account " + account);
 				user.refreshToken();
-				DataLoader.updateTransactions(user, account, 120);
+				PersistanceManager.getInstance().updateTransactions(user, account, 120);
 			} catch (FinErrorHandler e) {
 				log.error("Failed to refresh account " + account, e);
 			}
