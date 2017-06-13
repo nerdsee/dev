@@ -128,25 +128,6 @@ public class FigoBankingAPI implements BankingAPI {
 
 		return null;
 	}
-
-	@Override
-	public List<org.stoevesand.findow.model.FinBank> refreshServices() {
-		FigoConnection fc = new FigoConnection(client_id, client_secret, "http://localhost:3000");
-		FigoSession fs = fc.
-		Bank bank = null;
-
-		try {
-			bank = fc.queryApi("/catalog/banks/de/" + search, null, "GET", Bank.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FigoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
 	
 	@Override
 	public FinToken requestUserToken(String username, String password) throws FinErrorHandler {
