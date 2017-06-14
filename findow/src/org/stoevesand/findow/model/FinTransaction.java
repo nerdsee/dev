@@ -43,7 +43,7 @@ public class FinTransaction {
 	private String sourceSystem = "FIGO";
 
 	private transient int parentId;
-	private String accountId;
+	private Long accountId;
 	private long amount;
 	private Date valueDate;
 	private Date bookingDate;
@@ -108,7 +108,7 @@ public class FinTransaction {
 	}
 
 	@Column(name = "ACCOUNT_ID")
-	public String getAccountId() {
+	public Long getAccountId() {
 		return accountId;
 	}
 
@@ -164,7 +164,7 @@ public class FinTransaction {
 		try {
 			sourceId = jo.getString("id");
 			// parentId = jo.getInt("parentId");
-			accountId = jo.getString("accountId");
+			accountId = jo.getLong("accountId");
 			amount = (long) (jo.getDouble("amount") * 100);
 
 			String valueDateText = jo.getString("valueDate");
@@ -200,7 +200,7 @@ public class FinTransaction {
 	}
 
 	public FinTransaction(FinUser user, FinAccount account, me.figo.models.Transaction tx) {
-		accountId = account.getId().toString();
+		accountId = account.getId();
 		amount = (long) (tx.getAmount().doubleValue() * 100);
 		bookingDate = tx.getBookingDate();
 		valueDate = tx.getValueDate();
@@ -250,7 +250,7 @@ public class FinTransaction {
 		this.sourceSystem = sourceSystem;
 	}
 
-	public void setAccountId(String accountId) {
+	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
 	}
 

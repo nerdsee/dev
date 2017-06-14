@@ -85,7 +85,7 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId())
+				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getId())
 						.getResultList();
 				result.addAll(subResult);
 			} else {
@@ -98,7 +98,7 @@ public class PersistanceManager {
 			List<FinAccount> accounts = em.createQuery("select a from Account a where user=:id", FinAccount.class).setParameter("id", user).getResultList();
 			if (accounts != null) {
 				for (FinAccount account : accounts) {
-					List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getSourceId()).getResultList();
+					List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getId()).getResultList();
 					result.addAll(subResult);
 				}
 			}
