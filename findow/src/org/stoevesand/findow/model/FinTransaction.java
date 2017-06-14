@@ -64,6 +64,8 @@ public class FinTransaction {
 
 	private List<Hint> hints;
 
+	private Long userId;
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction", fetch = FetchType.EAGER, orphanRemoval = true)
 	public List<Hint> getHints() {
 		return hints;
@@ -106,7 +108,6 @@ public class FinTransaction {
 	}
 
 	@Column(name = "ACCOUNT_ID")
-	@JsonIgnore
 	public String getAccountId() {
 		return accountId;
 	}
@@ -198,8 +199,8 @@ public class FinTransaction {
 		}
 	}
 
-	public FinTransaction(me.figo.models.Transaction tx) {
-		accountId = tx.getAccountId();
+	public FinTransaction(FinUser user, FinAccount account, me.figo.models.Transaction tx) {
+		accountId = account.getId().toString();
 		amount = (long) (tx.getAmount().doubleValue() * 100);
 		bookingDate = tx.getBookingDate();
 		valueDate = tx.getValueDate();
@@ -207,6 +208,7 @@ public class FinTransaction {
 		purpose = tx.getPurposeText();
 		counterpartName = tx.getName();
 		sourceId = tx.getTransactionId();
+		userId = user.getId();
 	}
 
 	public void setAmountCent(long amount) {
@@ -215,6 +217,15 @@ public class FinTransaction {
 
 	public void setBookingDate(Date bookingDate) {
 		this.bookingDate = bookingDate;
+	}
+	
+	@Column(name = "USER_ID")
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	@JsonIgnore

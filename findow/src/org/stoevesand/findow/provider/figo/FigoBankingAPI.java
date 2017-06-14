@@ -152,7 +152,7 @@ public class FigoBankingAPI implements BankingAPI {
 	}
 
 	@Override
-	public FinTransactionList searchTransactions(FinUser user, org.stoevesand.findow.model.FinAccount account, int days) throws FinErrorHandler {
+	public FinTransactionList searchTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler {
 
 		FinTransactionList tl = new FinTransactionList();
 
@@ -162,7 +162,7 @@ public class FigoBankingAPI implements BankingAPI {
 			List<Transaction> txs = fs.getTransactions(account.getSourceId());
 
 			for (Transaction tx : txs) {
-				org.stoevesand.findow.model.FinTransaction t = new org.stoevesand.findow.model.FinTransaction(tx);
+				org.stoevesand.findow.model.FinTransaction t = new org.stoevesand.findow.model.FinTransaction(user, account, tx);
 				tl.addTransaction(t);
 			}
 

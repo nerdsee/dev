@@ -50,22 +50,27 @@ public class RestTransactions {
 			String jwsUser = principal.getName();
 			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			FinAccount account = user.getAccount(accountId);
+			if (accountId != null) {
+				// prüfen ob eine accountId mitgegeben wurde
+				FinAccount account = user.getAccount(accountId);
 
-			if (account != null) {
-				// DataLoader.updateTransactions(userToken,
-				// account.getSourceId(), days);
+				if (account != null) {
+					// DataLoader.updateTransactions(userToken,
+					// account.getSourceId(), days);
 
-				List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
+					List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, accountId, days);
 
-				FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions, account);
-
-				// result = RestUtils.generateJsonResponse(transactions,
-				// "transactions");
-				result = RestUtils.generateJsonResponse(wrapper, null);
+					FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions, account);
+					result = RestUtils.generateJsonResponse(wrapper, null);
+				} else {
+					log.error("Failed to getTransactions. Account not found (id): " + accountId);
+					result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
+				}
 			} else {
-				log.error("Failed to getTransactions. Account not found (id): " + accountId);
-				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
+				//ansonsten alle Transaktionen des users laden
+				List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, null, days);
+
+				result = RestUtils.generateJsonResponse(transactions, "transactions");
 			}
 		} catch (FinErrorHandler e) {
 			log.error("Failed to getTransactions");
