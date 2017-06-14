@@ -70,7 +70,9 @@ public class RestTransactions {
 				//ansonsten alle Transaktionen des users laden
 				List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, null, days);
 
-				result = RestUtils.generateJsonResponse(transactions, "transactions");
+				FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions);
+				result = RestUtils.generateJsonResponse(wrapper, null);
+				//result = RestUtils.generateJsonResponse(transactions, "transactions");
 			}
 		} catch (FinErrorHandler e) {
 			log.error("Failed to getTransactions");

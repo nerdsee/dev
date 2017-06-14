@@ -34,6 +34,13 @@ public class FinTransactionWrapper {
 	private double balanceBefore = 0;
 	private long txSum = 0;
 
+	public FinTransactionWrapper(List<FinTransaction> transactions) {
+		this.transactions = transactions;
+		sumTransactions(transactions);
+		balanceAfter = txSum;
+		balanceBefore = 0;
+	}
+
 	public FinTransactionWrapper(List<FinTransaction> transactions, FinAccount account) {
 		this.transactions = transactions;
 		sumTransactions(transactions);
