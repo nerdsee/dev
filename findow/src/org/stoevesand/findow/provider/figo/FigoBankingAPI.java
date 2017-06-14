@@ -36,12 +36,12 @@ public class FigoBankingAPI implements BankingAPI {
 	private String client_secret = "";
 
 	@Override
-	public String importAccount(FinUser user, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
+	public String importAccount(FinUser user, String bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
 		FigoSession fs = new FigoSession(user.getToken());
 		String taskToken = null;
 		try {
 
-			TaskTokenResponse er = fs.setupNewAccount(Integer.toString(bankId), "de", bankingUserId, bankingPin, null, true, true);
+			TaskTokenResponse er = fs.setupNewAccount(bankId, "de", bankingUserId, bankingPin, null, true, true);
 			if (er != null) {
 				taskToken = er.getTaskToken();
 				FinTask task = new FinTask(user, taskToken, TaskSolver.IMPORT_ACCOUNT);

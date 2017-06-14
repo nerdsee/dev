@@ -128,11 +128,11 @@ public class RestAccounts {
 	@POST
 	@Secured
 	@Produces("application/json")
-	public String importAccount(@HeaderParam("bankId") int bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
+	public String importAccount(@HeaderParam("bankId") String bankId, @HeaderParam("bankingUserId") String bankingUserId, @HeaderParam("bankingPin") String bankingPin) {
 		RestUtils.addHeader(response);
 		String result = "";
 
-		log.info(String.format("importAccount %d %s", bankId, bankingUserId));
+		log.info(String.format("importAccount %s %s", bankId, bankingUserId));
 
 		try {
 			// User laden

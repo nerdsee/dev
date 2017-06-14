@@ -11,7 +11,7 @@ import org.stoevesand.findow.model.FinUser;
 
 public interface BankingAPI {
 
-	public String importAccount(FinUser user, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler;
+	public String importAccount(FinUser user, String bankId, String bankingUserId, String bankingPin) throws FinErrorHandler;
 
 	public ApiUser createUser(String username, String password) throws FinErrorHandler;
 

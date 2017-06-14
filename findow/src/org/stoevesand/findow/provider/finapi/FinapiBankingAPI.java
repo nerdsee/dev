@@ -15,8 +15,8 @@ import org.stoevesand.findow.provider.finapi.model.BankConnection;
 public class FinapiBankingAPI implements BankingAPI {
 
 	@Override
-	public String importAccount(FinUser user, int bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
-		BankConnection connection = BankConnectionsService.importConnection(user.getToken(), bankId, bankingUserId, bankingPin);
+	public String importAccount(FinUser user, String bankId, String bankingUserId, String bankingPin) throws FinErrorHandler {
+		BankConnection connection = BankConnectionsService.importConnection(user.getToken(), Integer.parseInt(bankId), bankingUserId, bankingPin);
 
 		// Accounts laden
 		List<FinAccount> accounts = AccountsService.searchAccounts(user.getToken(), connection);

@@ -77,6 +77,7 @@ public class RestMaintenance {
 	@GET
 	@Produces("application/json")
 	public String readServices() {
+		String result = null;
 		FinUser user = PersistanceManager.getInstance().getUser(1);
 		FigoSession fs = new FigoSession(user.getToken());
 		try {
@@ -84,12 +85,17 @@ public class RestMaintenance {
 			for (Service service : services) {
 				log.info(String.format("Service: %s %s %s", service.getName(), service.getBankCode(), service.getIcon()));
 			}
+			result = RestUtils.generateJsonResponse(services, "services");
 		} catch (FigoException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return RestUtils.generateJsonResponse(FindowResponse.OK);
+		if (result != null) {
+			return result;
+		} else {
+			return RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
+		}
 	}
 
 	@Path("/readbanks")

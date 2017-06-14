@@ -30,11 +30,17 @@ public class SingleTaskJob implements Job {
 			task.getTaskState(user);
 			task = PersistanceManager.getInstance().persist(task);
 			if (task.isActive()) {
-				// Solange versuchen, bis er fertig ist.
-				int secs = 10 * task.getRetries();
-				log.info(String.format("task still running. Retry in %d seconds: %s", secs, task));
-				long next = System.currentTimeMillis() + (secs * 1000);
-				JobManager.getInstance().addSingleTaskJob(task, new Date(next));
+
+				if (task.isErroneous()) {
+					log.error(String.format("Task Error (%d): %s", task.getId(), task.getMessage()));
+				} else {
+
+					// Solange versuchen, bis er fertig ist.
+					int secs = 10 * task.getRetries();
+					log.info(String.format("task still running. Retry in %d seconds: %s", secs, task));
+					long next = System.currentTimeMillis() + (secs * 1000);
+					JobManager.getInstance().addSingleTaskJob(task, new Date(next));
+				}
 			} else if (!task.isSolved()) {
 				TaskSolver.getInstance().solve(user, task);
 			}
