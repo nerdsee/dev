@@ -72,6 +72,7 @@ public class RestTransactions {
 
 				FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions);
 				result = RestUtils.generateJsonResponse(wrapper, null);
+				
 				//result = RestUtils.generateJsonResponse(transactions, "transactions");
 			}
 		} catch (FinErrorHandler e) {
