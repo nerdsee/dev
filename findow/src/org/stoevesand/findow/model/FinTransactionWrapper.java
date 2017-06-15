@@ -37,7 +37,7 @@ public class FinTransactionWrapper {
 	public FinTransactionWrapper(List<FinTransaction> transactions) {
 		this.transactions = transactions;
 		sumTransactions(transactions);
-		balanceAfter = txSum;
+		balanceAfter = (double) txSum / 100;
 		balanceBefore = 0;
 	}
 
@@ -45,7 +45,7 @@ public class FinTransactionWrapper {
 		this.transactions = transactions;
 		sumTransactions(transactions);
 		balanceAfter = (double) account.getBalanceCent() / 100;
-		balanceBefore = balanceAfter - txSum;
+		balanceBefore = balanceAfter - (double) txSum / 100;
 	}
 
 	private void sumTransactions(List<FinTransaction> transactions) {

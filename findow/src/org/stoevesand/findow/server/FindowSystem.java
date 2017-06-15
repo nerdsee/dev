@@ -26,7 +26,7 @@ public class FindowSystem {
 
 	public static boolean isLocal() {
 		String value = System.getProperty("findow.debug");
-		return (value == null);
+		return (value != null);
 	}
 
 }
