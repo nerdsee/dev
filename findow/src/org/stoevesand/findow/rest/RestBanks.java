@@ -45,11 +45,9 @@ public class RestBanks {
 		FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
 		log.info("getBank: " + search + " (for user " + jwsUser + ")");
-		JobManager.getInstance();
-		RestUtils.addHeader(response);
-		// BankingAPI api = FindowSystem.getBankingAPI("FIGO");
-		BankingAPI api = FindowSystem.getBankingAPI(user);
-		List<FinBank> banks = api.searchBanks(search);
+		//JobManager.getInstance();
+
+		List<FinBank> banks = PersistanceManager.getInstance().searchBanks(search);
 		String result = RestUtils.generateJsonResponse(banks, "banks");
 		return result;
 	}

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.hint.RegexHint;
 import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinBank;
 import org.stoevesand.findow.model.FinCategory;
 import org.stoevesand.findow.model.FinCategorySum;
 import org.stoevesand.findow.model.FinErrorHandler;
@@ -504,6 +505,18 @@ public class PersistanceManager {
 			log.info("No update.");
 		}
 
+	}
+
+	public List<FinBank> searchBanks(String search) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<FinBank> accounts = entityManager.createQuery("select a from Bank a where UPPER(a.name) like :search", FinBank.class).setParameter("search", "%"+search.toUpperCase()+"%") .getResultList();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return accounts;
 	}
 
 }

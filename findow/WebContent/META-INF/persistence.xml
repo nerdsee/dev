@@ -12,6 +12,7 @@
 		<class>org.stoevesand.findow.model.FinUser</class>
 		<class>org.stoevesand.findow.model.FinCategorySum</class>
 		<class>org.stoevesand.findow.model.FinTask</class>
+		<class>org.stoevesand.findow.model.FinBank</class>
 		<class>org.stoevesand.findow.hint.Hint</class>
 		<class>org.stoevesand.findow.hint.RegexHint</class>
 

@@ -17,9 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.hint.HintEngine;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinBank;
 import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.figo.FigoBanksLoader;
 import org.stoevesand.findow.provider.finapi.AccountsService;
 import org.stoevesand.findow.provider.finapi.BankConnectionsService;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
@@ -84,6 +86,8 @@ public class RestMaintenance {
 			List<Service> services = fs.getSupportedServices();
 			for (Service service : services) {
 				log.info(String.format("Service: %s %s %s", service.getName(), service.getBankCode(), service.getIcon()));
+				FinBank bank = new FinBank(service);
+				PersistanceManager.getInstance().persist(bank);
 			}
 			result = RestUtils.generateJsonResponse(services, "services");
 		} catch (FigoException e) {
@@ -102,6 +106,16 @@ public class RestMaintenance {
 	@GET
 	@Produces("application/json")
 	public String readBanks() {
+		FinUser user = PersistanceManager.getInstance().getUser(1);
+		List<FinBank> banks = FigoBanksLoader.loadBanks(user);
+		for (FinBank bank : banks) {
+			log.info(String.format("Service: %s %s", bank.getName(), bank.getBlz()));
+			PersistanceManager.getInstance().persist(bank);
+		}
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
+	}
+
+	public String readBanksFromFigo() {
 		FinUser user = PersistanceManager.getInstance().getUser(1);
 		FigoSession fs = new FigoSession(user.getToken());
 		try {
