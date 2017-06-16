@@ -52,7 +52,6 @@ public class RestAccounts {
 			Principal principal = securityContext.getUserPrincipal();
 			String jwsUser = principal.getName();
 			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
-			String userToken = user.getToken();
 
 			FinAccount account = PersistanceManager.getInstance().getAccount(user, accountId);
 

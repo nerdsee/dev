@@ -90,6 +90,13 @@ public class FinTransaction {
 		return (double) amount / 100;
 	}
 
+	@Transient
+	public FinAccount getAccount() {
+		FinAccount account = PersistanceManager.getInstance().getAccount(accountId);
+
+		return account;
+	}
+
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
@@ -218,7 +225,7 @@ public class FinTransaction {
 	public void setBookingDate(Date bookingDate) {
 		this.bookingDate = bookingDate;
 	}
-	
+
 	@Column(name = "USER_ID")
 	public Long getUserId() {
 		return userId;

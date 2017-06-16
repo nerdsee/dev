@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
+import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.finapi.model.JSONUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -138,6 +140,10 @@ public class FinAccount {
 	private String status;
 
 	private String bankName;
+
+	private String bankCode;
+
+	//private int bankId;
 
 	public FinAccount(JSONObject jo) {
 		update(jo);
@@ -329,6 +335,12 @@ public class FinAccount {
 		}
 	}
 
+	@Transient
+	public FinBank getBank() {
+		FinBank bank = PersistanceManager.getInstance().getBankByCode(bankCode);
+		return bank;
+	}
+
 	public String getBankName() {
 		return bankName;
 	}
@@ -337,10 +349,19 @@ public class FinAccount {
 		this.bankName = bankName;
 	}
 
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
 	public void refresh(me.figo.models.Account acc) {
 		sourceId = acc.getAccountId();
 		accountNumber = acc.getAccountNumber();
 		bankName = acc.getBankName();
+		bankCode = acc.getBankCode();
 		double dba = acc.getBalance().getBalance().doubleValue();
 		balance = (long) (dba * 100);
 		accountCurrency = acc.getCurrency();

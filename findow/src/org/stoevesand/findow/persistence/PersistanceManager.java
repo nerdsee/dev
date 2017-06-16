@@ -86,8 +86,7 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getId())
-						.getResultList();
+				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getId()).getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new FinErrorHandler(500, "NO SUCH ACCOUNT");
@@ -311,22 +310,25 @@ public class PersistanceManager {
 
 		List<FinAccount> accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
 
-		for (FinAccount account : accounts) {
-			BankingAPI api = FindowSystem.getBankingAPI(user);
-			try {
-				api.refreshAccount(user, account);
-				entityManager.persist(account);
-			} catch (FinErrorHandler e) {
-				log.error("Failed to refresh account. Removed account: " + account.getId());
-				user.removeAccount(account);
-				persist(entityManager, user);
+		boolean refresh = false;
+		if (refresh) {
+			for (FinAccount account : accounts) {
+				BankingAPI api = FindowSystem.getBankingAPI(user);
+				try {
+					api.refreshAccount(user, account);
+					entityManager.persist(account);
+				} catch (FinErrorHandler e) {
+					log.error("Failed to refresh account. Removed account: " + account.getId());
+					user.removeAccount(account);
+					persist(entityManager, user);
+				}
 			}
+
+			// am ende nochmal neu laden, damit alle neue und entfernten
+			// Accounts
+			// richtig sind.
+			accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
 		}
-
-		// am ende nochmal neu laden, damit alle neue und entfernten Accounts
-		// richtig sind.
-		accounts = entityManager.createQuery("select a from Account a where a.user=:user", FinAccount.class).setParameter("user", user).getResultList();
-
 		entityManager.getTransaction().commit();
 		entityManager.close();
 
@@ -372,34 +374,46 @@ public class PersistanceManager {
 	public FinAccount getAccount(FinUser user, Long accountId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
-		FinAccount retAccount = null;
+		// FinAccount retAccount = null;
 
 		FinAccount account = entityManager.find(FinAccount.class, accountId);
-		if (account != null) {
-
-			try {
-				BankingAPI api = FindowSystem.getBankingAPI(user);
-				api.refreshAccount(user, account);
-			} catch (FinErrorHandler e) {
-				e.printStackTrace();
-			}
-
-			int ret = 0;
-
-			if (ret == 404) {
-				user.removeAccount(account);
-				remove(entityManager, account);
-				persist(entityManager, user);
-			} else {
-				entityManager.persist(account);
-				retAccount = account;
-			}
-		}
+		// if (account != null) {
+		//
+		// try {
+		// BankingAPI api = FindowSystem.getBankingAPI(user);
+		// api.refreshAccount(user, account);
+		// } catch (FinErrorHandler e) {
+		// e.printStackTrace();
+		// }
+		//
+		// int ret = 0;
+		//
+		// if (ret == 404) {
+		// user.removeAccount(account);
+		// remove(entityManager, account);
+		// persist(entityManager, user);
+		// } else {
+		// entityManager.persist(account);
+		// retAccount = account;
+		// }
+		// }
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
 
-		return retAccount;
+		return account;
+	}
+
+	public FinAccount getAccount(Long accountId) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		FinAccount account = entityManager.find(FinAccount.class, accountId);
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return account;
 	}
 
 	public void deleteAccount(FinUser user, Long accountId) throws FinErrorHandler {
@@ -511,12 +525,48 @@ public class PersistanceManager {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<FinBank> accounts = entityManager.createQuery("select a from Bank a where UPPER(a.name) like :search", FinBank.class).setParameter("search", "%"+search.toUpperCase()+"%") .getResultList();
+		List<FinBank> accounts = entityManager.createQuery("select a from Bank a where UPPER(a.name) like :search", FinBank.class).setParameter("search", "%" + search.toUpperCase() + "%").getResultList();
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
 
 		return accounts;
+	}
+
+	public FinBank getBank(int bankId) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		FinBank bank = entityManager.find(FinBank.class, bankId);
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return bank;
+	}
+
+	public FinBank getBankByCode(String bankCode) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		FinBank retBank = null;
+
+		List<FinBank> result = entityManager.createQuery("select t from Bank t where t.blz = :bc", FinBank.class).setParameter("bc", bankCode).getResultList();
+
+		if (result.size() > 0) {
+
+			if (result.size() > 1) {
+				log.error("Multiple banks with identical bank code.");
+			}
+
+			retBank = result.get(0);
+
+		} else {
+			log.info("No bank with bank code" + bankCode);
+		}
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		return retBank;
 	}
 
 }
