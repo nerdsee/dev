@@ -30,11 +30,6 @@ public class PersistanceManager {
 
 	private Logger log = LoggerFactory.getLogger(PersistanceManager.class);
 
-	// @PersistenceContext(unitName = "org.stoevesand.finapi.persistence")
-	// EntityManager entityManager;
-
-	// private EntityManager entityManager;
-
 	public static PersistanceManager getInstance() {
 		if (_instance == null) {
 			_instance = new PersistanceManager();
@@ -43,7 +38,17 @@ public class PersistanceManager {
 	}
 
 	private PersistanceManager() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence");
+		
+		if (FindowSystem.isLocal()) {
+			// DEV
+			entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence.dev");
+			log.info("Using DEV PersistanceUnit");
+		} else {
+			//PROD
+			entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence.prod");
+			log.info("Using PROD PersistanceUnit");
+		}
+		
 	}
 
 	public void storeTx(List<FinTransaction> transactionList) {
