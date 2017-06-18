@@ -38,17 +38,17 @@ public class PersistanceManager {
 	}
 
 	private PersistanceManager() {
-		
-		if (FindowSystem.isLocal()) {
+
+		if ("prod".equals(FindowSystem.getStage())) {
+			// PROD
+			entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence.prod");
+			log.info("Using PROD PersistanceUnit");
+		} else {
 			// DEV
 			entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence.dev");
 			log.info("Using DEV PersistanceUnit");
-		} else {
-			//PROD
-			entityManagerFactory = Persistence.createEntityManagerFactory("org.stoevesand.finapi.persistence.prod");
-			log.info("Using PROD PersistanceUnit");
 		}
-		
+
 	}
 
 	public void storeTx(List<FinTransaction> transactionList) {

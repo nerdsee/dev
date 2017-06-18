@@ -29,4 +29,9 @@ public class FindowSystem {
 		return (value != null);
 	}
 
+	public static String getStage() {
+		String stage = System.getProperty("findow.stage");
+		return stage == null ? "dev" : stage;
+	}
+
 }
