@@ -2,6 +2,7 @@ package org.stoevesand.findow.rest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -84,12 +85,15 @@ public class RestMaintenance {
 		FigoSession fs = new FigoSession(user.getToken());
 		try {
 			List<Service> services = fs.getSupportedServices();
+			List<FinBank> banks = new Vector<FinBank>();
 			for (Service service : services) {
-				log.info(String.format("Service: %s %s %s", service.getName(), service.getBankCode(), service.getIcon()));
 				FinBank bank = new FinBank(service);
-				PersistanceManager.getInstance().persist(bank);
+				banks.add(bank);
 			}
-			result = RestUtils.generateJsonResponse(services, "services");
+			PersistanceManager.getInstance().persistList(banks);
+
+			log.info(String.format("Imported %d services", services.size()));
+			result = RestUtils.generateJsonResponse(FindowResponse.OK);
 		} catch (FigoException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -108,10 +112,11 @@ public class RestMaintenance {
 	public String readBanks() {
 		FinUser user = PersistanceManager.getInstance().getUser(1);
 		List<FinBank> banks = FigoBanksLoader.loadBanks(user);
-		for (FinBank bank : banks) {
-			log.info(String.format("Service: %s %s", bank.getName(), bank.getBlz()));
-			PersistanceManager.getInstance().persist(bank);
-		}
+		PersistanceManager.getInstance().persistList(banks);
+		// for (FinBank bank : banks) {
+		// PersistanceManager.getInstance().persist(bank);
+		// }
+		log.info(String.format("Imported %d banks", banks.size()));
 		return RestUtils.generateJsonResponse(FindowResponse.OK);
 	}
 

@@ -174,6 +174,21 @@ public class PersistanceManager {
 		em.remove(em.contains(entity) ? entity : em.merge(entity));
 	}
 
+	public <T> void persistList(List<T> entityList) {
+
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		for (T entity : entityList) {
+			persist(entityManager, entity);
+		}
+
+		entityManager.flush();
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+	}
+
 	public <T> T persist(T entity) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
@@ -560,7 +575,7 @@ public class PersistanceManager {
 		if (result.size() > 0) {
 
 			if (result.size() > 1) {
-				log.error("Multiple banks with identical bank code.");
+				log.error("Multiple banks with identical bank code: " + bankCode);
 			}
 
 			retBank = result.get(0);

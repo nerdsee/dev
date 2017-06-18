@@ -37,14 +37,13 @@ public class JobManager {
 			// Start the schedule
 			sch.start();
 
-			if (!FindowSystem.isLocal()) {
-				JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
+			JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
 
-				// Trigger the job to run on the next round minute
-				Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(30).repeatForever()).build();
-				// Tell quartz to schedule the job using the trigger
-				sch.scheduleJob(refreshAccountJob, trigger);
-			}
+			// Trigger the job to run on the next round minute
+			Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(30).repeatForever()).build();
+			// Tell quartz to schedule the job using the trigger
+			sch.scheduleJob(refreshAccountJob, trigger);
+
 		} catch (SchedulerException e) {
 			log.error("Initialise JobManager failed.", e);
 			e.printStackTrace();

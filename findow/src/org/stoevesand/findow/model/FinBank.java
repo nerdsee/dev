@@ -95,6 +95,7 @@ public class FinBank {
 		this.icon = icon;
 	}
 
+	@Column(name = "ADVICE", columnDefinition = "text")
 	public String getAdvice() {
 		return advice;
 	}
