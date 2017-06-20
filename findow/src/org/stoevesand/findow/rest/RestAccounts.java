@@ -158,7 +158,9 @@ public class RestAccounts {
 				log.error("ILLEGAL_FIELD_VALUE");
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ILLEGAL_FIELD);
 			} else {
-				log.error("UNKNOWN");
+				log.error("UNKNOWN: ");
+				log.error("MSG: " + e.getMessage());
+				log.error("CE: " + e.getErrors());
 				result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 			}
 		}
