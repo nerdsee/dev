@@ -146,14 +146,19 @@ public class RestAccounts {
 
 		} catch (FinErrorHandler e) {
 			if (e.hasCallError("ENTITY_EXISTS")) {
+				log.error("ENTITY_EXISTS");
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ALREADY_EXISTS);
 			} else if (e.hasCallError("UNKNOWN_ENTITY")) {
+				log.error("UNKNOWN_ENTITY");
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 			} else if (e.hasCallError("BANK_SERVER_REJECTION")) {
+				log.error("BANK_SERVER_REJECTION");
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_IMPORT_REJECTED);
 			} else if (e.hasCallError("ILLEGAL_FIELD_VALUE")) {
+				log.error("ILLEGAL_FIELD_VALUE");
 				result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_ILLEGAL_FIELD);
 			} else {
+				log.error("UNKNOWN");
 				result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 			}
 		}
