@@ -161,6 +161,7 @@ public class RestAccounts {
 				log.error("UNKNOWN: ");
 				log.error("MSG: " + e.getMessage());
 				log.error("CE: " + e.getErrors());
+				log.error("RSP: " + e.getResponse());
 				result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 			}
 		}

@@ -41,9 +41,11 @@ public class FigoBankingAPI implements BankingAPI {
 		String taskToken = null;
 		try {
 
+			log.info("call setup new account");
 			TaskTokenResponse er = fs.setupNewAccount(bankId, "de", bankingUserId, bankingPin, null, true, true);
 			if (er != null) {
 				taskToken = er.getTaskToken();
+				log.info("new task token for import: " + taskToken);
 				FinTask task = new FinTask(user, taskToken, TaskSolver.IMPORT_ACCOUNT);
 				// erste Statusabfrage, damit der Request losläuft
 				boolean changed = task.getTaskState(fs);
@@ -57,6 +59,8 @@ public class FigoBankingAPI implements BankingAPI {
 
 				JobManager.getInstance().addSingleTaskJob(task, new Date());
 
+			} else {
+				log.error("No TTR. Call failed.");
 			}
 		} catch (FigoException e) {
 			e.printStackTrace();
