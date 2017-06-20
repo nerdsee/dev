@@ -1,5 +1,6 @@
 package org.stoevesand.findow.server;
 
+import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.provider.figo.FigoBankingAPI;
@@ -10,7 +11,10 @@ public class FindowSystem {
 	private static final String FINAPI = "FINAPI";
 	private static final String FIGO = "FIGO";
 
-	public static BankingAPI getBankingAPI(FinUser user) {
+	public static BankingAPI getBankingAPI(FinUser user) throws FinErrorHandler {
+		if (user==null) {
+			throw new FinErrorHandler("Not a valid user. (null)");
+		} 
 		return getBankingAPI(user.getApi());
 	}
 

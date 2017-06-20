@@ -29,8 +29,8 @@ public class RefreshAccountJob implements Job {
 
 		for (FinUser user : users) {
 
-			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
 			try {
+				BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
 				bankingAPI.reloadAccountContent(user, null);
 			} catch (FinErrorHandler e) {
 				// TODO Auto-generated catch block

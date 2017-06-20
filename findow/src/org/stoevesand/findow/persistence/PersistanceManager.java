@@ -324,7 +324,7 @@ public class PersistanceManager {
 		return accounts;
 	}
 
-	public List<FinAccount> getAccounts(FinUser user) {
+	public List<FinAccount> getAccounts(FinUser user) throws FinErrorHandler {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
