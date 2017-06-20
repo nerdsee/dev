@@ -55,6 +55,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 		} catch (Exception e) {
 			log.error("JWTExcpetion: " + e.getMessage());
+			log.error("Token: " + token);
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 		}
 	}

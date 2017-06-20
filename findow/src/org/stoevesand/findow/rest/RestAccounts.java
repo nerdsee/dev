@@ -17,6 +17,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stoevesand.findow.model.FinAccount;
+import org.stoevesand.findow.model.FinAccountWrapper;
 import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
@@ -116,7 +117,10 @@ public class RestAccounts {
 			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
 			List<FinAccount> accounts = PersistanceManager.getInstance().getAccounts(user);
-			result = RestUtils.generateJsonResponse(accounts, "accounts");
+			
+			FinAccountWrapper faw = new FinAccountWrapper(accounts);
+			
+			result = RestUtils.generateJsonResponse(faw, "accountInfo");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
 		}
