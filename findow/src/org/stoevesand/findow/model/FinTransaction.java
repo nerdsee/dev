@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,6 +30,8 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import me.figo.models.Category;
+
 @Entity(name = "Transaction")
 @Table(name = "TRANSACTIONS")
 public class FinTransaction {
@@ -50,6 +53,39 @@ public class FinTransaction {
 	private String purpose;
 	private String counterpartName;
 
+	private static String[] delims = { "IBAN+", "BIC+", "EREF+", "KREF+", "MREF+", "CRED+", "DEBT+", "COAM+", "OAMT+", "SVWZ+", "ABWA+", "ABWE+", "BREF+", "RREF+" };
+
+	public void setPurposeMT940(String purpose) {
+
+		if (purpose != null) {
+			int pos = -1;
+			int lastpos = -1;
+			boolean foundSepa = false;
+			List<String> entries = new Vector<String>();
+			for (String delim : delims) {
+				pos = purpose.toUpperCase().indexOf(delim);
+				if (pos >= 0) {
+					foundSepa = true;
+					if (lastpos >= 0) {
+						String entry = purpose.substring(lastpos, pos);
+						entries.add(entry);
+					}
+					lastpos = pos;
+				}
+			}
+			if (lastpos >= 0) {
+				String entry = purpose.substring(lastpos);
+				entries.add(entry);
+			}
+
+			if (!foundSepa) {
+				setPurpose(purpose);
+			} else {
+				setSepaFields(entries);
+			}
+		}
+	}
+
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
 	}
@@ -65,6 +101,42 @@ public class FinTransaction {
 	private List<Hint> hints;
 
 	private Long userId;
+
+	private String bankCode;
+
+	private String bankName;
+
+	private String bookingText;
+
+	private List<Category> categories;
+
+	private String txCode;
+
+	private String iban;
+
+	private String bic;
+
+	private String eref;
+
+	private String kref;
+
+	private String mref;
+
+	private String cred;
+
+	private String debt;
+
+	private String coam;
+
+	private String oamt;
+
+	private String abwa;
+
+	private String abwe;
+
+	private String bref;
+
+	private String rref;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction", fetch = FetchType.EAGER, orphanRemoval = true)
 	public List<Hint> getHints() {
@@ -211,11 +283,52 @@ public class FinTransaction {
 		amount = (long) (tx.getAmount().doubleValue() * 100);
 		bookingDate = tx.getBookingDate();
 		valueDate = tx.getValueDate();
-		type = tx.getBookingText();
-		purpose = tx.getPurposeText();
+
+		setPurposeMT940(tx.getPurposeText());
+
 		counterpartName = tx.getName();
 		sourceId = tx.getTransactionId();
 		userId = user.getId();
+		type = tx.getType();
+
+		bankCode = tx.getBankCode();
+		bankName = tx.getBankName();
+		bookingText = tx.getBookingText();
+		categories = tx.getCategories();
+		txCode = tx.getTransactionCode();
+
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBookingText() {
+		return bookingText;
+	}
+
+	public void setBookingText(String bookingText) {
+		this.bookingText = bookingText;
+	}
+
+	public String getTxCode() {
+		return txCode;
+	}
+
+	public void setTxCode(String txCode) {
+		this.txCode = txCode;
 	}
 
 	public void setAmountCent(long amount) {
@@ -261,11 +374,154 @@ public class FinTransaction {
 		this.accountId = accountId;
 	}
 
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
+	}
+
+	public String getEref() {
+		return eref;
+	}
+
+	public void setEref(String eref) {
+		this.eref = eref;
+	}
+
+	public String getKref() {
+		return kref;
+	}
+
+	public void setKref(String kref) {
+		this.kref = kref;
+	}
+
+	public String getMref() {
+		return mref;
+	}
+
+	public void setMref(String mref) {
+		this.mref = mref;
+	}
+
+	public String getCred() {
+		return cred;
+	}
+
+	public void setCred(String cred) {
+		this.cred = cred;
+	}
+
+	public String getDebt() {
+		return debt;
+	}
+
+	public void setDebt(String debt) {
+		this.debt = debt;
+	}
+
+	public String getCoam() {
+		return coam;
+	}
+
+	public void setCoam(String coam) {
+		this.coam = coam;
+	}
+
+	public String getOamt() {
+		return oamt;
+	}
+
+	public void setOamt(String oamt) {
+		this.oamt = oamt;
+	}
+
+	public String getAbwa() {
+		return abwa;
+	}
+
+	public void setAbwa(String abwa) {
+		this.abwa = abwa;
+	}
+
+	public String getAbwe() {
+		return abwe;
+	}
+
+	public void setAbwe(String abwe) {
+		this.abwe = abwe;
+	}
+
+	public String getBref() {
+		return bref;
+	}
+
+	public void setBref(String bref) {
+		this.bref = bref;
+	}
+
+	public String getRref() {
+		return rref;
+	}
+
+	public void setRref(String rref) {
+		this.rref = rref;
+	}
+
 	public void lookForHints() {
 		List<Hint> hints = HintEngine.getInstance().search(this);
 		if (hints.size() > 0) {
 			this.hints = hints;
 		}
+	}
+
+	// delims = { "IBAN+", "BIC+", "EREF+", "KREF+", "MREF+", "CRED+", "DEBT+",
+	// "COAM+", "OAMT+", "SVWZ+", "ABWA+", "ABWE+", "BREF+", "RREF+" };
+
+	private void setSepaFields(List<String> entries) {
+		for (String entry : entries) {
+			if (entry.toUpperCase().startsWith("SVWZ+")) {
+				purpose = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("IBAN+")) {
+				iban = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("BIC+")) {
+				bic = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("EREF+")) {
+				eref = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("KREF+")) {
+				kref = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("MREF+")) {
+				mref = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("CRED+")) {
+				cred = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("DEBT+")) {
+				debt = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("COAM+")) {
+				coam = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("OAMT+")) {
+				oamt = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("ABWA+")) {
+				abwa = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("ABWE+")) {
+				abwe = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("BREF+")) {
+				bref = entry.substring(5);
+			} else if (entry.toUpperCase().startsWith("RREF+")) {
+				rref = entry.substring(5);
+			}
+
+		}
+
 	}
 
 }
