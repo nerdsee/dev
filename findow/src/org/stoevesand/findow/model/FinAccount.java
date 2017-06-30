@@ -159,6 +159,7 @@ public class FinAccount {
 
 	public FinAccount(me.figo.models.Account acc) {
 		refresh(acc);
+        sourceSystem = "FIGO";
 	}
 
 	public void update(JSONObject jo) {

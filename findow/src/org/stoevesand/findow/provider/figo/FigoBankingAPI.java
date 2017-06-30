@@ -24,7 +24,6 @@ import me.figo.FigoException;
 import me.figo.FigoSession;
 import me.figo.internal.TaskStatusResponse;
 import me.figo.internal.TaskTokenResponse;
-import me.figo.internal.TokenResponse;
 import me.figo.models.Bank;
 import me.figo.models.Transaction;
 
