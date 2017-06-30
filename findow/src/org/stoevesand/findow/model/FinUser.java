@@ -116,6 +116,8 @@ public class FinUser {
                 token = null;
                 e.printStackTrace();
             }
+        } else {
+            ret = token.getToken();
         }
         return ret;
     }
