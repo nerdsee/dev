@@ -19,60 +19,68 @@ import org.stoevesand.findow.server.FindowSystem;
 
 public class JobManager {
 
-	private Logger log = LoggerFactory.getLogger(JobManager.class);
+    private static Logger log = LoggerFactory.getLogger(JobManager.class);
 
-	private static JobManager _instance = null;
-	private SchedulerFactory schFactory = new StdSchedulerFactory();
-	private Scheduler sch;
+    private static JobManager _instance = null;
+    private SchedulerFactory schFactory = new StdSchedulerFactory();
+    private Scheduler sch;
 
-	private JobManager() {
+    static {
+        if (_instance == null) {
+            _instance = new JobManager();
+            log.info("JobManager statically initialised.");
+        }
+    }
 
-		// refresh Account Job
+    private JobManager() {
 
-		log.info("Initialise JobManager" + this);
+        // refresh Account Job
 
-		try {
-			sch = schFactory.getScheduler();
+        log.info("Initialise JobManager" + this);
 
-			// Start the schedule
-			sch.start();
+        try {
+            sch = schFactory.getScheduler();
 
-			JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
+            // Start the schedule
+            sch.start();
 
-			// Trigger the job to run on the next round minute
-			Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(30).repeatForever()).build();
-			// Tell quartz to schedule the job using the trigger
-			sch.scheduleJob(refreshAccountJob, trigger);
+            JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
 
-		} catch (SchedulerException e) {
-			log.error("Initialise JobManager failed.", e);
-			e.printStackTrace();
-		}
-		log.info("Initialise JobManager done. Scheduler: " + sch);
+            // Trigger the job to run on the next round minute
+            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(30).repeatForever())
+                    .build();
+            // Tell quartz to schedule the job using the trigger
+            sch.scheduleJob(refreshAccountJob, trigger);
 
-	}
+        } catch (SchedulerException e) {
+            log.error("Initialise JobManager failed.", e);
+            e.printStackTrace();
+        }
+        log.info("Initialise JobManager done. Scheduler: " + sch);
 
-	public void addSingleTaskJob(FinTask task, Date start) {
-		try {
-			JobDetail taskJob = JobBuilder.newJob(SingleTaskJob.class).build();
-			taskJob.getJobDataMap().put(SingleTaskJob.TASK_KEY, task);
+    }
 
-			// Trigger the job to run on the next round minute
-			Trigger triggerNow = TriggerBuilder.newTrigger().startAt(start).build();
+    public void addSingleTaskJob(FinTask task, Date start) {
+        try {
+            JobDetail taskJob = JobBuilder.newJob(SingleTaskJob.class).build();
+            taskJob.getJobDataMap().put(SingleTaskJob.TASK_KEY, task);
 
-			sch.scheduleJob(taskJob, triggerNow);
-		} catch (SchedulerException e) {
-			log.error("addSingleTaskJob", e);
-		} catch (Exception e) {
-			log.error("addSingleTaskJob", e);
-		}
-	}
+            // Trigger the job to run on the next round minute
+            Trigger triggerNow = TriggerBuilder.newTrigger().startAt(start).build();
 
-	public static JobManager getInstance() {
-		if (_instance == null) {
-			_instance = new JobManager();
-		}
-		return _instance;
+            sch.scheduleJob(taskJob, triggerNow);
+        } catch (SchedulerException e) {
+            log.error("addSingleTaskJob", e);
+        } catch (Exception e) {
+            log.error("addSingleTaskJob", e);
+        }
+    }
 
-	}
+    public static JobManager getInstance() {
+        if (_instance == null) {
+            _instance = new JobManager();
+        }
+        return _instance;
+
+    }
 }
