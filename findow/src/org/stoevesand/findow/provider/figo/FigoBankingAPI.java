@@ -147,7 +147,7 @@ public class FigoBankingAPI implements BankingAPI {
 			fs.removeAccount(account.getSourceId());
 			success = true;
 		} catch (FigoException e) {
-			e.printStackTrace();
+			log.error(e.getErrorMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -222,7 +222,12 @@ public class FigoBankingAPI implements BankingAPI {
 
 			List<me.figo.models.Account> accs = fs.getAccounts();
 
+			log.info("Account@FIGO:");
+
 			for (me.figo.models.Account acc : accs) {
+			    
+			    log.info(String.format("-> %s %s %s" ,acc.getAccountNumber(), acc.getAccountId(), acc.getBankName()));
+			    
 				ret.add(new FinAccount(acc));
 			}
 
