@@ -15,37 +15,37 @@ public class FinTransactionWrapper {
 	}
 
 	@JsonGetter
-	public double getBalanceAfter() {
+	public long getBalanceAfter() {
 		return balanceAfter;
 	}
 
 	@JsonGetter
-	public double getBalanceBefore() {
+	public long getBalanceBefore() {
 		return balanceBefore;
 	}
 
 	@JsonGetter
-	public double getTxSum() {
-		return (double) txSum / 100;
+	public long getTxSum() {
+		return txSum;
 	}
 
 	private List<FinTransaction> transactions;
-	private double balanceAfter = 0;
-	private double balanceBefore = 0;
+	private long balanceAfter = 0;
+	private long balanceBefore = 0;
 	private long txSum = 0;
 
 	public FinTransactionWrapper(List<FinTransaction> transactions) {
 		this.transactions = transactions;
 		sumTransactions(transactions);
-		balanceAfter = (double) txSum / 100;
+		balanceAfter = txSum;
 		balanceBefore = 0;
 	}
 
 	public FinTransactionWrapper(List<FinTransaction> transactions, FinAccount account) {
 		this.transactions = transactions;
 		sumTransactions(transactions);
-		balanceAfter = (double) account.getBalanceCent() / 100;
-		balanceBefore = balanceAfter - (double) txSum / 100;
+		balanceAfter = account.getBalanceCent();
+		balanceBefore = balanceAfter - txSum;
 	}
 
 	private void sumTransactions(List<FinTransaction> transactions) {

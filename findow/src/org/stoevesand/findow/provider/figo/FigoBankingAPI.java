@@ -91,7 +91,7 @@ public class FigoBankingAPI implements BankingAPI {
 		String email = "";
 		String recoveryPassword = "";
 		try {
-			username = username.substring(6) + "_TEST";
+			username = username.replace('|', '-');
 			email = username + "@stoevesand.org";
 			recoveryPassword = fc.addUser(username, email, password, "de");
 
