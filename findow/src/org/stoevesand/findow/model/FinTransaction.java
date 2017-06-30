@@ -216,6 +216,12 @@ public class FinTransaction {
         return bookingDate;
     }
 
+    @Transient
+    public String getBookingDateString() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return df.format(bookingDate);
+    }
+
     @Column(name = "PURPOSE", columnDefinition = "text")
     public String getPurpose() {
         String p = purpose;
@@ -526,10 +532,18 @@ public class FinTransaction {
 
     }
 
-    public static Comparator<FinTransaction> BookingDateComparator = new Comparator<FinTransaction>() {
+    public static Comparator<FinTransaction> bookingDateComparator = new Comparator<FinTransaction>() {
 
         public int compare(FinTransaction tx1, FinTransaction tx2) {
             return tx1.bookingDate.compareTo(tx2.bookingDate);
+        }
+
+    };
+
+    public static Comparator<FinTransaction> bookingDateComparatorDesc = new Comparator<FinTransaction>() {
+
+        public int compare(FinTransaction tx1, FinTransaction tx2) {
+            return tx2.bookingDate.compareTo(tx1.bookingDate);
         }
 
     };

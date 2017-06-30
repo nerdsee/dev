@@ -1,5 +1,6 @@
 package org.stoevesand.findow.persistence;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -118,7 +119,7 @@ public class PersistanceManager {
         em.getTransaction().commit();
         em.close();
 
-        result.sort(FinTransaction.BookingDateComparator);
+        result.sort(FinTransaction.bookingDateComparatorDesc);
 
         return result;
     }
