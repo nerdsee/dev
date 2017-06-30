@@ -48,4 +48,9 @@
         <servlet-class>org.stoevesand.findow.swagger.Bootstrap</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>FindowInit</servlet-name>
+        <servlet-class>org.stoevesand.findow.server.FindowInitServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 </web-app>
