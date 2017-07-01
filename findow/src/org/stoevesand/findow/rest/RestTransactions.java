@@ -97,7 +97,7 @@ public class RestTransactions {
 			String jwsUser = principal.getName();
 			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
-			List<FinCategorySum> cs = PersistanceManager.getInstance().getCategorySummary(user, accountId);
+			List<FinCategorySum> cs = PersistanceManager.getInstance().getCategorySummary(user, accountId, days);
 			result = RestUtils.generateJsonResponse(cs, "categorySummary");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);

@@ -279,12 +279,12 @@ public class PersistanceManager {
 		return ret;
 	}
 
-	public List<FinCategorySum> getCategorySummary(FinUser user, Long accountId) {
+	public List<FinCategorySum> getCategorySummary(FinUser user, Long accountId, int days) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		FinAccount account = user.getAccount(accountId);
 
-		Query q = entityManager.createNativeQuery("select coalesce(category_id,0) as category_id, count(*) as count, sum(amount) as sum from transactions t where t.account_id=:aid group by t.category_id", FinCategorySum.class).setParameter("aid", account.getSourceId());
+		Query q = entityManager.createNativeQuery("select coalesce(category_id,9999) as category_id, count(*) as count, sum(t.AMOUNT_CENT) as sum from FINDOW.TRANSACTIONS t where t.account_id=:aid group by t.category_id", FinCategorySum.class).setParameter("aid", account.getId());
 		List<FinCategorySum> catsum = q.getResultList();
 
 		entityManager.close();

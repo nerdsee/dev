@@ -10,6 +10,7 @@ import org.stoevesand.findow.persistence.PersistanceManager;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Entity
 public class FinCategorySum {
 
 	private double sum = 0;
@@ -50,7 +51,7 @@ public class FinCategorySum {
 
 	public void setCategoryId(long categoryId) {
 		this.categoryId = categoryId;
-		if (categoryId>0) {
+		if (categoryId > 0) {
 			category = PersistanceManager.getInstance().getCategory(categoryId);
 		}
 	}
