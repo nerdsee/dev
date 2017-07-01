@@ -1,5 +1,6 @@
 package org.stoevesand.findow.persistence;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -94,7 +95,12 @@ public class PersistanceManager {
 			// Standardfall mit echter accountId
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
-				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate > current_date - :daydelta order by t.bookingDate desc", FinTransaction.class).setParameter("daydelta", days).setParameter("aid", account.getId()).getResultList();
+				long endMillis = System.currentTimeMillis();
+				long startMillis = endMillis - (1000*60*60*24*days);
+				Date endDate = new Date(endMillis);
+				Date startDate = new Date(startMillis);
+						
+				List<FinTransaction> subResult = em.createQuery("select t from Transaction t where t.accountId=:aid and t.bookingDate between :startDate and :endDate order by t.bookingDate desc", FinTransaction.class).setParameter("startDate", startDate).setParameter("endDate", endDate).setParameter("aid", account.getId()).getResultList();
 				result.addAll(subResult);
 			} else {
 				throw new FinErrorHandler(500, "NO SUCH ACCOUNT");
