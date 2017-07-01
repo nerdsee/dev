@@ -16,7 +16,7 @@ public class CategoryEngine {
 	private Logger log = LoggerFactory.getLogger(CategoryEngine.class);
 
 	static private CategoryEngine _instance = null;
-	Map<Long, List<CategoryRule>> categoryRulesMap = null;
+	List<CategoryRule> categoryRules;
 
 	private CategoryEngine() {
 		refresh();
@@ -24,25 +24,9 @@ public class CategoryEngine {
 
 	public void refresh() {
 		log.info("Load CategoryRules");
-		categoryRulesMap = new HashMap<Long, List<CategoryRule>>();
 
 		// einmal alle laden
-		List<CategoryRule> categoryRules = PersistanceManager.getInstance().getCategoryRules();
-
-		// und dann in der Map zu den Categories sortieren
-		for (CategoryRule rule : categoryRules) {
-			Long categoryId = rule.getCategoryId();
-			List<CategoryRule> ruleset = categoryRulesMap.get(categoryId);
-
-			if (ruleset == null) {
-				ruleset = new Vector<CategoryRule>();
-			}
-
-			ruleset.add(rule);
-			categoryRulesMap.put(categoryId, ruleset);
-
-		}
-
+		categoryRules = PersistanceManager.getInstance().getCategoryRules();
 	};
 
 	public static CategoryEngine getInstance() {
@@ -54,25 +38,15 @@ public class CategoryEngine {
 
 	public FinCategory searchCategory(FinTransaction transaction) {
 
-		List<FinCategory> categories = PersistanceManager.getInstance().getCategories();
+		String purpose = transaction.getPurpose();
+		for (CategoryRule rule : categoryRules) {
+			String content = rule.getContent();
 
-		for (FinCategory category : categories) {
-
-			Long categoryId = category.getId();
-			List<CategoryRule> ruleset = categoryRulesMap.get(categoryId);
-
-			if (ruleset != null) {
-				for (CategoryRule rule : ruleset) {
-					String purpose = transaction.getPurpose();
-					String content = rule.getContent();
-
-					if ((purpose != null) && (content != null) && (purpose.toUpperCase().contains(content.toUpperCase()))) {
-						log.info("Found category: " + "[" + category.getName() + "] " + transaction.getPurpose());
-						return category;
-					}
-				}
+			if ((purpose != null) && (content != null) && (purpose.toUpperCase().contains(content.toUpperCase()))) {
+				FinCategory category = PersistanceManager.getInstance().getCategory(rule.getCategoryId());
+				log.info("Found category: " + "[" + category.getName() + "] " + transaction.getPurpose());
+				return category;
 			}
-
 		}
 
 		return null;
