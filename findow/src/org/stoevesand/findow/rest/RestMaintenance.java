@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stoevesand.findow.hint.CategoryEngine;
 import org.stoevesand.findow.hint.HintEngine;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.FinAccount;
@@ -117,6 +118,15 @@ public class RestMaintenance {
 		// PersistanceManager.getInstance().persist(bank);
 		// }
 		log.info(String.format("Imported %d banks", banks.size()));
+		return RestUtils.generateJsonResponse(FindowResponse.OK);
+	}
+
+	@Path("/updateCategories")
+	@GET
+	@Produces("application/json")
+	public String updateCategories() {
+		CategoryEngine.getInstance().refresh();
+		PersistanceManager.getInstance().updateTransactionCategories();
 		return RestUtils.generateJsonResponse(FindowResponse.OK);
 	}
 

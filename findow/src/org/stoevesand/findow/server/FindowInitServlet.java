@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stoevesand.findow.hint.HintEngine;
 import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.persistence.PersistanceManager;
 import org.stoevesand.findow.provider.figo.FigoBankingAPI;
@@ -19,6 +20,7 @@ public class FindowInitServlet extends HttpServlet {
 
         JobManager jm = JobManager.getInstance();
         PersistanceManager pm = PersistanceManager.getInstance();
+        HintEngine he = HintEngine.getInstance();
 
         log.info("FINDOW INIT. done.");
 

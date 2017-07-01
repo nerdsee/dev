@@ -15,6 +15,7 @@
 		<class>org.stoevesand.findow.model.FinBank</class>
 		<class>org.stoevesand.findow.hint.Hint</class>
 		<class>org.stoevesand.findow.hint.RegexHint</class>
+		<class>org.stoevesand.findow.hint.CategoryRule</class>
 
 		<properties>
 
@@ -44,6 +45,7 @@
 		<class>org.stoevesand.findow.model.FinBank</class>
 		<class>org.stoevesand.findow.hint.Hint</class>
 		<class>org.stoevesand.findow.hint.RegexHint</class>
+		<class>org.stoevesand.findow.hint.CategoryRule</class>
 
 		<properties>
 
