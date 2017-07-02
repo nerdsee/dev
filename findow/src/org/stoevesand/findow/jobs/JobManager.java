@@ -47,7 +47,7 @@ public class JobManager {
             JobDetail refreshAccountJob = JobBuilder.newJob(RefreshAccountJob.class).withIdentity("refreshAccountJob").build();
 
             // Trigger the job to run on the next round minute
-            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(30).repeatForever())
+            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInHours(8).repeatForever())
                     .build();
             // Tell quartz to schedule the job using the trigger
             sch.scheduleJob(refreshAccountJob, trigger);
