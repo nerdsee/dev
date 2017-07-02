@@ -395,6 +395,7 @@ public class FinTransaction {
 		this.bic = bic;
 	}
 
+	@JsonIgnore
 	public String getEref() {
 		return eref;
 	}
@@ -403,6 +404,7 @@ public class FinTransaction {
 		this.eref = eref;
 	}
 
+	@JsonIgnore
 	public String getKref() {
 		return kref;
 	}
@@ -411,6 +413,7 @@ public class FinTransaction {
 		this.kref = kref;
 	}
 
+	@JsonIgnore
 	public String getMref() {
 		return mref;
 	}
@@ -419,6 +422,7 @@ public class FinTransaction {
 		this.mref = mref;
 	}
 
+	@JsonIgnore
 	public String getCred() {
 		return cred;
 	}
@@ -427,6 +431,7 @@ public class FinTransaction {
 		this.cred = cred;
 	}
 
+	@JsonIgnore
 	public String getDebt() {
 		return debt;
 	}
@@ -435,6 +440,7 @@ public class FinTransaction {
 		this.debt = debt;
 	}
 
+	@JsonIgnore
 	public String getCoam() {
 		return coam;
 	}
@@ -443,6 +449,7 @@ public class FinTransaction {
 		this.coam = coam;
 	}
 
+	@JsonIgnore
 	public String getOamt() {
 		return oamt;
 	}
@@ -451,6 +458,7 @@ public class FinTransaction {
 		this.oamt = oamt;
 	}
 
+	@JsonIgnore
 	public String getAbwa() {
 		return abwa;
 	}
@@ -459,6 +467,7 @@ public class FinTransaction {
 		this.abwa = abwa;
 	}
 
+	@JsonIgnore
 	public String getAbwe() {
 		return abwe;
 	}
@@ -467,6 +476,7 @@ public class FinTransaction {
 		this.abwe = abwe;
 	}
 
+	@JsonIgnore
 	public String getBref() {
 		return bref;
 	}
@@ -475,6 +485,7 @@ public class FinTransaction {
 		this.bref = bref;
 	}
 
+	@JsonIgnore
 	public String getRref() {
 		return rref;
 	}

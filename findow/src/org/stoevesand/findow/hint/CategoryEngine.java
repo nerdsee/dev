@@ -1,9 +1,6 @@
 package org.stoevesand.findow.hint;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +39,20 @@ public class CategoryEngine {
 		for (CategoryRule rule : categoryRules) {
 			String content = rule.getContent();
 
-			if ((purpose != null) && (content != null) && (purpose.toUpperCase().contains(content.toUpperCase()))) {
-				FinCategory category = PersistanceManager.getInstance().getCategory(rule.getCategoryId());
-				log.info("Found category: " + "[" + category.getName() + "] " + transaction.getPurpose());
-				return category;
+			if (rule.getType() == CategoryRule.TYPE_CONTAINS) {
+				if ((purpose != null) && (content != null) && (purpose.toUpperCase().contains(content.toUpperCase()))) {
+					FinCategory category = PersistanceManager.getInstance().getCategory(rule.getCategoryId());
+					log.info("Found category: " + "[" + category.getName() + "] " + transaction.getPurpose());
+					return category;
+				}
+			} else if (rule.getType() == CategoryRule.TYPE_CONTAINS) {
+				if ((purpose != null) && (content != null) && (purpose.toUpperCase().contains(content.toUpperCase()))) {
+					FinCategory category = PersistanceManager.getInstance().getCategory(rule.getCategoryId());
+					log.info("Found category: " + "[" + category.getName() + "] " + transaction.getPurpose());
+					return category;
+				}
+			} else {
+				log.error("Uknown CategoryRule Type: " + rule.getType());
 			}
 		}
 

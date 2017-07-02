@@ -96,7 +96,7 @@ public class PersistanceManager {
 			// Account account = entityManager.find(Account.class, accountId);
 			if (account != null) {
 				long endMillis = System.currentTimeMillis();
-				long startMillis = endMillis - (1000*60*60*24*days);
+				long startMillis = endMillis - (1000L*60L*60L*24L*days);
 				Date endDate = new Date(endMillis);
 				Date startDate = new Date(startMillis);
 						
@@ -339,7 +339,7 @@ public class PersistanceManager {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
-		List<CategoryRule> rules = entityManager.createQuery("select c from CategoryRule c", CategoryRule.class).getResultList();
+		List<CategoryRule> rules = entityManager.createQuery("select c from CategoryRule c order by prio", CategoryRule.class).getResultList();
 
 		entityManager.getTransaction().commit();
 		entityManager.close();

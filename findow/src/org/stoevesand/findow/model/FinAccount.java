@@ -192,6 +192,7 @@ public class FinAccount {
 		lastUpdateAttempt = JSONUtils.getDate(jo, "lastUpdateAttempt", "yyyy-MM-dd HH:mm:ss.SSS");
 	}
 
+	@JsonIgnore
 	public String getStatus() {
 		return status;
 	}
@@ -216,6 +217,7 @@ public class FinAccount {
 		this.lastUpdateAttempt = lastUpdateAttempt;
 	}
 
+	@JsonIgnore
 	public String getAccountCurrency() {
 		return accountCurrency;
 	}
@@ -224,6 +226,7 @@ public class FinAccount {
 		this.accountCurrency = accountCurrency;
 	}
 
+	@JsonIgnore
 	public int getAccountTypeId() {
 		return accountTypeId;
 	}

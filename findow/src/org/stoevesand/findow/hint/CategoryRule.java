@@ -4,31 +4,27 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.stoevesand.findow.model.FinCategory;
-import org.stoevesand.findow.model.FinTransaction;
-import org.stoevesand.findow.model.FinUser;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "CategoryRule")
 @Table(name = "CATEGORY_RULES")
 public class CategoryRule {
 
-	String name;
-	String type;
+	public static final int TYPE_CONTAINS = 1;
+	public static final int TYPE_REGEX = 2;
+
+	int type;
 	String content;
 	private Long categoryId;
 	private Long id;
+	private int prio;
 
 	public CategoryRule() {
-		this.name = "";
-		this.type = "";
+		this.type = TYPE_CONTAINS;
 		this.content = "";
+		this.prio = 0;
 	}
 
 	@Id
@@ -52,20 +48,20 @@ public class CategoryRule {
 		categoryId = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
+	}
+
+	public int getPrio() {
+		return prio;
+	}
+
+	public void setPrio(int prio) {
+		this.prio = prio;
 	}
 
 	public String getContent() {

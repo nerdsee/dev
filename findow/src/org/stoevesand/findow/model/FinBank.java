@@ -12,6 +12,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import me.figo.models.Service;
 
@@ -79,6 +80,7 @@ public class FinBank {
 	public FinBank() {
 	}
 
+	@JsonIgnore
 	public String getType() {
 		return type;
 	}
@@ -96,6 +98,7 @@ public class FinBank {
 	}
 
 	@Column(name = "ADVICE", columnDefinition = "text")
+	@JsonIgnore
 	public String getAdvice() {
 		return advice;
 	}
