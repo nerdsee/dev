@@ -21,7 +21,7 @@
 
 			<!-- AWS DEV -->
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://findow-dev-cluster-1.cluster-cd7hwivw4aio.eu-central-1.rds.amazonaws.com:3306/FINDOW" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/FINDOW" />
 			<property name="javax.persistence.jdbc.user" value="appserver" />
 			<property name="javax.persistence.jdbc.password" value="ndjwuN!hzGb%hjhFzrHV#RFhL2lhj5j2" />
 
@@ -51,7 +51,7 @@
 
 			<!-- AWS PROD -->
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://findow-prod-cluster.cluster-cd7hwivw4aio.eu-central-1.rds.amazonaws.com:3306/FINDOW" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://s18569682.onlinehome-server.info:3306/FINDOW" />
 			<property name="javax.persistence.jdbc.user" value="appserver" />
 			<property name="javax.persistence.jdbc.password" value="ndjwuN!hzGb%hjhFzrHV#RFhL2lhj5j2" />
 
