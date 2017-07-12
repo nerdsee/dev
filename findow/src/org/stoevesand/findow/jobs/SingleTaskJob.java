@@ -12,6 +12,8 @@ import org.stoevesand.findow.model.FinTask;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
+import me.figo.models.ApiError;
+
 public class SingleTaskJob implements Job {
 
 	public static final String TASK_KEY = "TASK_KEY";
@@ -33,6 +35,13 @@ public class SingleTaskJob implements Job {
 
 				if (task.isErroneous()) {
 					log.error(String.format("Task Error (%d): %s", task.getId(), task.getMessage()));
+					ApiError error = task.getError();
+					if (error != null) {
+						log.error(error.getName());
+						log.error(error.getDescription() );
+						log.error(error.getMessage());
+						log.error("Code: " + error.getCode());
+					}
 				} else {
 
 					// Solange versuchen, bis er fertig ist.
