@@ -13,14 +13,17 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.jobs.JobManager;
 import org.stoevesand.findow.model.FinBank;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
-import org.stoevesand.findow.provider.BankingAPI;
-import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiKeyAuthDefinition;
+import io.swagger.annotations.ApiKeyAuthDefinition.ApiKeyLocation;
+import io.swagger.annotations.SecurityDefinition;
+import io.swagger.annotations.SwaggerDefinition;
+
+@SwaggerDefinition(securityDefinition = @SecurityDefinition(apiKeyAuthDefinitions = { @ApiKeyAuthDefinition(key = "user", name = "Authorization", in = ApiKeyLocation.HEADER) }))
 
 @Path("/banks")
 @Api(value = "banks")
@@ -45,7 +48,7 @@ public class RestBanks {
 		FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
 
 		log.info("getBank: " + search + " (for user " + jwsUser + ")");
-		//JobManager.getInstance();
+		// JobManager.getInstance();
 
 		List<FinBank> banks = PersistanceManager.getInstance().searchBanks(search);
 		String result = RestUtils.generateJsonResponse(banks, "banks");
