@@ -61,8 +61,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	}
 
 	private String extractUserFromToken(String token) throws JWTVerificationException {
-		// token =
-		// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Imhhbm5lcyIsImFkbWluIjp0cnVlLCJpc3MiOiJhdXRoMCJ9.E6Z9SYZdYKzfnLLu7IP2s6QRwYOO1XXxZWvpUpwela0";
+		
 		String name = "";
 		try {
 			// secret für auth0 von simprove

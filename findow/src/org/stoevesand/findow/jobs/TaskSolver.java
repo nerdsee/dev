@@ -15,6 +15,7 @@ import org.stoevesand.findow.provider.BankingAPI;
 import org.stoevesand.findow.server.FindowSystem;
 
 public class TaskSolver {
+	private static final int MAX_DAYS_HISTORY = 2000; // infinity
 	public static final String IMPORT_ACCOUNT = "IMPORT_ACCOUNT";
 	public static final String UPDATE_TX = "UPDATE_TX";
 
@@ -67,7 +68,7 @@ public class TaskSolver {
 			try {
 				log.info("Update transactions of account " + account);
 				Date lastUpdate = account.getLastSuccessfulUpdate();
-				int diff = 120;
+				int diff = MAX_DAYS_HISTORY;
 				if (lastUpdate != null) {
 					Date now = new Date();
 					// Zeit seit dem letzten update plus eine Woche

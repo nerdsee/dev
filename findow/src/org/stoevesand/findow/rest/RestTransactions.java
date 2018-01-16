@@ -13,14 +13,16 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.auth.Authenticator;
 import org.stoevesand.findow.model.FinAccount;
 import org.stoevesand.findow.model.FinCategorySum;
 import org.stoevesand.findow.model.FinErrorHandler;
 import org.stoevesand.findow.model.FinTransaction;
+import org.stoevesand.findow.model.FinTransactionList;
 import org.stoevesand.findow.model.FinTransactionWrapper;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
+import org.stoevesand.findow.provider.BankingAPI;
+import org.stoevesand.findow.server.FindowSystem;
 
 import io.swagger.annotations.Api;
 
@@ -67,13 +69,14 @@ public class RestTransactions {
 					result = RestUtils.generateJsonResponse(FindowResponse.ACCOUNT_UNKNOWN);
 				}
 			} else {
-				//ansonsten alle Transaktionen des users laden
+				// ansonsten alle Transaktionen des users laden
 				List<FinTransaction> transactions = PersistanceManager.getInstance().getTx(user, null, days);
 
 				FinTransactionWrapper wrapper = new FinTransactionWrapper(transactions);
 				result = RestUtils.generateJsonResponse(wrapper, null);
-				
-				//result = RestUtils.generateJsonResponse(transactions, "transactions");
+
+				// result = RestUtils.generateJsonResponse(transactions,
+				// "transactions");
 			}
 		} catch (FinErrorHandler e) {
 			log.error("Failed to getTransactions");
@@ -101,6 +104,39 @@ public class RestTransactions {
 			result = RestUtils.generateJsonResponse(cs, "categorySummary");
 		} catch (Exception e) {
 			result = RestUtils.generateJsonResponse(FindowResponse.UNKNOWN);
+		}
+		return result;
+	}
+
+	@Path("/direct")
+	@GET
+	@Secured
+	@Produces("application/json")
+	public String getTransactionsDirect() {
+		RestUtils.addHeader(response);
+		String result = "";
+
+		try {
+			// User laden
+			Principal principal = securityContext.getUserPrincipal();
+			String jwsUser = principal.getName();
+			FinUser user = PersistanceManager.getInstance().getUserByName(jwsUser);
+
+			BankingAPI bankingAPI = FindowSystem.getBankingAPI(user);
+			FinTransactionList transactions = bankingAPI.searchTransactions(user, null, 5000);
+
+			// ansonsten alle Transaktionen des users laden
+			List<FinTransaction> tl = transactions.getTransactions();
+
+			FinTransactionWrapper wrapper = new FinTransactionWrapper(tl);
+			result = RestUtils.generateJsonResponse(wrapper, null);
+
+			// result = RestUtils.generateJsonResponse(transactions,
+			// "transactions");
+		} catch (FinErrorHandler e) {
+			log.error("Failed to getTransactions");
+			e.printErrors();
+			result = e.getResponse();
 		}
 		return result;
 	}

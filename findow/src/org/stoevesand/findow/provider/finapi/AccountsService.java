@@ -14,10 +14,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stoevesand.findow.jobs.ImportAccountJob;
 import org.stoevesand.findow.model.FinAccount;
 import org.stoevesand.findow.model.FinErrorHandler;
-import org.stoevesand.findow.model.FinToken;
 import org.stoevesand.findow.provider.finapi.model.BankConnection;
 
 public class AccountsService {

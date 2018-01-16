@@ -285,7 +285,9 @@ public class FinTransaction {
 	}
 
 	public FinTransaction(FinUser user, FinAccount account, me.figo.models.Transaction tx) {
-		accountId = account.getId();
+		if (account != null) {
+			accountId = account.getId();
+		}
 		amount = (long) (tx.getAmount().doubleValue() * 100);
 		bookingDate = tx.getBookingDate();
 		valueDate = tx.getValueDate();

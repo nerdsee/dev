@@ -201,6 +201,13 @@ public class FinTask {
 	}
 
 	@Transient
+	/**
+	 * Hier wird gepollt, in welchem Zustand der Task gerade bei FIGO ist. 
+	 * Der Task bei FIGO wird aber erst gestartet, wenn zum ersten mal der Status mit getTaskState abgerufen wird.
+	 * 
+	 * @param fs die FigoSession, die zu aktuellen User gehört
+	 * @return
+	 */
 	public boolean getTaskState(FigoSession fs) {
 		boolean changed = false;
 		try {

@@ -29,6 +29,8 @@ import me.figo.models.Transaction;
 
 public class FigoBankingAPI implements BankingAPI {
 
+	private static final int BATCH_SIZE = 100;
+
 	private Logger log = LoggerFactory.getLogger(FigoBankingAPI.class);
 
 	private String client_id = "";
@@ -41,11 +43,23 @@ public class FigoBankingAPI implements BankingAPI {
 		try {
 
 			log.info("call setup new account");
+			
+			/* Hier wird bei FIGO ein Task gestartet, der das Konto importiert. Auf dem Task muss getTaskState aufgerufen
+			 * werden, damit der Task bei FIGO losläuft 
+			 */
 			TaskTokenResponse er = fs.setupNewAccount(bankId, "de", bankingUserId, bankingPin, null, true, true);
 			if (er != null) {
+				
+				// um den Status asynchron bei FIGO abzufragen, benötigt man den TaskToken
+				// der ist in der Response enthalten, die man bei der Anlage aller Tasks zurückbekommt
 				taskToken = er.getTaskToken();
+				
 				log.info("new task token for import: " + taskToken);
+				
+				// Für jeden Task bei FIGO gibt es einen "Schatten" bei findow.
+				// hier ist auch der TaskToken gespeichert und der Typ des Tasks
 				FinTask task = new FinTask(user, taskToken, TaskSolver.IMPORT_ACCOUNT);
+				
 				// erste Statusabfrage, damit der Request losläuft
 				boolean changed = task.getTaskState(fs);
 				if (changed) {
@@ -53,9 +67,10 @@ public class FigoBankingAPI implements BankingAPI {
 				}
 
 				log.info("Import startet: " + task.getMessage());
-				String accountId = task.getSourceId();
-				log.info("Account: " + accountId);
+				log.info("Account       : " + task.getSourceId());
 
+				// der Task wird gescheduled, damit regelmäßig geprüft werden kann,
+				// ob der Task bei FIGO fertig ist.
 				JobManager.getInstance().addSingleTaskJob(task, new Date());
 
 			} else {
@@ -131,7 +146,7 @@ public class FigoBankingAPI implements BankingAPI {
 
 		return null;
 	}
-	
+
 	@Override
 	public FinToken requestUserToken(String username, String password) throws FinErrorHandler {
 
@@ -156,17 +171,30 @@ public class FigoBankingAPI implements BankingAPI {
 
 	@Override
 	public FinTransactionList searchTransactions(FinUser user, FinAccount account, int days) throws FinErrorHandler {
-
+		
 		FinTransactionList tl = new FinTransactionList();
 
 		FigoSession fs = new FigoSession(user.getToken());
 
 		try {
-			List<Transaction> txs = fs.getTransactions(account.getSourceId());
+			String accountId = account == null ? null : account.getSourceId();
+			// List<Transaction> txs = fs.getTransactions(accountId);
 
-			for (Transaction tx : txs) {
-				org.stoevesand.findow.model.FinTransaction t = new org.stoevesand.findow.model.FinTransaction(user, account, tx);
-				tl.addTransaction(t);
+			int offset = 0;
+			int count = BATCH_SIZE;
+			int retCount = BATCH_SIZE;
+
+			while (retCount == BATCH_SIZE) {
+
+				List<Transaction> txs = fs.getTransactions(accountId, null, count, offset, null);
+
+				retCount = txs.size();
+				offset+=retCount;
+				
+				for (Transaction tx : txs) {
+					org.stoevesand.findow.model.FinTransaction t = new org.stoevesand.findow.model.FinTransaction(user, account, tx);
+					tl.addTransaction(t);
+				}
 			}
 
 		} catch (FigoException e) {
@@ -225,9 +253,9 @@ public class FigoBankingAPI implements BankingAPI {
 			log.info("Account@FIGO:");
 
 			for (me.figo.models.Account acc : accs) {
-			    
-			    log.info(String.format("-> %s %s %s" ,acc.getAccountNumber(), acc.getAccountId(), acc.getBankName()));
-			    
+
+				log.info(String.format("-> %s %s %s", acc.getAccountNumber(), acc.getAccountId(), acc.getBankName()));
+
 				ret.add(new FinAccount(acc));
 			}
 
@@ -240,8 +268,9 @@ public class FigoBankingAPI implements BankingAPI {
 	}
 
 	/**
-	 * Fordert eine Konten synchronisation an und startet dann einen Task, der wartet
-	 * bis der synch durch ist. Dieser Task lädt am Ende erst die Transaktionen nach.
+	 * Fordert eine Konten synchronisation an und startet dann einen Task, der
+	 * wartet bis der synch durch ist. Dieser Task lädt am Ende erst die
+	 * Transaktionen nach.
 	 */
 	@Override
 	public void reloadAccountContent(FinUser user, FinAccount account) throws FinErrorHandler {

@@ -1,6 +1,5 @@
 package org.stoevesand.findow.jobs;
 
-import java.util.Date;
 import java.util.List;
 
 import org.quartz.DisallowConcurrentExecution;
@@ -13,6 +12,12 @@ import org.stoevesand.findow.model.FinTask;
 import org.stoevesand.findow.model.FinUser;
 import org.stoevesand.findow.persistence.PersistanceManager;
 
+/**
+ * Diese Klasse *soll* Tasks neu starten, die noch liefen, als der Server runtergefahren wurde.
+ * Da fehlt noch einiges. Glaube ich. ;-)
+ * @author JAN
+ *
+ */
 @DisallowConcurrentExecution
 public class TaskJob implements Job {
 
